@@ -11,9 +11,9 @@ The **booking service** is responsible for managing the booking process. This se
 
 ## API
 
-| Link                             | Method  | Endpoint                   | Description        |
-|:--------------------------------:| ------- | -------------------------- | ------------------ |
-| [&#128279;](./get-booking.md)    | `GET`   | `/bookings/{pnrId}`        | Get booking        |
-| [&#128279;](./create-booking.md) | `POST`  | `/bookings`                | Create new booking |
-| [&#128279;](./update-booking.md) | `PUT`   | `/bookings/{pnrId}`        | Update booking     |
-| [&#128279;](./cancel-booking.md) | `POST`  | `/bookings/{pnrId}/cancel` | Cancel booking     |
+| Link                             | Method | Endpoint                   | Description        |
+|:--------------------------------:|:------:| -------------------------- | ------------------ |
+| [&#128279;](./get-booking.md)    | `GET`  | `/bookings/{pnrId}`        | Get booking        |
+| [&#128279;](./create-booking.md) | `POST` | `/bookings`                | Create new booking |
+| [&#128279;](./update-booking.md) | `PUT`  | `/bookings/{pnrId}`        | Update booking     |
+| [&#128279;](./cancel-booking.md) | `POST` | `/bookings/{pnrId}/cancel` | Cancel booking     |

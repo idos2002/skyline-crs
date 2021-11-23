@@ -1,8 +1,15 @@
-# Create New Booking - `POST /bookings`
+# Create New Booking
 
 Creates a new booking for the requested booking details. May fail if not enough seats are available or if the given PNR details are invalid.
 
+## Request
+
+```http
+POST /bookings
+```
+
 ### Body
+
 ```json
 {
     "passengers": [

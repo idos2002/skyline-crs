@@ -1,17 +1,31 @@
-# Update Booking - `PUT /bookings/{pnrId}`
+# Update Booking
 
 Update the booking with the requested PNR ID. Optional fields omitted previously may be added to the booking through this operation. May fail if the given PNR details are invalid. Authentication by providing the first name and last name of the person who made the booking (as provided by the **current** contact details, before the update) is required.
 
 > **Note:** An updated ticket will be issued for this update.
 
 ### Restrictions and Warnings
+
 - Passenger's list must have the same length as in the existing PNR - the client may not add passengers for an existing booking!
 - The passengers will be updated (replaced) according to their order in the request.
 
-### Parameters
-- `pnrId` - The PNR ID (booking number) of the booking to update.
+## Request
+
+```http
+PUT /bookings/{pnrId}
+```
+
+| Parameter | Description                                           | Format      |
+| --------- | ----------------------------------------------------- | ----------- |
+| `{pnrId}` | The PNR ID (booking number) of the booking to update. | UUID string |
+
+Example:
+```http
+PUT /bookings/f362846f-679d-4ef7-857d-e321c622cb41
+```
 
 ### Body
+
 ```json
 {
     "authentication": {

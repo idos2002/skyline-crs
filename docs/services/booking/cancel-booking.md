@@ -1,11 +1,28 @@
-# Get Booking - `GET /bookings/{pnrId}`
+# Cancel Booking
 
-Gets the booking with the requested PNR ID. The first name and last name of the person who made the booking (as in the contact details of the corresponding PNR) are required in the request body for authentication purposes.
+Cancels the booking with the requested PNR ID. The first name and last name of the person who made the booking (as in the contact details of the corresponding PNR) are required in the request body for authentication purposes.
 
-### Parameters
-- `pnrId` - The PNR ID (booking number) of the requested booking.
+> **Warning!** This operation is irreversible!
+
+> **Note:** Canceled PNRs will be archived and will not be accessible through this API thereafter.
+
+## Request
+
+```http
+POST /bookings/{pnrId}/cancel
+```
+
+| Parameter | Description                                           | Format      |
+| --------- | ----------------------------------------------------- | ----------- |
+| `{pnrId}` | The PNR ID (booking number) of the booking to cancel. | UUID string |
+
+Example:
+```http
+POST /bookings/f362846f-679d-4ef7-857d-e321c622cb41/cancel
+```
 
 ### Body
+
 ```json
 {
     "authentication": {
@@ -55,7 +72,7 @@ Example:
         }
     },
     "ticket": {
-        "status": "<Ticketing status: pending / issued / canceled>",
+        "status": "canceled",
         "issueTimestamp": "<Ticket issue timestamp (optional)>"
     },
     "createdTimestamp": "<PNR creation timestamp>",
@@ -63,7 +80,6 @@ Example:
         "<PNR updates timestamps (optional)>",
     ],
     "cancelTimestamp": "<PNR cancellation timestamp (optional)>",
-    "checkInTimestamp": "<Check-in timestamp for this PNR (optional)>"
 }
 ```
 
@@ -102,14 +118,14 @@ Example:
         }
     },
     "ticket": {
-        "status": "issued",
+        "status": "canceled",
         "issueTimestamp": "2020-10-11T22:58:43.236672Z"
     },
     "createdTimestamp": "2020-10-10T14:23:05.659711Z",
     "updatesTimestamps": [
         "2020-10-17T07:31:01.678945Z"
     ],
-    "checkInTimestamp": "2020-10-20T02:15:54.659720Z"
+    "cancelTimestamp": "2020-10-20T02:15:54.659720Z"
 }
 ```
 
@@ -128,5 +144,14 @@ Example:
 {
     "error": "Booking not found",
     "message": "Could not find a booking with the given PNR ID."
+}
+```
+
+## Booking Already Canceled Response - `409 Conflict`
+
+```json
+{
+    "error": "Booking already canceled",
+    "message": "Could not cancel a booking which is already canceled."
 }
 ```
