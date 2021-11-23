@@ -45,10 +45,10 @@
                     "gender": {
                         "description": "Gender of the passenger as written in the passport. (Required)",
                         "enum": [
-                            "Male",
-                            "Female",
-                            "Other",
-                            "Unspecified"
+                            "male",
+                            "female",
+                            "other",
+                            "unspecified"
                         ]
                     }
                 }
@@ -70,11 +70,11 @@
             ],
             "properties": {
                 "firstName": {
-                    "description": "First name of the passenger to contact. (Required)",
+                    "description": "First name of the person who made the booking. (Required)",
                     "bsonType": "string"
                 },
                 "surname": {
-                    "description": "Surname (or last name) of the passenger to contact. (Required)",
+                    "description": "Surname (or last name) of the person who made the booking. (Required)",
                     "bsonType": "string"
                 },
                 "email": {
@@ -134,9 +134,9 @@
                 "status": {
                     "description": "Status of the ticket to be issued for this PNR. (Required)",
                     "enum": [
-                        "Pending",
-                        "Issued",
-                        "Denied"
+                        "pending",
+                        "issued",
+                        "canceled"
                     ]
                 },
                 "issueTimestamp": {
