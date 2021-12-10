@@ -1,6 +1,8 @@
 # Update Booking
 
-Update the booking with the requested PNR ID. Optional fields omitted previously may be added to the booking through this operation. May fail if the given PNR details are invalid. Authentication by providing the first name and last name of the person who made the booking (as provided by the **current** contact details, before the update) is required.
+Update the booking with the requested PNR ID. Optional fields omitted previously may be added to the booking through this operation. May fail if the given PNR details are invalid.
+
+> **Important:**  Login is required to access this endpoint.
 
 > **Note:** An updated ticket will be issued for this update.
 
@@ -28,10 +30,6 @@ PUT /bookings/f362846f-679d-4ef7-857d-e321c622cb41
 
 ```json
 {
-    "authentication": {
-        "firstName": "<First name of the person who made the booking provided by the current contact details, before this update>",
-        "lastName": "<Last name of the person who made the booking provided by the current contact details, before this update>",
-    },
     "passengers": [
         {
             "nameTitle": "<Passenger name title, e.g. Mr, Mrs, etc. (optional)>",
@@ -61,10 +59,6 @@ PUT /bookings/f362846f-679d-4ef7-857d-e321c622cb41
 Example:
 ```json
 {
-    "authentication": {
-        "firstName": "John",
-        "lastName": "Doe",
-    },
     "passengers": [
         {
             "nameTitle": "Mr",
@@ -216,7 +210,7 @@ Example:
 ```json
 {
     "error": "Unauthorized access",
-    "message": "The provided first name and last name do not match the booking's contact details."
+    "message": "The access_token cookie is missing or invalid. Please log in first."
 }
 ```
 

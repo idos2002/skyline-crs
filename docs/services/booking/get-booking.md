@@ -1,6 +1,8 @@
 # Get Booking
 
-Gets the booking with the requested PNR ID. The first name and last name of the person who made the booking (as in the contact details of the corresponding PNR) are required in the request body for authentication purposes.
+Gets the booking with the requested PNR ID.
+
+> **Important:**  Login is required to access this endpoint.
 
 ## Request
 
@@ -15,27 +17,6 @@ GET /bookings/{pnrId}
 Example:
 ```http
 GET /bookings/f362846f-679d-4ef7-857d-e321c622cb41
-```
-
-### Body
-
-```json
-{
-    "authentication": {
-        "firstName": "<First name of the person who made the booking>",
-        "lastName": "<Last name of the person who made the booking>"
-    }
-}
-```
-
-Example:
-```json
-{
-    "authentication": {
-        "firstName": "John",
-        "lastName": "Doe"
-    }
-}
 ```
 
 ## Success Response - `200 OK`
@@ -131,7 +112,7 @@ Example:
 ```json
 {
     "error": "Unauthorized access",
-    "message": "The provided first name and last name do not match the booking's contact details."
+    "message": "The access_token cookie is missing or invalid. Please log in first."
 }
 ```
 

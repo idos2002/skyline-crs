@@ -4,6 +4,8 @@ Cancels the booking with the requested PNR ID. The first name and last name of t
 
 > **Warning!** This operation is irreversible!
 
+> **Important:**  Login is required to access this endpoint.
+
 > **Note:** Canceled PNRs will be archived and will not be accessible through this API thereafter.
 
 ## Request
@@ -19,27 +21,6 @@ POST /bookings/{pnrId}/cancel
 Example:
 ```http
 POST /bookings/f362846f-679d-4ef7-857d-e321c622cb41/cancel
-```
-
-### Body
-
-```json
-{
-    "authentication": {
-        "firstName": "<First name of the person who made the booking>",
-        "lastName": "<Last name of the person who made the booking>"
-    }
-}
-```
-
-Example:
-```json
-{
-    "authentication": {
-        "firstName": "John",
-        "lastName": "Doe"
-    }
-}
 ```
 
 ## Success Response - `200 OK`
@@ -134,7 +115,7 @@ Example:
 ```json
 {
     "error": "Unauthorized access",
-    "message": "The provided first name and last name do not match the booking's contact details."
+    "message": "The access_token cookie is missing or invalid. Please log in first."
 }
 ```
 
