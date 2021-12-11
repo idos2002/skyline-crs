@@ -30,7 +30,15 @@ GET /bookings/f362846f-679d-4ef7-857d-e321c622cb41
             "givenNames": "<Passenger given names (first name and middle names)>",
             "surname": "<Passenger surname (last name)>",
             "dateOfBirth": "<Passenger date of birth (in UTC ISO 8601 format)>",
-            "gender": "<Passenger gender: male / female / other / unspecified>"
+            "gender": "<Passenger gender: male / female / other / unspecified>",
+            "passport": {
+                "number": "<The passport number (optional)>",
+                "expirationDate": "<The expiration date of the passport (optional)>",
+                "countryIssued": "<The ISO 3166-1 alpha-2 country code of the country that issued this passport (optional)>"
+            },
+            "bookedSeatId": "<Booked seat ID of the passenger's seat in the flight in standard UUID format (optional)>",
+            "checkInTimestamp": "<Check-in timestamp for this passenger (optional)>",
+            "boardingTimestamp": "<Plane boarding timestamp for this passenger (optional)>"
         },
     ],
     "flightId": "<Flight ID>",
@@ -40,8 +48,8 @@ GET /bookings/f362846f-679d-4ef7-857d-e321c622cb41
         "email": "<Contact email address>",
         "phone": "<Contact international phone number>",
         "address": {
-            "country": "<Contact address country>",
-            "administrativeDivision": "<Contact address administrative division, e.g. state, province, region, etc. (optional)>",
+            "countryCode": "<Contact address ISO 3166-1 alpha-2 country code>",
+            "subdivisionCode": "<Contact address ISO 3166-2 subdivision code (optional)>",
             "city": "<Contact address city>",
             "street": "<Contact address street name>",
             "houseNumber": "<Contact address house number>",
@@ -56,8 +64,7 @@ GET /bookings/f362846f-679d-4ef7-857d-e321c622cb41
     "updatesTimestamps": [
         "<PNR updates timestamps (optional)>",
     ],
-    "cancelTimestamp": "<PNR cancellation timestamp (optional)>",
-    "checkInTimestamp": "<Check-in timestamp for this PNR (optional)>"
+    "cancelTimestamp": "<PNR cancellation timestamp (optional)>"
 }
 ```
 
@@ -71,14 +78,28 @@ Example:
             "givenNames": "John Albert",
             "surname": "Doe",
             "dateOfBirth": "2000-01-01T00:00:00.000Z",
-            "gender": "male"
+            "gender": "male",
+            "passport": {
+                "number": "12345678",
+                "expirationDate": "2022-01-01T00:00:00.000Z",
+                "countryIssued": "IL"
+            },
+            "bookedSeatId": "2dc2ad2b-23ea-429a-bcf9-a462d0e42806",
+            "checkInTimestamp": "2020-10-20T02:15:54.659720Z"
         },
         {
             "nameTitle": "Mrs",
             "givenNames": "Jane",
             "surname": "Doe",
             "dateOfBirth": "2002-01-01T00:00:00.000Z",
-            "gender": "female"
+            "gender": "female",
+            "passport": {
+                "number": "87654321",
+                "expirationDate": "2024-06-01T00:00:00.000Z",
+                "countryIssued": "IL"
+            },
+            "bookedSeatId": "2edb1071-f3ab-4754-b40f-38616e2b8060",
+            "checkInTimestamp": "2020-10-20T02:15:54.659720Z"
         }
     ],
     "flightId": "17564e2f-7d32-4d4a-9d99-27ccd768fb7d",
@@ -88,7 +109,7 @@ Example:
         "email": "john.doe@example.com",
         "phone": "+972541234567",
         "address": {
-            "country": "Israel",
+            "countryCode": "IL",
             "city": "Tel Aviv-Yafo",
             "street": "Shlomo Rd.",
             "houseNumber": "136",
@@ -102,8 +123,7 @@ Example:
     "createdTimestamp": "2020-10-10T14:23:05.659711Z",
     "updatesTimestamps": [
         "2020-10-17T07:31:01.678945Z"
-    ],
-    "checkInTimestamp": "2020-10-20T02:15:54.659720Z"
+    ]
 }
 ```
 

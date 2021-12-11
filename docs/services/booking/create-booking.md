@@ -28,8 +28,8 @@ POST /bookings
         "email": "<Contact email address>",
         "phone": "<Contact international phone number>",
         "address": {
-            "country": "<Contact address country>",
-            "administrativeDivision": "<Contact address administrative division, e.g. state, province, region, etc. (optional)>",
+            "countryCode": "<Contact address ISO 3166-1 alpha-2 country code>",
+            "subdivisionCode": "<Contact address ISO 3166-2 subdivision code (optional)>",
             "city": "<Contact address city>",
             "street": "<Contact address street name>",
             "houseNumber": "<Contact address house number>",
@@ -65,7 +65,7 @@ Example:
         "email": "john.doe@example.com",
         "phone": "+972541234567",
         "address": {
-            "country": "Israel",
+            "countryCode": "IL",
             "city": "Tel Aviv-Yafo",
             "street": "Shlomo Rd.",
             "houseNumber": "136",
@@ -138,7 +138,7 @@ Example:
         "email": "john.doe@example.com",
         "phone": "+972541234567",
         "address": {
-            "country": "Israel",
+            "countryCode": "IL",
             "city": "Tel Aviv-Yafo",
             "street": "Shlomo Rd.",
             "houseNumber": "136",

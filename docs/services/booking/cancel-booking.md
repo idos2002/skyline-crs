@@ -1,8 +1,8 @@
 # Cancel Booking
 
-Cancels the booking with the requested PNR ID. The first name and last name of the person who made the booking (as in the contact details of the corresponding PNR) are required in the request body for authentication purposes.
+Cancels the booking with the requested PNR ID. A booking **cannot be canceled** if all or some of the passengers have already checked in for the flight!
 
-> **Warning!** This operation is irreversible!
+> **Warning!** This operation is irreversible and can only be done once!
 
 > **Important:**  Login is required to access this endpoint.
 
@@ -44,8 +44,8 @@ POST /bookings/f362846f-679d-4ef7-857d-e321c622cb41/cancel
         "email": "<Contact email address>",
         "phone": "<Contact international phone number>",
         "address": {
-            "country": "<Contact address country>",
-            "administrativeDivision": "<Contact address administrative division, e.g. state, province, region, etc. (optional)>",
+            "countryCode": "<Contact address ISO 3166-1 alpha-2 country code>",
+            "subdivisionCode": "<Contact address ISO 3166-2 subdivision code (optional)>",
             "city": "<Contact address city>",
             "street": "<Contact address street name>",
             "houseNumber": "<Contact address house number>",
@@ -91,7 +91,7 @@ Example:
         "email": "john.doe@example.com",
         "phone": "+972541234567",
         "address": {
-            "country": "Israel",
+            "countryCode": "IL",
             "city": "Tel Aviv-Yafo",
             "street": "Shlomo Rd.",
             "houseNumber": "136",
@@ -134,5 +134,14 @@ Example:
 {
     "error": "Booking already canceled",
     "message": "Could not cancel a booking which is already canceled."
+}
+```
+
+## Already Checked In Response - `409 Conflict`
+
+```json
+{
+    "error": "Already checked in",
+    "message": "Could not cancel a booking which all or some of its passengers have already checked in."
 }
 ```

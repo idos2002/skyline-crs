@@ -1,6 +1,6 @@
 # Update Booking
 
-Update the booking with the requested PNR ID. Optional fields omitted previously may be added to the booking through this operation. May fail if the given PNR details are invalid.
+Update the booking with the requested PNR ID. Optional fields omitted previously may be added to the booking through this operation. May fail if the given PNR details are invalid or if all or some of the passengers have already checked in for the flight.
 
 > **Important:**  Login is required to access this endpoint.
 
@@ -45,8 +45,8 @@ PUT /bookings/f362846f-679d-4ef7-857d-e321c622cb41
         "email": "<Contact email address>",
         "phone": "<Contact international phone number>",
         "address": {
-            "country": "<Contact address country>",
-            "administrativeDivision": "<Contact address administrative division, e.g. state, province, region, etc. (optional)>",
+            "countryCode": "<Contact address ISO 3166-1 alpha-2 country code>",
+            "subdivisionCode": "<Contact address ISO 3166-2 subdivision code (optional)>",
             "city": "<Contact address city>",
             "street": "<Contact address street name>",
             "houseNumber": "<Contact address house number>",
@@ -81,7 +81,7 @@ Example:
         "email": "john.doe.updated@example.com",
         "phone": "+972547654321",
         "address": {
-            "country": "Israel",
+            "countryCode": "IL",
             "city": "Tel Aviv-Yafo",
             "street": "Shlomo Rd.",
             "houseNumber": "136",
@@ -112,8 +112,8 @@ Example:
         "email": "<Contact email address>",
         "phone": "<Contact international phone number>",
         "address": {
-            "country": "<Contact address country>",
-            "administrativeDivision": "<Contact address administrative division, e.g. state, province, region, etc. (optional)>",
+            "countryCode": "<Contact address ISO 3166-1 alpha-2 country code>",
+            "subdivisionCode": "<Contact address ISO 3166-2 subdivision code (optional)>",
             "city": "<Contact address city>",
             "street": "<Contact address street name>",
             "houseNumber": "<Contact address house number>",
@@ -158,7 +158,7 @@ Example:
         "email": "john.doe@example.com",
         "phone": "+972541234567",
         "address": {
-            "country": "Israel",
+            "countryCode": "IL",
             "city": "Tel Aviv-Yafo",
             "street": "Shlomo Rd.",
             "houseNumber": "136",
@@ -238,5 +238,13 @@ In the case the booking has been canceled:
 {
     "error": "Invalid update",
     "message": "Booking has been canceled."
+}
+```
+
+In the case some or all of the passengers have already checked in:
+```json
+{
+    "error": "Invalid update",
+    "message": "All or some of the passengers have already check in."
 }
 ```
