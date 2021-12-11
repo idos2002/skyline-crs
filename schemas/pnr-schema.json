@@ -17,7 +17,7 @@
             "bsonType": "array",
             "minItems": 1,
             "items": {
-                "description": "Passenger details",
+                "description": "Passenger details.",
                 "bsonType": "object",
                 "required": [
                     "givenNames",
@@ -40,7 +40,7 @@
                     },
                     "dateOfBirth": {
                         "description": "Date of birth of the passenger as written in the passport. (Required)",
-                        "bsonTye": "date"
+                        "bsonType": "date"
                     },
                     "gender": {
                         "description": "Gender of the passenger as written in the passport. (Required)",
@@ -50,13 +50,48 @@
                             "other",
                             "unspecified"
                         ]
+                    },
+                    "bookedSeatId": {
+                        "description": "Booked seat ID of the passenger's seat in the flight in standard UUID format.",
+                        "bsonType": "binData"
+                    },
+                    "passport": {
+                        "description": "Passport details for this passenger.",
+                        "bsonType": "object",
+                        "required": [
+                            "number",
+                            "expirationDate",
+                            "countryIssued"
+                        ],
+                        "properties": {
+                            "number": {
+                                "description": "The passport number.",
+                                "bsonType": "string"
+                            },
+                            "expirationDate": {
+                                "description": "The expiration date of the passport.",
+                                "bsonType": "date"
+                            },
+                            "countryIssued": {
+                                "description": "The ISO 3166-1 alpha-2 country code of the country that issued this passport.",
+                                "bsonType": "string"
+                            }
+                        }
+                    },
+                    "checkInTimestamp": {
+                        "description": "Check-in timestamp for this passenger.",
+                        "bsonType": "date"
+                    },
+                    "boardingTimestamp": {
+                        "description": "Plane boarding timestamp for this passenger.",
+                        "bsonType": "date"
                     }
                 }
             }
         },
         "flightId": {
-            "description": "Flight ID of the flight the booking was made for. (Required)",
-            "bsonType": "long"
+            "description": "Flight ID of the flight the booking was made for in standard UUID format. (Required)",
+            "bsonType": "binData"
         },
         "contact": {
             "description": "Contact details of the person who made the booking. (Required)",
@@ -89,19 +124,19 @@
                     "description": "Address of the person who made the booking. (Required)",
                     "bsonType": "object",
                     "required": [
-                        "country",
+                        "countryCode",
                         "city",
                         "street",
                         "houseNumber",
                         "postalCode"
                     ],
                     "properties": {
-                        "country": {
-                            "description": "Country name. (Required)",
+                        "countryCode": {
+                            "description": "ISO 3166-1 alpha-2 country code. (Required)",
                             "bsonType": "string"
                         },
-                        "administrativeDivision": {
-                            "description": "Administrative division name (e.g. state, province, region, etc).",
+                        "subdivisionCode": {
+                            "description": "ISO 3166-2 subdivision code.",
                             "bsonType": "string"
                         },
                         "city": {
@@ -159,10 +194,6 @@
         },
         "cancelTimestamp": {
             "description": "Timestamp on which this booking (PNR) has been canceled.",
-            "bsonType": "date"
-        },
-        "checkInTimestamp": {
-            "description": "Check-in timestamp for this PNR.",
             "bsonType": "date"
         }
     }
