@@ -39,8 +39,7 @@ GET /flights/LAX/TLV/2021-03-22?passengers=2&class=F
         "icaoCode": "<ICAO airport code of the origin>",
         "name": "<Origin airport name>",
         "location": {
-            "country": "<The country the airport is located in>",
-            "administrativeDivision": "<The administrative division (e.g. state, province, region) the airport is located in (optional)>",
+            "subdivisionCode": "<The ISO 3166-2 subdivision code the airport is located in>",
             "city": "<The city the airport is located in>",
             "latitude": "<Geographic latitude coordinate of the airport>",
             "longitude": "<Geographic longitude coordinate of the airport>"
@@ -51,8 +50,7 @@ GET /flights/LAX/TLV/2021-03-22?passengers=2&class=F
         "icaoCode": "<ICAO airport code of the destination>",
         "name": "<Destination airport name>",
         "location": {
-            "country": "<The country the airport is located in>",
-            "administrativeDivision": "<The administrative division (e.g. state, province, region) the airport is located in (optional)>",
+            "subdivisionCode": "<The ISO 3166-2 subdivision code the airport is located in>",
             "city": "<The city the airport is located in>",
             "latitude": "<Geographic latitude coordinate of the airport>",
             "longitude": "<Geographic longitude coordinate of the airport>"
@@ -62,8 +60,8 @@ GET /flights/LAX/TLV/2021-03-22?passengers=2&class=F
         {
             "id": "<ID of the flight>",
             "departureTerminal": "<Departure terminal name>",
-            "arrivalTerminal": "<Arrival terminal name>",
             "departureTime": "<Departure time in UTC ISO 1806 format>",
+            "arrivalTerminal": "<Arrival terminal name>",
             "arrivalTime": "<Return time in UTC ISO 1806 format>",
             "planeModelNumber": "<Plane model number>",
             "planeModelName": "<Plane model name>",
@@ -87,7 +85,7 @@ Example:
         "icaoCode": "LLBG",
         "name": "Ben Gurion Airport",
         "location": {
-            "country": "Israel",
+            "subdivisionCode": "IL-M",
             "city": "Tel Aviv-Yafo",
             "latitude": "32.009444",
             "longitude": "34.882778"
@@ -98,8 +96,7 @@ Example:
         "icaoCode": "KJFK",
         "name": "John F. Kennedy International Airport",
         "location": {
-            "country": "United States",
-            "administrativeDivision": "New York",
+            "subdivisionCode": "US-NY",
             "city": "New York City",
             "latitude": "40.639722",
             "longitude": "-73.778889"
@@ -109,8 +106,8 @@ Example:
         {
             "id": "17564e2f-7d32-4d4a-9d99-27ccd768fb7d",
             "departureTerminal": "3",
-            "arrivalTerminal": "4",
             "departureTime": "2021-10-11T22:45:00Z",
+            "arrivalTerminal": "4",
             "arrivalTime": "2021-10-12T10:45:00Z",
             "planeModelNumber": "B789",
             "planeModelName": "Boeing 787-9 Dreamliner",
