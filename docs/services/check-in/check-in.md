@@ -1,15 +1,11 @@
-# Check-in Service
+# Check In
 
-The **check-in service** is responsible for the check-in process and boarding pass email generation.
-The client may check in only some of the passengers for the specified PNR at a time, according to the given information in the request body.
+Check in all or some passengers of a booking (PNR) to their flight.
 The check-in process may fail if the given details do not match those in the existing PNR (e.g. name, date of birth, etc.).
-The service has a single endpoint `/checkIn/{pnrId}`, where the check-in data is sent to check in to the flight.
 
 > **Warning!** This operation is irreversible and can only be done once!
 
 > **Important:**  Login is required to access this endpoint.
-
-> **Note:** The boarding passes will be sent by email once the process is complete, and will be accessible through the `GET /bookings/{pnrId}` endpoint of the **booking service** thereafter.
 
 ## Request
 

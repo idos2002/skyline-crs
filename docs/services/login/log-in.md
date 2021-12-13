@@ -1,7 +1,6 @@
-# Login Service
+# Log In
 
-The **login service** is responsible for authenticating the client to access protected resources in the system, such as booking information.
-The service has a single endpoint `/login`, where the authentication credentials are sent to for authentication.
+Log in to Skyline CRS using the booking credentials to access protected endpoints.
 
 ## Authentication Process
 
