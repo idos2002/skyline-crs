@@ -33,6 +33,6 @@ The **login service** is responsible for authenticating the client to access pro
 
 ## API
 
-| Link                    | Method | Endpoint | Description | Login Required |
-|:-----------------------:|:------:| -------- | ----------- |:--------------:|
-| [&#128279;](./login.md) | `POST` | `/login` | Log in      | &#10060;       |
+| Link                     | Method | Endpoint | Description | Login Required |
+|:------------------------:|:------:| -------- | ----------- |:--------------:|
+| [&#128279;](./log-in.md) | `POST` | `/login` | Log in      | &#10060;       |
