@@ -60,11 +60,14 @@ GET /flights/LAX/TLV/2021-03-22?passengers=2&class=F
         {
             "id": "<ID of the flight>",
             "departureTerminal": "<Departure terminal name>",
-            "departureTime": "<Departure time in UTC ISO 1806 format>",
+            "departureTime": "<Departure time in ISO 1806 format>",
             "arrivalTerminal": "<Arrival terminal name>",
-            "arrivalTime": "<Return time in UTC ISO 1806 format>",
-            "planeModelNumber": "<Plane model number>",
-            "planeModelName": "<Plane model name>",
+            "arrivalTime": "<Return time in ISO 1806 format>",
+            "aircraftModel": {
+                "icaoCode": "<ICAO aircraft type designator code>",
+                "iataCode": "<IATA aircraft type designator code>",
+                "name": "<Model name of the aircraft>"
+            },
             "cabins": [
                 {
                     "cabinClass": "<Cabin class: E / B / F>",
@@ -109,8 +112,11 @@ Example:
             "departureTime": "2021-10-11T22:45:00Z",
             "arrivalTerminal": "4",
             "arrivalTime": "2021-10-12T10:45:00Z",
-            "planeModelNumber": "B789",
-            "planeModelName": "Boeing 787-9 Dreamliner",
+            "aircraftModel": {
+                "icaoCode": "B789",
+                "iataCode": "789",
+                "name": "Boeing 787-9 Dreamliner"
+            },
             "cabins": [
                 {
                     "cabinClass": "E",

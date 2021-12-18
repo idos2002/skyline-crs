@@ -21,18 +21,19 @@ GET /flight/17564e2f-7d32-4d4a-9d99-27ccd768fb7d/seats
 ```json
 {
     "flightId": "<ID of the flight>",
-    "seatMap": {
-        "planeModelNumber": "<Plane model number>",
-        "planeModelName": "<Plane model name>",
-        "cabins": [
-            {
-                "cabinClass": "<Cabin class: E / B / F>",
-                "startRow": "<Start row of the cabin>",
-                "endRow": "<End row of the cabin>",
-                "columnLayout": "<Column layout for this cabin, e.g. ABC-DE-FGH>"
-            }
-        ]
+    "aircraftModel": {
+        "icaoCode": "<ICAO aircraft type designator code>",
+        "iataCode": "<IATA aircraft type designator code>",
+        "name": "<Model name of the aircraft>"
     },
+    "seatMap": [
+        {
+            "cabinClass": "<Cabin class: E / B / F>",
+            "startRow": "<Start row of the cabin>",
+            "endRow": "<End row of the cabin>",
+            "columnLayout": "<Column layout for this cabin, e.g. ABC-DE-FGH>"
+        },
+    ],
     "bookedSeats": [
         {
             "row": "<Row number of the booked seat>",
@@ -46,54 +47,55 @@ Example:
 ```json
 {
     "flightId": "17564e2f-7d32-4d4a-9d99-27ccd768fb7d",
-    "seatMap": {
-        "planeModelNumber": "B789",
-        "planeModelName": "Boeing 787-9 Dreamliner",
-        "cabins": [
-            {
-                "cabinClass": "F",
-                "startRow": "1",
-                "endRow": "8",
-                "columnLayout": "A-DG-K"
-            },
-            {
-                "cabinClass": "B",
-                "startRow": "10",
-                "endRow": "14",
-                "columnLayout": "AC-DFG-HK"
-            },
-            {
-                "cabinClass": "E",
-                "startRow": "21",
-                "endRow": "28",
-                "columnLayout": "ABC-DFG-HJK"
-            },
-            {
-                "cabinClass": "E",
-                "startRow": "29",
-                "endRow": "30",
-                "columnLayout": "--------HJK"
-            },
-            {
-                "cabinClass": "E",
-                "startRow": "35",
-                "endRow": "36",
-                "columnLayout": "ABC-----HJK"
-            },
-            {
-                "cabinClass": "E",
-                "startRow": "37",
-                "endRow": "48",
-                "columnLayout": "ABC-DFG-HJK"
-            },
-            {
-                "cabinClass": "E",
-                "startRow": "49",
-                "endRow": "50",
-                "columnLayout": "----DFG----"
-            },
-        ]
+    "aircraftModel": {
+        "icaoCode": "B789",
+        "iataCode": "789",
+        "name": "Boeing 787-9 Dreamliner"
     },
+    "seatMap": [
+        {
+            "cabinClass": "F",
+            "startRow": "1",
+            "endRow": "8",
+            "columnLayout": "A-DG-K"
+        },
+        {
+            "cabinClass": "B",
+            "startRow": "10",
+            "endRow": "14",
+            "columnLayout": "AC-DFG-HK"
+        },
+        {
+            "cabinClass": "E",
+            "startRow": "21",
+            "endRow": "28",
+            "columnLayout": "ABC-DFG-HJK"
+        },
+        {
+            "cabinClass": "E",
+            "startRow": "29",
+            "endRow": "30",
+            "columnLayout": "--------HJK"
+        },
+        {
+            "cabinClass": "E",
+            "startRow": "35",
+            "endRow": "36",
+            "columnLayout": "ABC-----HJK"
+        },
+        {
+            "cabinClass": "E",
+            "startRow": "37",
+            "endRow": "48",
+            "columnLayout": "ABC-DFG-HJK"
+        },
+        {
+            "cabinClass": "E",
+            "startRow": "49",
+            "endRow": "50",
+            "columnLayout": "----DFG----"
+        },
+    ],
     "bookedSeats": [
         {
             "row": "5",
