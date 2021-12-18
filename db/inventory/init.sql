@@ -40,10 +40,10 @@ CREATE TABLE flight (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v1(),
     service_id integer NOT NULL REFERENCES service (service_number),
     departure_terminal text NOT NULL,
-    departure_utc_time timestamptz NOT NULL,
+    departure_time timestamptz NOT NULL,
     arrival_terminal text NOT NULL,
-    arrival_utc_time timestamptz NOT NULL,
-    CHECK (departure_utc_time < arrival_utc_time),
+    arrival_time timestamptz NOT NULL,
+    CHECK (departure_time < arrival_time),
     aircraft_model_id integer NOT NULL REFERENCES aircraft_model (id),
 );
 
