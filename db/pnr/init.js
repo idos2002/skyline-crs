@@ -1,4 +1,4 @@
-db.createCollection("pnrs", {
+const res = db.createCollection("pnrs", {
     validator: {
         $jsonSchema: {
             bsonType: "object",
@@ -77,7 +77,7 @@ db.createCollection("pnrs", {
                                     countryIssued: {
                                         description: "The ISO 3166-1 alpha-2 country code of the country that issued this passport.",
                                         bsonType: "string",
-                                        pattern: /^[A-Z]{2}$/
+                                        pattern: "^[A-Z]{2}$"
                                     }
                                 }
                             },
@@ -137,12 +137,12 @@ db.createCollection("pnrs", {
                                 countryCode: {
                                     description: "ISO 3166-1 alpha-2 country code. (Required)",
                                     bsonType: "string",
-                                    pattern: /^[A-Z]{2}$/
+                                    pattern: "^[A-Z]{2}$"
                                 },
                                 subdivisionCode: {
                                     description: "ISO 3166-2 subdivision code.",
                                     bsonType: "string",
-                                    pattern: /^[A-Z]{2}-[A-Z0-9]{1,3}$/
+                                    pattern: "^[A-Z]{2}-[A-Z0-9]{1,3}$"
                                 },
                                 city: {
                                     description: "City name. (Required)",
@@ -204,4 +204,6 @@ db.createCollection("pnrs", {
             }
         }
     }
-})
+});
+
+printjson(res);
