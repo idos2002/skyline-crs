@@ -133,33 +133,3 @@ CREATE VIEW available_flight_seats_count AS
     FROM booked_seats_count
          INNER JOIN cabin_seats_count 
          ON booked_seats_count.aircraft_model_id = cabin_seats_count.aircraft_model_id;
-
-
-/*
- * Insert dummy data
- */
-
-INSERT INTO airport VALUES ('TLV', 'LLBG', 'Ben Gurion Airport', 'IL-M', 'Tel Aviv-Yafo', 'SRID=4326;POINT(32.009444 34.882778)'); -- id: 1
-INSERT INTO airport VALUES ('LAX', 'KLAX', 'Los Angeles International Airport', 'US-CA', 'Los Angeles', 'SRID=4326;POINT(33.9425 -118.408056)'); -- id: 2
-
-INSERT INTO service VALUES (1, 1, 2); -- From TLV to LAX
-
-INSERT INTO aircraft_model VALUES ('B789', '789', 'Boeing 787-9 Dreamliner'); -- id: 1
-
--- Boeing 787-9 Dreamliner seat map
-INSERT INTO seat_map VALUES (1, 'F', 1, 8, 'A-DG-K');
-INSERT INTO seat_map VALUES (1, 'B', 10, 14, 'AC-DFG-HK');
-INSERT INTO seat_map VALUES (1, 'E', 21, 28, 'ABC-DFG-HJK');
-INSERT INTO seat_map VALUES (1, 'E', 29, 30, '--HJK');
-INSERT INTO seat_map VALUES (1, 'E', 35, 36, 'ABC--HJK');
-INSERT INTO seat_map VALUES (1, 'E', 37, 48, 'ABC-DFG-HJK');
-INSERT INTO seat_map VALUES (1, 'E', 49, 50, '-DFG-');
-
-INSERT INTO flight (id, service_id, departure_terminal, departure_time, arrival_terminal, arrival_time, aircraft_model_id)
-VALUES ('eb2e5080-000e-440d-8242-46428e577ce5', 1, '3', '2020-01-01T01:05+02:00', 'B', '2020-01-01T06:00-08:00', 1);
-
-INSERT INTO booked_seat ('eb2e5080-000e-440d-8242-46428e577ce5', 'E', 40, 'D');
-INSERT INTO booked_seat ('eb2e5080-000e-440d-8242-46428e577ce5', 'E', 40, 'F');
-INSERT INTO booked_seat ('eb2e5080-000e-440d-8242-46428e577ce5', 'E', 40, 'G');
-
-
