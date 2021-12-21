@@ -116,48 +116,60 @@ CREATE VIEW cabin_seats_count AS
     GROUP BY aircraft_model_id, cabin_class;
 
 CREATE VIEW available_flight_seats_count AS
-    WITH booked_seats_count AS (
+    WITH flight_cabin_class AS (
         SELECT flight.id AS flight_id,
                flight.aircraft_model_id AS aircraft_model_id,
+               cabin_class
+        FROM flight CROSS JOIN unnest(enum_range(null::cabin_class)) AS cabin_class
+    ), booked_seats_count AS (
+        SELECT flight.id AS flight_id,
                booked_seat.cabin_class AS cabin_class,
-               count(*) AS seat_count
-        FROM flight
-             INNER JOIN booked_seat
-             ON flight.id = booked_seat.flight_id
+               count(*) AS booked_seats_count
+        FROM flight INNER JOIN booked_seat ON flight.id = booked_seat.flight_id
         GROUP BY flight.id, booked_seat.cabin_class
     )
-    SELECT booked_seats_count.flight_id AS flight_id,
-           booked_seats_count.cabin_class AS cabin_class,
-           cabin_seats_count.seat_count - booked_seats_count.seat_count AS available_seats_count,
+    SELECT flight_cabin_class.flight_id AS flight_id,
+           flight_cabin_class.cabin_class AS cabin_class,
+           cabin_seats_count.seat_count - coalesce(booked_seats_count.booked_seats_count, 0) AS available_seats_count,
            cabin_seats_count.seat_count AS total_seats_count
-    FROM booked_seats_count
-         INNER JOIN cabin_seats_count 
-         ON booked_seats_count.aircraft_model_id = cabin_seats_count.aircraft_model_id;
+    FROM flight_cabin_class
+         LEFT JOIN booked_seats_count
+                   ON flight_cabin_class.flight_id = booked_seats_count.flight_id
+                   AND flight_cabin_class.cabin_class = booked_seats_count.cabin_class
+         LEFT JOIN cabin_seats_count
+                   ON flight_cabin_class.aircraft_model_id = cabin_seats_count.aircraft_model_id
+                   AND flight_cabin_class.cabin_class = cabin_seats_count.cabin_class;
+    WHERE cabin_seats_count.seat_count > 0;
 
 
 /*
  * Insert dummy data
  */
 
-INSERT INTO airport VALUES ('TLV', 'LLBG', 'Ben Gurion Airport', 'IL-M', 'Tel Aviv-Yafo', 'SRID=4326;POINT(32.009444 34.882778)'); -- id: 1
-INSERT INTO airport VALUES ('LAX', 'KLAX', 'Los Angeles International Airport', 'US-CA', 'Los Angeles', 'SRID=4326;POINT(33.9425 -118.408056)'); -- id: 2
+-- id: 1
+INSERT INTO airport (iata_code, icao_code, airport_name, subdivision_code, city, geo_location)
+VALUES ('TLV', 'LLBG', 'Ben Gurion Airport', 'IL-M', 'Tel Aviv-Yafo', 'SRID=4326;POINT(32.009444 34.882778)');
+-- id: 2
+INSERT INTO airport (iata_code, icao_code, airport_name, subdivision_code, city, geo_location)
+VALUES ('LAX', 'KLAX', 'Los Angeles International Airport', 'US-CA', 'Los Angeles', 'SRID=4326;POINT(33.9425 -118.408056)');
 
 INSERT INTO service VALUES (1, 1, 2); -- From TLV to LAX
 
-INSERT INTO aircraft_model VALUES ('B789', '789', 'Boeing 787-9 Dreamliner'); -- id: 1
+-- id: 1
+INSERT INTO aircraft_model (icao_code, iata_code, model_name)
+VALUES ('B789', '789', 'Boeing 787-9 Dreamliner');
 
 -- Boeing 787-9 Dreamliner seat map
-INSERT INTO seat_map VALUES (1, 'F', 1, 8, 'A-DG-K');
-INSERT INTO seat_map VALUES (1, 'B', 10, 14, 'AC-DFG-HK');
-INSERT INTO seat_map VALUES (1, 'E', 21, 28, 'ABC-DFG-HJK');
-INSERT INTO seat_map VALUES (1, 'E', 29, 30, '--HJK');
-INSERT INTO seat_map VALUES (1, 'E', 35, 36, 'ABC--HJK');
-INSERT INTO seat_map VALUES (1, 'E', 37, 48, 'ABC-DFG-HJK');
-INSERT INTO seat_map VALUES (1, 'E', 49, 50, '-DFG-');
+INSERT INTO seat_map (aircraft_model_id, cabin_class, start_row, end_row, column_layout) VALUES (1, 'F', 1, 8, 'A-DG-K');
+INSERT INTO seat_map (aircraft_model_id, cabin_class, start_row, end_row, column_layout) VALUES (1, 'B', 10, 14, 'AC-DFG-HK');
+INSERT INTO seat_map (aircraft_model_id, cabin_class, start_row, end_row, column_layout) VALUES (1, 'E', 21, 28, 'ABC-DFG-HJK');
+INSERT INTO seat_map (aircraft_model_id, cabin_class, start_row, end_row, column_layout) VALUES (1, 'E', 29, 30, '--HJK');
+INSERT INTO seat_map (aircraft_model_id, cabin_class, start_row, end_row, column_layout) VALUES (1, 'E', 35, 36, 'ABC--HJK');
+INSERT INTO seat_map (aircraft_model_id, cabin_class, start_row, end_row, column_layout) VALUES (1, 'E', 37, 48, 'ABC-DFG-HJK');
+INSERT INTO seat_map (aircraft_model_id, cabin_class, start_row, end_row, column_layout) VALUES (1, 'E', 49, 50, '-DFG-');
 
-INSERT INTO flight (id, service_id, departure_terminal, departure_time, arrival_terminal, arrival_time, aircraft_model_id)
-VALUES ('eb2e5080-000e-440d-8242-46428e577ce5', 1, '3', '2020-01-01T01:05+02:00', 'B', '2020-01-01T06:00-08:00', 1);
+INSERT INTO flight VALUES ('eb2e5080-000e-440d-8242-46428e577ce5', 1, '3', '2020-01-01T01:05+02:00', 'B', '2020-01-01T06:00-08:00', 1);
 
-INSERT INTO booked_seat ('eb2e5080-000e-440d-8242-46428e577ce5', 'E', 40, 'D');
-INSERT INTO booked_seat ('eb2e5080-000e-440d-8242-46428e577ce5', 'E', 40, 'F');
-INSERT INTO booked_seat ('eb2e5080-000e-440d-8242-46428e577ce5', 'E', 40, 'G');
+INSERT INTO booked_seat (flight_id, cabin_class, seat_row, seat_column) VALUES ('eb2e5080-000e-440d-8242-46428e577ce5', 'E', 40, 'D');
+INSERT INTO booked_seat (flight_id, cabin_class, seat_row, seat_column) VALUES ('eb2e5080-000e-440d-8242-46428e577ce5', 'E', 40, 'F');
+INSERT INTO booked_seat (flight_id, cabin_class, seat_row, seat_column) VALUES ('eb2e5080-000e-440d-8242-46428e577ce5', 'E', 40, 'G');

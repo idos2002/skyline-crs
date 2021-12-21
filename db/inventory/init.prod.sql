@@ -116,20 +116,27 @@ CREATE VIEW cabin_seats_count AS
     GROUP BY aircraft_model_id, cabin_class;
 
 CREATE VIEW available_flight_seats_count AS
-    WITH booked_seats_count AS (
+    WITH flight_cabin_class AS (
         SELECT flight.id AS flight_id,
                flight.aircraft_model_id AS aircraft_model_id,
+               cabin_class
+        FROM flight CROSS JOIN unnest(enum_range(null::cabin_class)) AS cabin_class
+    ), booked_seats_count AS (
+        SELECT flight.id AS flight_id,
                booked_seat.cabin_class AS cabin_class,
-               count(*) AS seat_count
-        FROM flight
-             INNER JOIN booked_seat
-             ON flight.id = booked_seat.flight_id
+               count(*) AS booked_seats_count
+        FROM flight INNER JOIN booked_seat ON flight.id = booked_seat.flight_id
         GROUP BY flight.id, booked_seat.cabin_class
     )
-    SELECT booked_seats_count.flight_id AS flight_id,
-           booked_seats_count.cabin_class AS cabin_class,
-           cabin_seats_count.seat_count - booked_seats_count.seat_count AS available_seats_count,
+    SELECT flight_cabin_class.flight_id AS flight_id,
+           flight_cabin_class.cabin_class AS cabin_class,
+           cabin_seats_count.seat_count - coalesce(booked_seats_count.booked_seats_count, 0) AS available_seats_count,
            cabin_seats_count.seat_count AS total_seats_count
-    FROM booked_seats_count
-         INNER JOIN cabin_seats_count 
-         ON booked_seats_count.aircraft_model_id = cabin_seats_count.aircraft_model_id;
+    FROM flight_cabin_class
+         LEFT JOIN booked_seats_count
+                   ON flight_cabin_class.flight_id = booked_seats_count.flight_id
+                   AND flight_cabin_class.cabin_class = booked_seats_count.cabin_class
+         LEFT JOIN cabin_seats_count
+                   ON flight_cabin_class.aircraft_model_id = cabin_seats_count.aircraft_model_id
+                   AND flight_cabin_class.cabin_class = cabin_seats_count.cabin_class;
+    WHERE cabin_seats_count.seat_count > 0;
