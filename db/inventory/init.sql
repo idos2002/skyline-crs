@@ -11,6 +11,24 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 
 /*
+ * Define types
+ */
+
+CREATE TYPE cabin_class AS ENUM ('E', 'B', 'F');
+
+
+/*
+ * Define functions
+ */
+
+CREATE FUNCTION column_layout_seats_count(column_layout text) RETURNS integer
+LANGUAGE SQL
+IMMUTABLE
+RETURNS NULL ON NULL INPUT
+RETURN char_length(replace(column_layout, '-', ''));
+
+
+/*
  * Create tables
  */
 
@@ -50,6 +68,19 @@ CREATE TABLE aircraft_model (
     UNIQUE (icao_code, iata_code)
 );
 
+CREATE TABLE seat_map (
+    id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    aircraft_model_id integer REFERENCES aircraft_model (id),
+    cabin_class cabin_class NOT NULL,
+    start_row integer NOT NULL CHECK (start_row > 0),
+    end_row integer NOT NULL CHECK (end_row > 0),
+    CHECK (start_row <= end_row),
+    column_layout text NOT NULL,
+    -- Check if column layout is in the correct form, e.g. ABC-EF-GHI, ABC, ABC-DEF, etc.)
+    CHECK (column_layout ~ '\A(?:-*[A-Z]+-*)+\Z'),
+    UNIQUE (aircraft_model_id, start_row, end_row)
+);
+
 CREATE TABLE flight (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v1(),
     service_id integer NOT NULL REFERENCES service (service_number),
@@ -61,8 +92,6 @@ CREATE TABLE flight (
     aircraft_model_id integer NOT NULL REFERENCES aircraft_model (id)
 );
 
-CREATE TYPE cabin_class AS ENUM ('E', 'B', 'F');
-
 CREATE TABLE booked_seat (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v1(),
     flight_id uuid NOT NULL REFERENCES flight (id),
@@ -73,30 +102,6 @@ CREATE TABLE booked_seat (
     CHECK (seat_column ~ '\A[A-Z]\Z'),
     UNIQUE (flight_id, seat_row, seat_column)
 );
-
-CREATE TABLE seat_map (
-    id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    aircraft_model_id integer REFERENCES aircraft_model (id),
-    cabin_class cabin_class NOT NULL,
-    start_row integer NOT NULL CHECK (start_row > 0),
-    end_row integer NOT NULL CHECK (end_row > 0),
-    CHECK (start_row <= end_row),
-    column_layout text NOT NULL,
-    -- Check if column layout is in the correct form, e.g. ABC-EF-GHI, ABC, ABC-DEF, etc.)
-    CHECK (column_layout ~ '\A[A-Z]+(?:-[A-Z]+)*\Z'),
-    UNIQUE (aircraft_model_id, start_row, end_row)
-);
-
-
-/*
- * Create functions
- */
-
-CREATE FUNCTION column_layout_seats_count(column_layout text) RETURNS integer
-LANGUAGE SQL
-IMMUTABLE
-RETURNS NULL ON NULL INPUT
-RETURN char_length(replace(column_layout, '-', ''));
 
 
 /*
@@ -128,3 +133,33 @@ CREATE VIEW available_flight_seats_count AS
     FROM booked_seats_count
          INNER JOIN cabin_seats_count 
          ON booked_seats_count.aircraft_model_id = cabin_seats_count.aircraft_model_id;
+
+
+/*
+ * Insert dummy data
+ */
+
+INSERT INTO airport VALUES ('TLV', 'LLBG', 'Ben Gurion Airport', 'IL-M', 'Tel Aviv-Yafo', 'SRID=4326;POINT(32.009444 34.882778)'); -- id: 1
+INSERT INTO airport VALUES ('LAX', 'KLAX', 'Los Angeles International Airport', 'US-CA', 'Los Angeles', 'SRID=4326;POINT(33.9425 -118.408056)'); -- id: 2
+
+INSERT INTO service VALUES (1, 1, 2); -- From TLV to LAX
+
+INSERT INTO aircraft_model VALUES ('B789', '789', 'Boeing 787-9 Dreamliner'); -- id: 1
+
+-- Boeing 787-9 Dreamliner seat map
+INSERT INTO seat_map VALUES (1, 'F', 1, 8, 'A-DG-K');
+INSERT INTO seat_map VALUES (1, 'B', 10, 14, 'AC-DFG-HK');
+INSERT INTO seat_map VALUES (1, 'E', 21, 28, 'ABC-DFG-HJK');
+INSERT INTO seat_map VALUES (1, 'E', 29, 30, '--HJK');
+INSERT INTO seat_map VALUES (1, 'E', 35, 36, 'ABC--HJK');
+INSERT INTO seat_map VALUES (1, 'E', 37, 48, 'ABC-DFG-HJK');
+INSERT INTO seat_map VALUES (1, 'E', 49, 50, '-DFG-');
+
+INSERT INTO flight (id, service_id, departure_terminal, departure_time, arrival_terminal, arrival_time, aircraft_model_id)
+VALUES ('eb2e5080-000e-440d-8242-46428e577ce5', 1, '3', '2020-01-01T01:05+02:00', 'B', '2020-01-01T06:00-08:00', 1);
+
+INSERT INTO booked_seat ('eb2e5080-000e-440d-8242-46428e577ce5', 'E', 40, 'D');
+INSERT INTO booked_seat ('eb2e5080-000e-440d-8242-46428e577ce5', 'E', 40, 'F');
+INSERT INTO booked_seat ('eb2e5080-000e-440d-8242-46428e577ce5', 'E', 40, 'G');
+
+
