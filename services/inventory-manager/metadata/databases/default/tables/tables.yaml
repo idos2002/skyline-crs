@@ -1,0 +1,8 @@
+- "!include public_aircraft_model.yaml"
+- "!include public_airport.yaml"
+- "!include public_available_flight_seats_count.yaml"
+- "!include public_booked_seat.yaml"
+- "!include public_cabin_seats_count.yaml"
+- "!include public_flight.yaml"
+- "!include public_seat_map.yaml"
+- "!include public_service.yaml"

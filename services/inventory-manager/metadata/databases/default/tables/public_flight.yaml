@@ -1,0 +1,40 @@
+table:
+  name: flight
+  schema: public
+object_relationships:
+- name: aircraft_model
+  using:
+    foreign_key_constraint_on: aircraft_model_id
+- name: service
+  using:
+    foreign_key_constraint_on: service_number
+array_relationships:
+- name: available_seats_counts
+  using:
+    manual_configuration:
+      column_mapping:
+        id: flight_id
+      insertion_order: null
+      remote_table:
+        name: available_flight_seats_count
+        schema: public
+- name: booked_seats
+  using:
+    foreign_key_constraint_on:
+      column: flight_id
+      table:
+        name: booked_seat
+        schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - id
+    - service_number
+    - departure_terminal
+    - departure_time
+    - arrival_terminal
+    - arrival_time
+    - aircraft_model_id
+    filter: {}
+  role: user

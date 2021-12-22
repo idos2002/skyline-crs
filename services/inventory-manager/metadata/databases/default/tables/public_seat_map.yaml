@@ -1,0 +1,19 @@
+table:
+  name: seat_map
+  schema: public
+object_relationships:
+- name: aircraft_model
+  using:
+    foreign_key_constraint_on: aircraft_model_id
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - id
+    - aircraft_model_id
+    - cabin_class
+    - start_row
+    - end_row
+    - column_layout
+    filter: {}
+  role: user

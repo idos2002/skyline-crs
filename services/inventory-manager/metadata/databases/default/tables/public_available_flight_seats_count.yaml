@@ -1,0 +1,23 @@
+table:
+  name: available_flight_seats_count
+  schema: public
+object_relationships:
+- name: flight
+  using:
+    manual_configuration:
+      column_mapping:
+        flight_id: id
+      insertion_order: null
+      remote_table:
+        name: flight
+        schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - available_seats_count
+    - total_seats_count
+    - cabin_class
+    - flight_id
+    filter: {}
+  role: user

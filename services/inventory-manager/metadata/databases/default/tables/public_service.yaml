@@ -1,0 +1,27 @@
+table:
+  name: service
+  schema: public
+object_relationships:
+- name: destination_airport
+  using:
+    foreign_key_constraint_on: destination_airport_id
+- name: origin_airport
+  using:
+    foreign_key_constraint_on: origin_airport_id
+array_relationships:
+- name: flights
+  using:
+    foreign_key_constraint_on:
+      column: service_number
+      table:
+        name: flight
+        schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - service_number
+    - origin_airport_id
+    - destination_airport_id
+    filter: {}
+  role: user

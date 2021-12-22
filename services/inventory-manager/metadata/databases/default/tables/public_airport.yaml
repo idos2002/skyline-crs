@@ -1,0 +1,31 @@
+table:
+  name: airport
+  schema: public
+array_relationships:
+- name: arrivingServices
+  using:
+    foreign_key_constraint_on:
+      column: destination_airport_id
+      table:
+        name: service
+        schema: public
+- name: departingServices
+  using:
+    foreign_key_constraint_on:
+      column: origin_airport_id
+      table:
+        name: service
+        schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - id
+    - iata_code
+    - icao_code
+    - airport_name
+    - subdivision_code
+    - city
+    - geo_location
+    filter: {}
+  role: user

@@ -1,0 +1,22 @@
+table:
+  name: cabin_seats_count
+  schema: public
+object_relationships:
+- name: aircraft_model
+  using:
+    manual_configuration:
+      column_mapping:
+        aircraft_model_id: id
+      insertion_order: null
+      remote_table:
+        name: aircraft_model
+        schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - seat_count
+    - aircraft_model_id
+    - cabin_class
+    filter: {}
+  role: user

@@ -1,0 +1,37 @@
+table:
+  name: aircraft_model
+  schema: public
+array_relationships:
+- name: cabin_seats_counts
+  using:
+    manual_configuration:
+      column_mapping:
+        id: aircraft_model_id
+      insertion_order: null
+      remote_table:
+        name: cabin_seats_count
+        schema: public
+- name: flights
+  using:
+    foreign_key_constraint_on:
+      column: aircraft_model_id
+      table:
+        name: flight
+        schema: public
+- name: seat_maps
+  using:
+    foreign_key_constraint_on:
+      column: aircraft_model_id
+      table:
+        name: seat_map
+        schema: public
+select_permissions:
+- permission:
+    allow_aggregations: true
+    columns:
+    - id
+    - icao_code
+    - iata_code
+    - model_name
+    filter: {}
+  role: user
