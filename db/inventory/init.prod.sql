@@ -138,5 +138,5 @@ CREATE VIEW available_flight_seats_count AS
                    AND flight_cabin_class.cabin_class = booked_seats_count.cabin_class
          LEFT JOIN cabin_seats_count
                    ON flight_cabin_class.aircraft_model_id = cabin_seats_count.aircraft_model_id
-                   AND flight_cabin_class.cabin_class = cabin_seats_count.cabin_class;
+                   AND flight_cabin_class.cabin_class = cabin_seats_count.cabin_class
     WHERE cabin_seats_count.seat_count > 0;
