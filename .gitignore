@@ -1,0 +1,25 @@
+# Local files
+*.local
+
+# OS generated files
+.DS_Store
+.DS_Store?
+ehthumbs.db
+Icon?
+Thumbs.db
+
+# VCS
+.svn
+.svn/
+CVS
+
+# XCode 4
+*.xcuserstate
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+xcuserdata/
+
+# Jekyll build directory
+/_site
