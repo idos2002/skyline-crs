@@ -83,7 +83,7 @@ CREATE TABLE seat_map (
 
 CREATE TABLE flight (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v1(),
-    service_id integer NOT NULL REFERENCES service (service_number),
+    service_number integer NOT NULL REFERENCES service (service_number),
     departure_terminal text NOT NULL,
     departure_time timestamptz NOT NULL,
     arrival_terminal text NOT NULL,
