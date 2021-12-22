@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  inventory-manager:
+    build: ./services/inventory-manager
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://${INVENTORY_USER}:${INVENTORY_PASSWORD}@inventory:${INVENTORY_PORT}/${INVENTORY_DB_NAME}
+      HASURA_GRAPHQL_ADMIN_SECRET: ${INVENTORY_MANAGER_ADMIN_SECRET}
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      HASURA_GRAPHQL_DEV_MODE: "true"
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+    expose:
+      - ${INVENTORY_MANAGER_PORT}
+    ports:
+      - 8080:${INVENTORY_MANAGER_PORT}
+    depends_on:
+      - inventory
+    restart: unless-stopped
+
+  inventory:
+    build:
+      context: ./db/inventory
+      target: development
+    environment:
+      POSTGRES_USER: ${INVENTORY_USER}
+      POSTGRES_PASSWORD: ${INVENTORY_PASSWORD}
+      POSTGRES_DB: ${INVENTORY_DB_NAME}
+    expose:
+      - ${INVENTORY_PORT}
+    volumes:
+      - inventory-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  pnr:
+    build: ./db/pnr
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${PNR_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${PNR_PASSWORD}
+      MONGO_INITDB_DATABASE: ${PNR_DB_NAME}
+    expose:
+      - ${PNR_PORT}
+    volumes:
+      - pnr-data:/data/db
+    restart: unless-stopped
+
+volumes:
+  inventory-data:
+  pnr-data:
