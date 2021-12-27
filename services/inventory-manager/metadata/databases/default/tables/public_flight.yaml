@@ -7,7 +7,7 @@ object_relationships:
     foreign_key_constraint_on: aircraft_model_id
 - name: service
   using:
-    foreign_key_constraint_on: service_number
+    foreign_key_constraint_on: service_id
 array_relationships:
 - name: available_seats_counts
   using:
@@ -30,7 +30,7 @@ select_permissions:
     allow_aggregations: true
     columns:
     - id
-    - service_number
+    - service_id
     - departure_terminal
     - departure_time
     - arrival_terminal

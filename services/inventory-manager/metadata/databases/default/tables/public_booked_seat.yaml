@@ -2,6 +2,9 @@ table:
   name: booked_seat
   schema: public
 object_relationships:
+- name: cabin_class_details
+  using:
+    foreign_key_constraint_on: cabin_class
 - name: flight
   using:
     foreign_key_constraint_on: flight_id

@@ -5,6 +5,9 @@ object_relationships:
 - name: aircraft_model
   using:
     foreign_key_constraint_on: aircraft_model_id
+- name: cabin_class_details
+  using:
+    foreign_key_constraint_on: cabin_class
 select_permissions:
 - permission:
     allow_aggregations: true

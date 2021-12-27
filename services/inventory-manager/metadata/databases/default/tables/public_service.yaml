@@ -12,7 +12,7 @@ array_relationships:
 - name: flights
   using:
     foreign_key_constraint_on:
-      column: service_number
+      column: service_id
       table:
         name: flight
         schema: public
@@ -20,7 +20,7 @@ select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - service_number
+    - id
     - origin_airport_id
     - destination_airport_id
     filter: {}

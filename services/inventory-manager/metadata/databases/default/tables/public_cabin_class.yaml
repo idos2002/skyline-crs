@@ -1,31 +1,27 @@
 table:
-  name: airport
+  name: cabin_class
   schema: public
+is_enum: true
 array_relationships:
-- name: arrivingServices
+- name: booked_seats
   using:
     foreign_key_constraint_on:
-      column: destination_airport_id
+      column: cabin_class
       table:
-        name: service
+        name: booked_seat
         schema: public
-- name: departingServices
+- name: seat_maps
   using:
     foreign_key_constraint_on:
-      column: origin_airport_id
+      column: cabin_class
       table:
-        name: service
+        name: seat_map
         schema: public
 select_permissions:
 - permission:
     allow_aggregations: true
     columns:
-    - id
-    - iata_code
-    - icao_code
-    - name
-    - subdivision_code
-    - city
-    - geo_location
+    - description
+    - value
     filter: {}
   role: user

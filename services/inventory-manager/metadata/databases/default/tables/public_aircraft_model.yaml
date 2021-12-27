@@ -32,6 +32,6 @@ select_permissions:
     - id
     - icao_code
     - iata_code
-    - model_name
+    - name
     filter: {}
   role: user
