@@ -11,10 +11,17 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 
 /*
- * Define types
+ * Define enum tables
  */
 
-CREATE TYPE cabin_class AS ENUM ('E', 'B', 'F');
+CREATE TABLE cabin_class (
+    value text PRIMARY KEY,
+    description text NOT NULL
+);
+INSERT INTO cabin_class VALUES
+    ('E', 'Economy class'),
+    ('B', 'Business class'),
+    ('F', 'First class');
 
 
 /*
@@ -40,7 +47,7 @@ CREATE TABLE airport (
     icao_code text NOT NULL,
     -- Check if it is a valid airport icao code, e.g. LLBG, KLAX, etc.
     CHECK (icao_code ~ '\A[A-Z]{4}\Z'),
-    airport_name text NOT NULL,
+    name text NOT NULL,
     subdivision_code text NOT NULL,
     -- Check if it is a valid ISO 3166-2 subdivision code, e.g. IL-M, US-CA, etc.
     CHECK (subdivision_code ~ '\A[A-Z]{2}-[A-Z0-9]{1,3}\Z'),
@@ -50,7 +57,7 @@ CREATE TABLE airport (
 );
 
 CREATE TABLE service (
-    service_number integer PRIMARY KEY,
+    id integer PRIMARY KEY,
     origin_airport_id integer NOT NULL REFERENCES airport (id),
     destination_airport_id integer NOT NULL REFERENCES airport (id),
     UNIQUE (origin_airport_id, destination_airport_id)
@@ -64,14 +71,14 @@ CREATE TABLE aircraft_model (
     iata_code text NOT NULL,
     -- Check if it is a valid aircraft iata code, e.g. A4F, 313, etc.
     CHECK (iata_code ~ '\A[A-Z0-9]{3}\Z'),
-    model_name text NOT NULL,
+    name text NOT NULL,
     UNIQUE (icao_code, iata_code)
 );
 
 CREATE TABLE seat_map (
     id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     aircraft_model_id integer REFERENCES aircraft_model (id),
-    cabin_class cabin_class NOT NULL,
+    cabin_class text REFERENCES cabin_class (value) NOT NULL,
     start_row integer NOT NULL CHECK (start_row > 0),
     end_row integer NOT NULL CHECK (end_row > 0),
     CHECK (start_row <= end_row),
@@ -83,7 +90,7 @@ CREATE TABLE seat_map (
 
 CREATE TABLE flight (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v1(),
-    service_number integer NOT NULL REFERENCES service (service_number),
+    service_id integer NOT NULL REFERENCES service (id),
     departure_terminal text NOT NULL,
     departure_time timestamptz NOT NULL,
     arrival_terminal text NOT NULL,
@@ -95,7 +102,7 @@ CREATE TABLE flight (
 CREATE TABLE booked_seat (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v1(),
     flight_id uuid NOT NULL REFERENCES flight (id),
-    cabin_class cabin_class NOT NULL,
+    cabin_class text REFERENCES cabin_class (value) NOT NULL,
     seat_row integer NOT NULL CHECK (seat_row > 0),
     seat_column text NOT NULL,
     -- Check if the seat's column is a single uppercase letter (A-Z).
@@ -119,8 +126,8 @@ CREATE VIEW available_flight_seats_count AS
     WITH flight_cabin_class AS (
         SELECT flight.id AS flight_id,
                flight.aircraft_model_id AS aircraft_model_id,
-               cabin_class
-        FROM flight CROSS JOIN unnest(enum_range(null::cabin_class)) AS cabin_class
+               cabin_class.value AS cabin_class
+        FROM flight CROSS JOIN cabin_class
     ), booked_seats_count AS (
         SELECT flight.id AS flight_id,
                booked_seat.cabin_class AS cabin_class,
@@ -146,30 +153,28 @@ CREATE VIEW available_flight_seats_count AS
  * Insert dummy data
  */
 
--- id: 1
-INSERT INTO airport (iata_code, icao_code, airport_name, subdivision_code, city, geo_location)
-VALUES ('TLV', 'LLBG', 'Ben Gurion Airport', 'IL-M', 'Tel Aviv-Yafo', 'SRID=4326;POINT(32.009444 34.882778)');
--- id: 2
-INSERT INTO airport (iata_code, icao_code, airport_name, subdivision_code, city, geo_location)
-VALUES ('LAX', 'KLAX', 'Los Angeles International Airport', 'US-CA', 'Los Angeles', 'SRID=4326;POINT(33.9425 -118.408056)');
+INSERT INTO airport (iata_code, icao_code, name, subdivision_code, city, geo_location) VALUES
+    ('TLV', 'LLBG', 'Ben Gurion Airport', 'IL-M', 'Tel Aviv-Yafo', 'SRID=4326;POINT(32.009444 34.882778)'), -- id: 1
+    ('LAX', 'KLAX', 'Los Angeles International Airport', 'US-CA', 'Los Angeles', 'SRID=4326;POINT(33.9425 -118.408056)'); -- id: 2
 
-INSERT INTO service VALUES (1, 1, 2); -- From TLV to LAX
+INSERT INTO service (id, origin_airport_id, destination_airport_id) VALUES (1, 1, 2); -- From TLV to LAX
 
--- id: 1
-INSERT INTO aircraft_model (icao_code, iata_code, model_name)
-VALUES ('B789', '789', 'Boeing 787-9 Dreamliner');
+INSERT INTO aircraft_model (icao_code, iata_code, name) VALUES ('B789', '789', 'Boeing 787-9 Dreamliner'); -- id: 1
 
 -- Boeing 787-9 Dreamliner seat map
-INSERT INTO seat_map (aircraft_model_id, cabin_class, start_row, end_row, column_layout) VALUES (1, 'F', 1, 8, 'A-DG-K');
-INSERT INTO seat_map (aircraft_model_id, cabin_class, start_row, end_row, column_layout) VALUES (1, 'B', 10, 14, 'AC-DFG-HK');
-INSERT INTO seat_map (aircraft_model_id, cabin_class, start_row, end_row, column_layout) VALUES (1, 'E', 21, 28, 'ABC-DFG-HJK');
-INSERT INTO seat_map (aircraft_model_id, cabin_class, start_row, end_row, column_layout) VALUES (1, 'E', 29, 30, '--HJK');
-INSERT INTO seat_map (aircraft_model_id, cabin_class, start_row, end_row, column_layout) VALUES (1, 'E', 35, 36, 'ABC--HJK');
-INSERT INTO seat_map (aircraft_model_id, cabin_class, start_row, end_row, column_layout) VALUES (1, 'E', 37, 48, 'ABC-DFG-HJK');
-INSERT INTO seat_map (aircraft_model_id, cabin_class, start_row, end_row, column_layout) VALUES (1, 'E', 49, 50, '-DFG-');
+INSERT INTO seat_map (aircraft_model_id, cabin_class, start_row, end_row, column_layout) VALUES
+    (1, 'F', 1, 8, 'A-DG-K'),
+    (1, 'B', 10, 14, 'AC-DFG-HK'),
+    (1, 'E', 21, 28, 'ABC-DFG-HJK'),
+    (1, 'E', 29, 30, '--HJK'),
+    (1, 'E', 35, 36, 'ABC--HJK'),
+    (1, 'E', 37, 48, 'ABC-DFG-HJK'),
+    (1, 'E', 49, 50, '-DFG-');
 
-INSERT INTO flight VALUES ('eb2e5080-000e-440d-8242-46428e577ce5', 1, '3', '2020-01-01T01:05+02:00', 'B', '2020-01-01T06:00-08:00', 1);
+INSERT INTO flight (id, service_id, departure_terminal, departure_time, arrival_terminal, arrival_time, aircraft_model_id) VALUES
+    ('eb2e5080-000e-440d-8242-46428e577ce5', 1, '3', '2020-01-01T01:05+02:00', 'B', '2020-01-01T06:00-08:00', 1);
 
-INSERT INTO booked_seat (flight_id, cabin_class, seat_row, seat_column) VALUES ('eb2e5080-000e-440d-8242-46428e577ce5', 'E', 40, 'D');
-INSERT INTO booked_seat (flight_id, cabin_class, seat_row, seat_column) VALUES ('eb2e5080-000e-440d-8242-46428e577ce5', 'E', 40, 'F');
-INSERT INTO booked_seat (flight_id, cabin_class, seat_row, seat_column) VALUES ('eb2e5080-000e-440d-8242-46428e577ce5', 'E', 40, 'G');
+INSERT INTO booked_seat (flight_id, cabin_class, seat_row, seat_column) VALUES
+    ('eb2e5080-000e-440d-8242-46428e577ce5', 'E', 40, 'D'),
+    ('eb2e5080-000e-440d-8242-46428e577ce5', 'E', 40, 'F'),
+    ('eb2e5080-000e-440d-8242-46428e577ce5', 'E', 40, 'G');

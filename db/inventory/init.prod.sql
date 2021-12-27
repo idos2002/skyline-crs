@@ -11,10 +11,17 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 
 /*
- * Define types
+ * Define enum tables
  */
 
-CREATE TYPE cabin_class AS ENUM ('E', 'B', 'F');
+CREATE TABLE cabin_class (
+    value text PRIMARY KEY,
+    description text NOT NULL
+);
+INSERT INTO cabin_class VALUES
+    ('E', 'Economy class'),
+    ('B', 'Business class'),
+    ('F', 'First class');
 
 
 /*
@@ -40,7 +47,7 @@ CREATE TABLE airport (
     icao_code text NOT NULL,
     -- Check if it is a valid airport icao code, e.g. LLBG, KLAX, etc.
     CHECK (icao_code ~ '\A[A-Z]{4}\Z'),
-    airport_name text NOT NULL,
+    name text NOT NULL,
     subdivision_code text NOT NULL,
     -- Check if it is a valid ISO 3166-2 subdivision code, e.g. IL-M, US-CA, etc.
     CHECK (subdivision_code ~ '\A[A-Z]{2}-[A-Z0-9]{1,3}\Z'),
@@ -50,7 +57,7 @@ CREATE TABLE airport (
 );
 
 CREATE TABLE service (
-    service_number integer PRIMARY KEY,
+    id integer PRIMARY KEY,
     origin_airport_id integer NOT NULL REFERENCES airport (id),
     destination_airport_id integer NOT NULL REFERENCES airport (id),
     UNIQUE (origin_airport_id, destination_airport_id)
@@ -64,14 +71,14 @@ CREATE TABLE aircraft_model (
     iata_code text NOT NULL,
     -- Check if it is a valid aircraft iata code, e.g. A4F, 313, etc.
     CHECK (iata_code ~ '\A[A-Z0-9]{3}\Z'),
-    model_name text NOT NULL,
+    name text NOT NULL,
     UNIQUE (icao_code, iata_code)
 );
 
 CREATE TABLE seat_map (
     id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     aircraft_model_id integer REFERENCES aircraft_model (id),
-    cabin_class cabin_class NOT NULL,
+    cabin_class text REFERENCES cabin_class (value) NOT NULL,
     start_row integer NOT NULL CHECK (start_row > 0),
     end_row integer NOT NULL CHECK (end_row > 0),
     CHECK (start_row <= end_row),
@@ -83,7 +90,7 @@ CREATE TABLE seat_map (
 
 CREATE TABLE flight (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v1(),
-    service_number integer NOT NULL REFERENCES service (service_number),
+    service_id integer NOT NULL REFERENCES service (id),
     departure_terminal text NOT NULL,
     departure_time timestamptz NOT NULL,
     arrival_terminal text NOT NULL,
@@ -95,7 +102,7 @@ CREATE TABLE flight (
 CREATE TABLE booked_seat (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v1(),
     flight_id uuid NOT NULL REFERENCES flight (id),
-    cabin_class cabin_class NOT NULL,
+    cabin_class text REFERENCES cabin_class (value) NOT NULL,
     seat_row integer NOT NULL CHECK (seat_row > 0),
     seat_column text NOT NULL,
     -- Check if the seat's column is a single uppercase letter (A-Z).
@@ -119,8 +126,8 @@ CREATE VIEW available_flight_seats_count AS
     WITH flight_cabin_class AS (
         SELECT flight.id AS flight_id,
                flight.aircraft_model_id AS aircraft_model_id,
-               cabin_class
-        FROM flight CROSS JOIN unnest(enum_range(null::cabin_class)) AS cabin_class
+               cabin_class.value AS cabin_class
+        FROM flight CROSS JOIN cabin_class
     ), booked_seats_count AS (
         SELECT flight.id AS flight_id,
                booked_seat.cabin_class AS cabin_class,
