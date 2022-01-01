@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "flights"
+version = "0.1.0"
+description = "This is the flights service for Skyline CRS. It presents an external API for the inventory, which contains all of the flights information."
+authors = ["Ido Saban <sabanido.business@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.70.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
