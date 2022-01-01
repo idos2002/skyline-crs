@@ -1,6 +1,6 @@
 # Flights Service
 
-The **flights service** presents an external API for the inventory, which contains all the flights information.
+The **flights service** presents an external API for the inventory, which contains all of the flights information.
 
 ## Features
 
