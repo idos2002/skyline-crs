@@ -1,3 +1,7 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.poetry]
 name = "flights"
 version = "0.1.0"
@@ -7,10 +11,33 @@ authors = ["Ido Saban <sabanido.business@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.10"
 fastapi = "^0.70.1"
+uvicorn = { version = "^0.16.0", extras = ["standard"] }
+httpx = "^0.21.1"
 
 [tool.poetry.dev-dependencies]
+black = "^21.12b0"
+isort = "^5.10.1"
 pytest = "^6.2.5"
+coverage = { version = "^6.2", extras = ["toml"] }
 
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.black]
+line-length = 88
+target_version = ["py310"]
+
+[tool.isort]
+profile = "black"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["flights"]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover", # Re-enable the standard pragma
+    "def __repr__", # Don't complain about missing debug-only code
+    "raise NotImplementedError"
+]
