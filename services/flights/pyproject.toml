@@ -17,6 +17,8 @@ httpx = "^0.21.1"
 [tool.poetry.dev-dependencies]
 black = "^21.12b0"
 isort = "^5.10.1"
+flake8 = "^4.0.1"
+mypy = "^0.930"
 pytest = "^6.2.5"
 coverage = { version = "^6.2", extras = ["toml"] }
 
@@ -26,6 +28,9 @@ target_version = ["py310"]
 
 [tool.isort]
 profile = "black"
+
+[tool.mypy]
+python_version = "3.10"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
