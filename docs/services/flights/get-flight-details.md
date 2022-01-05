@@ -29,8 +29,10 @@ GET /flight/17564e2f-7d32-4d4a-9d99-27ccd768fb7d
         "location": {
             "subdivisionCode": "<The ISO 3166-2 subdivision code the airport is located in>",
             "city": "<The city the airport is located in>",
-            "latitude": "<Geographic latitude coordinate of the airport>",
-            "longitude": "<Geographic longitude coordinate of the airport>"
+            "coordinates": {
+                "crs": "<The coordinates reference system (CRS) URN used for the coordinates data, e.g. urn:ogc:def:crs:EPSG::4326>",
+                "data": [ "<The coordinates data>" ]
+            }
         }
     },
     "destination": {
@@ -40,8 +42,10 @@ GET /flight/17564e2f-7d32-4d4a-9d99-27ccd768fb7d
         "location": {
             "subdivisionCode": "<The ISO 3166-2 subdivision code the airport is located in>",
             "city": "<The city the airport is located in>",
-            "latitude": "<Geographic latitude coordinate of the airport>",
-            "longitude": "<Geographic longitude coordinate of the airport>"
+            "coordinates": {
+                "crs": "<The coordinates reference system (CRS) URN used for the coordinates data, e.g. urn:ogc:def:crs:EPSG::4326>",
+                "data": [ "<The coordinates data>" ]
+            }
         }
     },
     "departureTerminal": "<Departure terminal name>",
@@ -74,8 +78,10 @@ Example:
         "location": {
             "subdivisionCode": "IL-M",
             "city": "Tel Aviv-Yafo",
-            "latitude": "32.009444",
-            "longitude": "34.882778"
+            "coordinates": {
+                "crs": "urn:ogc:def:crs:EPSG::4326",
+                "data": [ 32.009444, 34.882778 ]
+            }
         }
     },
     "destination": {
@@ -85,8 +91,10 @@ Example:
         "location": {
             "subdivisionCode": "US-NY",
             "city": "New York City",
-            "latitude": "40.639722",
-            "longitude": "-73.778889"
+            "coordinates": {
+                "crs": "urn:ogc:def:crs:EPSG::4326",
+                "data": [ 40.639722, -73.778889 ]
+            }
         }
     },
     "departureTerminal": "3",
@@ -101,15 +109,15 @@ Example:
     "cabins": [
         {
             "cabinClass": "E",
-            "availableSeatsCount": "16"
+            "availableSeatsCount": 16
         },
         {
             "cabinClass": "B",
-            "availableSeatsCount": "7"
+            "availableSeatsCount": 7
         },
         {
             "cabinClass": "F",
-            "availableSeatsCount": "3"
+            "availableSeatsCount": 3
         }
     ]
 }

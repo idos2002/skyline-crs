@@ -55,58 +55,58 @@ Example:
     "seatMap": [
         {
             "cabinClass": "F",
-            "startRow": "1",
-            "endRow": "8",
+            "startRow": 1,
+            "endRow": 8,
             "columnLayout": "A-DG-K"
         },
         {
             "cabinClass": "B",
-            "startRow": "10",
-            "endRow": "14",
+            "startRow": 10,
+            "endRow": 14,
             "columnLayout": "AC-DFG-HK"
         },
         {
             "cabinClass": "E",
-            "startRow": "21",
-            "endRow": "28",
+            "startRow": 21,
+            "endRow": 28,
             "columnLayout": "ABC-DFG-HJK"
         },
         {
             "cabinClass": "E",
-            "startRow": "29",
-            "endRow": "30",
-            "columnLayout": "--------HJK"
+            "startRow": 29,
+            "endRow": 30,
+            "columnLayout": "###-###-HJK"
         },
         {
             "cabinClass": "E",
-            "startRow": "35",
-            "endRow": "36",
-            "columnLayout": "ABC-----HJK"
+            "startRow": 35,
+            "endRow": 36,
+            "columnLayout": "ABC-###-HJK"
         },
         {
             "cabinClass": "E",
-            "startRow": "37",
-            "endRow": "48",
+            "startRow": 37,
+            "endRow": 48,
             "columnLayout": "ABC-DFG-HJK"
         },
         {
             "cabinClass": "E",
-            "startRow": "49",
-            "endRow": "50",
-            "columnLayout": "----DFG----"
+            "startRow": 49,
+            "endRow": 50,
+            "columnLayout": "###-DFG-###"
         },
     ],
     "bookedSeats": [
         {
-            "row": "5",
+            "row": 5,
             "column": "A"
         },
         {
-            "row": "12",
+            "row": 12,
             "column": "G"
         },
         {
-            "row": "42",
+            "row": 42,
             "column": "J"
         }
     ]
