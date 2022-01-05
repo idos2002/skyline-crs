@@ -128,15 +128,18 @@ Example:
             "cabins": [
                 {
                     "cabinClass": "E",
-                    "availableSeatsCount": 16
+                    "seatsCount": 204,
+                    "availableSeatsCount": 201
                 },
                 {
                     "cabinClass": "B",
-                    "availableSeatsCount": 7
+                    "seatsCount": 35,
+                    "availableSeatsCount": 14
                 },
                 {
                     "cabinClass": "F",
-                    "availableSeatsCount": 3
+                    "seatsCount": 32,
+                    "availableSeatsCount": 21
                 }
             ]
         }
