@@ -32,7 +32,7 @@ CREATE FUNCTION column_layout_seats_count(column_layout text) RETURNS integer
 LANGUAGE SQL
 IMMUTABLE
 RETURNS NULL ON NULL INPUT
-RETURN char_length(replace(column_layout, '-', ''));
+RETURN char_length(translate(column_layout, '-#', ''));
 
 
 /*
@@ -84,7 +84,7 @@ CREATE TABLE seat_map (
     CHECK (start_row <= end_row),
     column_layout text NOT NULL,
     -- Check if column layout is in the correct form, e.g. ABC-EF-GHI, ABC, ABC-DEF, etc.)
-    CHECK (column_layout ~ '\A(?:-*[A-Z]+-*)+\Z'),
+    CHECK (column_layout ~ '\A[A-Z#]+(?:-[A-Z#]+)*\Z'),
     UNIQUE (aircraft_model_id, start_row, end_row)
 );
 
@@ -166,10 +166,10 @@ INSERT INTO seat_map (aircraft_model_id, cabin_class, start_row, end_row, column
     (1, 'F', 1, 8, 'A-DG-K'),
     (1, 'B', 10, 14, 'AC-DFG-HK'),
     (1, 'E', 21, 28, 'ABC-DFG-HJK'),
-    (1, 'E', 29, 30, '--HJK'),
-    (1, 'E', 35, 36, 'ABC--HJK'),
+    (1, 'E', 29, 30, '###-###-HJK'),
+    (1, 'E', 35, 36, 'ABC-###-HJK'),
     (1, 'E', 37, 48, 'ABC-DFG-HJK'),
-    (1, 'E', 49, 50, '-DFG-');
+    (1, 'E', 49, 50, '###-DFG-###');
 
 INSERT INTO flight (id, service_id, departure_terminal, departure_time, arrival_terminal, arrival_time, aircraft_model_id) VALUES
     ('eb2e5080-000e-440d-8242-46428e577ce5', 1, '3', '2020-01-01T01:05+02:00', 'B', '2020-01-01T06:00-08:00', 1);

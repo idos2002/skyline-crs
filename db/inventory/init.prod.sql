@@ -32,7 +32,7 @@ CREATE FUNCTION column_layout_seats_count(column_layout text) RETURNS integer
 LANGUAGE SQL
 IMMUTABLE
 RETURNS NULL ON NULL INPUT
-RETURN char_length(replace(column_layout, '-', ''));
+RETURN char_length(translate(column_layout, '-#', ''));
 
 
 /*
@@ -84,7 +84,7 @@ CREATE TABLE seat_map (
     CHECK (start_row <= end_row),
     column_layout text NOT NULL,
     -- Check if column layout is in the correct form, e.g. ABC-EF-GHI, ABC, ABC-DEF, etc.)
-    CHECK (column_layout ~ '\A(?:-*[A-Z]+-*)+\Z'),
+    CHECK (column_layout ~ '\A[A-Z#]+(?:-[A-Z#]+)*\Z'),
     UNIQUE (aircraft_model_id, start_row, end_row)
 );
 
