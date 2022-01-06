@@ -75,6 +75,7 @@ GET /flights/LAX/TLV/2021-03-22?passengers=2&class=F
             "cabins": [
                 {
                     "cabinClass": "<Cabin class: E / B / F>",
+                    "seatsCount": "<Total number of seats>",
                     "availableSeatsCount": "<Number of available seats>"
                 },
             ]

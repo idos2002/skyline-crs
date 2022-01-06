@@ -60,6 +60,7 @@ GET /flight/17564e2f-7d32-4d4a-9d99-27ccd768fb7d
     "cabins": [
         {
             "cabinClass": "<Cabin class: E / B / F>",
+            "seatsCount": "<Total number of seats>",
             "availableSeatsCount": "<Number of available seats>"
         },
     ]
