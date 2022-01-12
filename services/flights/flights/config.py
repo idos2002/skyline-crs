@@ -4,12 +4,11 @@ from pydantic import AnyHttpUrl, BaseSettings, Field
 
 
 class LogLevel(str, Enum):
-    CRITICAL = "critical"
-    ERROR = "error"
-    WARNING = "warning"
-    INFO = "info"
-    DEBUG = "debug"
-    TRACE = "trace"
+    CRITICAL = "CRITICAL"
+    ERROR = "ERROR"
+    WARNING = "WARNING"
+    INFO = "INFO"
+    DEBUG = "DEBUG"
 
 
 class Settings(BaseSettings):

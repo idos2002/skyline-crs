@@ -13,6 +13,6 @@ COPY --from=export-requirements /tmp/requirements.txt .
 
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
-COPY flights .
+COPY flights flights
 
-CMD ["python", "main.py"]
+CMD ["python", "-m", "flights.main"]
