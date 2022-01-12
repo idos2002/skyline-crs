@@ -71,7 +71,7 @@ class Cabin(CamelCaseModel):
     def from_model(cls, cabin: models.Cabin) -> Cabin:
         return cls.construct(
             cabin_class=cabin.cabin_class,
-            seats_count=cabin.total_seats_count,
+            seats_count=cabin.seats_count,
             available_seats_count=cabin.available_seats_count,
         )
 
@@ -107,7 +107,7 @@ class FlightsList(CamelCaseModel):
                     arrival_time=flight.arrival_time,
                     arrival_terminal=flight.arrival_terminal,
                     aircraft_model=AircraftModel.from_model(flight.aircraft_model),
-                    cabins=[Cabin.from_model(c) for c in flight.available_seats_counts],
+                    cabins=[Cabin.from_model(c) for c in flight.cabins],
                 )
                 for flight in service_flights.flights
             ],
@@ -132,7 +132,7 @@ class FlightDetails(Flight):
             arrival_terminal=flight.arrival_terminal,
             arrival_time=flight.arrival_time,
             aircraft_model=AircraftModel.from_model(flight.aircraft_model),
-            cabins=[Cabin.from_model(c) for c in flight.available_seats_counts],
+            cabins=[Cabin.from_model(c) for c in flight.cabins],
         )
 
 
@@ -167,11 +167,11 @@ class FlightSeats(CamelCaseModel):
         return cls.construct(
             flight_id=flight_seats.flight_id,
             aircraft_model=AircraftModel.from_model(
-                flight_seats.aircraft_model_with_seat_maps
+                flight_seats.aircraft_model_with_seat_map
             ),
             seat_map=[
                 SeatMapSection.from_model(s)
-                for s in flight_seats.aircraft_model_with_seat_maps.seat_map
+                for s in flight_seats.aircraft_model_with_seat_map.seat_map
             ],
             booked_seats=[BookedSeat.from_model(b) for b in flight_seats.booked_seats],
         )

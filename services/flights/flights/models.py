@@ -38,7 +38,7 @@ class AircraftModel(BaseModel):
 
 class Cabin(BaseModel):
     cabin_class: CabinClass
-    total_seats_count: int
+    seats_count: int = Field(..., alias="total_seats_count")
     available_seats_count: int
 
 
@@ -49,7 +49,7 @@ class Flight(BaseModel):
     arrival_terminal: str
     arrival_time: datetime
     aircraft_model: AircraftModel
-    available_seats_counts: list[Cabin]
+    cabins: list[Cabin] = Field(..., alias="available_seats_counts")
 
 
 class ServiceFlights(Service):
@@ -78,7 +78,7 @@ class BookedSeat(BaseModel):
 
 class FlightSeats(BaseModel):
     flight_id: UUID = Field(..., alias="id")
-    aircraft_model_with_seat_maps: AircraftModelWithSeatMap = Field(
+    aircraft_model_with_seat_map: AircraftModelWithSeatMap = Field(
         ..., alias="aircraft_model"
     )
     booked_seats: list[BookedSeat]
