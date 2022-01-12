@@ -147,3 +147,12 @@ Example:
     ]
 }
 ```
+
+## Flights Not Found Response - `404 Not Found`
+
+```json
+{
+    "error": "Flights not found",
+    "message": "The flights for the requested origin and destination airports."
+}
+```
