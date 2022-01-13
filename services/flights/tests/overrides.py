@@ -13,7 +13,7 @@ async def get_flights(
     destination: str = Path(..., regex=r"^[a-zA-Z]{3}$"),
     departure_time: datetime = Path(...),
     passengers: int = Query(1, ge=1),
-    cabin_classes: set[CabinClass] | None = None,
+    cabin_classes: set[CabinClass] | None = Query(None, alias="cabin"),
 ) -> ServiceFlights | None:
     response_origin = "TLV"
     response_destination = "LAX"
