@@ -15,4 +15,4 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 COPY flights flights
 
-CMD ["python", "-m", "flights.main"]
+CMD uvicorn flights.main:app --host 0.0.0.0 --port ${SKYLINE_PORT:=80}

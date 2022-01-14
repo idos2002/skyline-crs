@@ -3,7 +3,6 @@ from fastapi import Depends, FastAPI, Request, status
 from fastapi.responses import JSONResponse
 
 from . import dependencies, models, schemas
-from .dependencies import get_settings
 from .exceptions import (
     FlightNotFoundException,
     ServiceNotFoundException,
@@ -58,7 +57,3 @@ async def get_flight_seats(
     if not flight_seats:
         raise FlightNotFoundException
     return schemas.FlightSeats.from_model(flight_seats)
-
-
-if __name__ == "__main__":
-    uvicorn.run("flights.main:app", host="0.0.0.0", port=get_settings().port)

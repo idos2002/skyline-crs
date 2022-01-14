@@ -12,7 +12,6 @@ class LogLevel(str, Enum):
 
 
 class Settings(BaseSettings):
-    port: int = 80
     log_level: LogLevel = LogLevel.INFO
     inventory_manager_url: AnyHttpUrl
     iata_airline_code: str = Field("SK", regex=r"^[A-Z0-9]{2,3}$")
