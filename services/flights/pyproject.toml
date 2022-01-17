@@ -10,8 +10,8 @@ authors = ["Ido Saban <sabanido.business@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-fastapi = "^0.71.0"
-uvicorn = { version = "^0.16.0", extras = ["standard"] }
+fastapi = "^0.72.0"
+uvicorn = { version = "^0.17.0", extras = ["standard"] }
 httpx = "^0.21.1"
 pyhumps = "^3.5.0"
 
