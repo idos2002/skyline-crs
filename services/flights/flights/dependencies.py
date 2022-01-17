@@ -1,19 +1,13 @@
 from datetime import datetime, timedelta
-from functools import cache
 from typing import Any
 from uuid import UUID
 
 from fastapi import Path, Query
 from httpx import AsyncClient, Response
 
-from .config import Settings
+from .config import get_settings
 from .models import FlightDetails, FlightSeats, ServiceFlights
 from .util import CabinClass
-
-
-@cache
-def get_settings() -> Settings:
-    return Settings()
 
 
 async def query_inventory_manager(

@@ -1,13 +1,18 @@
-import uvicorn  # type: ignore
+import logging
+
 from fastapi import Depends, FastAPI, Request, status
 from fastapi.responses import JSONResponse
 
 from . import dependencies, models, schemas
+from .config import config_logging
 from .exceptions import (
     FlightNotFoundException,
     ServiceNotFoundException,
     SkylineException,
 )
+
+config_logging()
+log = logging.getLogger(__name__)
 
 app = FastAPI()
 

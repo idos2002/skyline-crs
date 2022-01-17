@@ -7,7 +7,7 @@ from humps import camelize
 from pydantic import BaseModel
 
 from . import models
-from .dependencies import get_settings
+from .config import get_settings
 from .util import CabinClass
 
 
