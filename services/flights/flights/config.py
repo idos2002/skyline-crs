@@ -9,6 +9,10 @@ from pydantic import AnyHttpUrl, BaseModel, BaseSettings, Field
 
 
 class LogLevel(str, Enum):
+    """
+    Log level for the flights logger.
+    """
+
     CRITICAL = "CRITICAL"
     ERROR = "ERROR"
     WARNING = "WARNING"
@@ -17,6 +21,15 @@ class LogLevel(str, Enum):
 
 
 class Settings(BaseSettings):
+    """
+    Provides application setting for the entire application, which are configurable
+    through environment variables.
+
+    This class should not be instantiated explicitly in most cases,
+    the :func:`get_settings` function should be used instead, as it caches the instance
+    upon first call (as each instantiation involves reading environment variables).
+    """
+
     log_level: LogLevel | None = None
     inventory_manager_url: AnyHttpUrl
     iata_airline_code: str = Field("SK", regex=r"^[A-Z0-9]{2,3}$")
@@ -28,24 +41,58 @@ class Settings(BaseSettings):
 
 @cache
 def get_settings() -> Settings:
+    """
+    Creates a new instance of :class:`Settings` and caches it on first call.
+    On subsequent calls the cached instance is returned.
+
+    :return: The cached settings instance.
+    """
     return Settings()
 
 
 class ConfigurationException(Exception):
+    """
+    Raised when flights service has a configuration error.
+    """
+
     pass
-
-
-def json_dumps_fallback(o: Any) -> Any:
-    match o:
-        case BaseModel():
-            return o.dict()
-        case _:
-            return str(o)
 
 
 class JsonLogFormatter(logging.Formatter):
     """
-    Custom JSON logging Formatter that outputs.
+    Structured JSON :class:`logging.Formatter` for the python :mod:`logging` module.
+
+    The JSON logs have the following schema:
+    ::
+        {
+            "time": "<ISO 8601 UTC timestamp, e.g. 2022-01-15T20:36:10.412635Z>",
+            "level": "DEBUG | INFO | WARNING | ERROR | CRITICAL",
+            "logger": "<Name of the logger>",
+            "message": "<Some message>",
+            "extra": { <Optional data> }
+        }
+    The JSON log fields can be customized with the constructor's ``fields`` parameter.
+    The ``extra`` field is always included if extra parameters are provided.
+
+    For example:
+    ::
+        extras = { "type": "access", "method": "GET", ... }
+        logger.info("Some message", extra={"extra": extras})
+    Will log:
+    ::
+        {
+            "time": "...",
+            "level": "INFO",
+            "logger": "...",
+            "message": "Some message",
+            "extra": {
+                "type": "access",
+                "method": "GET",
+                ...
+            }
+        }
+
+    It should be noted that each log is printed on a single line.
     """
 
     fields_mapping = {
@@ -65,6 +112,23 @@ class JsonLogFormatter(logging.Formatter):
         msec_format: str = "%s.%03dZ",
         validate: bool = True,
     ):
+        """
+        Initializes the formatter.
+
+        :param fields: The fields to include in the log.
+            Available fields: time, level, logger, message.
+            Defaults to all available fields.
+        :param time_format: Sets the default_time_format attribute of parent class.
+            Defaults to "%Y-%m-%dT%H:%M:%S".
+        :param msec_format: Sets the default_msec_format attribute of parent class.
+            Defaults to "%s.%03dZ".
+        :param validate: If the fields list should be validated for containing
+            supported fields.
+            Defaults to True.
+
+        :raises ConfigurationException: Raised when validation is enabled and the given
+            fields list is invalid.
+        """
         super().__init__()
 
         if validate:
@@ -84,14 +148,21 @@ class JsonLogFormatter(logging.Formatter):
 
     def usesTime(self) -> bool:
         """
-        Overwritten to look for the attribute in the fields list instead of the fmt string.
+        Checks if "time" should be used in the log (if is included in the fields list).
         """
         return "time" in self._fields
 
+    @staticmethod
+    def _json_dumps_fallback(o: Any) -> Any:
+        match o:
+            case BaseModel():
+                return o.dict()
+            case _:
+                return str(o)
+
     def format(self, record: logging.LogRecord) -> str:
         """
-        Mostly the same as the parent's class method, the difference being that a dict is manipulated and dumped as JSON
-        instead of a string.
+        Formats the :class:`logging.LogRecord` to a structured JSON log.
         """
         record.message = record.getMessage()
 
@@ -124,7 +195,7 @@ class JsonLogFormatter(logging.Formatter):
         if record.stack_info:
             message_dict["extra"]["stackFrame"] = self.formatStack(record.stack_info)
 
-        return json.dumps(message_dict, default=json_dumps_fallback)
+        return json.dumps(message_dict, default=JsonLogFormatter._json_dumps_fallback)
 
 
 def config_logging():
@@ -132,9 +203,10 @@ def config_logging():
     Configures logging for the application. Should be called before instantiating
     the application object.
 
-    Must be used with Uvicorn's `--config-file command` line option to use
-    `flights/logging.yaml` for the application's logging configuration.
-    This function overrides the flights logger's default log level if another
+    Must be used with Uvicorn's ``--config-file command`` line option to use
+    ``flights/logging.yaml`` for the application's logging configuration.
+
+    This function overrides the ``flights`` logger's default log level if another
     log level was provided using environment variables.
     """
     log_level = get_settings().log_level

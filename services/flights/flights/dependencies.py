@@ -14,6 +14,13 @@ async def query_inventory_manager(
     query: str,
     variables: dict[str, Any],
 ) -> dict[str, Any]:
+    """
+    Sends a GraphQL query (or mutation) to the inventory manager.
+
+    :param query: The GraphQL query or mutation string.
+    :param variables: Variables for the request.
+    :return: The JSON response.
+    """
     settings = get_settings()
     async with AsyncClient() as client:
         response: Response = await client.post(
