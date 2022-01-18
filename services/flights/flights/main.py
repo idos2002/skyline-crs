@@ -3,6 +3,7 @@ import time
 from datetime import datetime
 
 from fastapi import Depends, FastAPI, Request, Response, status
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
 from . import dependencies, models, schemas
@@ -39,7 +40,7 @@ async def access_log_middleware(request: Request, call_next):
 async def service_not_found_exception_handler(request: Request, exc: SkylineException):
     return JSONResponse(
         status_code=status.HTTP_404_NOT_FOUND,
-        content=exc.details.dict(),
+        content=jsonable_encoder(exc.details),
     )
 
 
