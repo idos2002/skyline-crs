@@ -23,6 +23,7 @@ mypy = "^0.931"
 pytest = "^6.2.5"
 coverage = { version = "^6.2", extras = ["toml"] }
 requests = "^2.27.0"
+pytest-env = "^0.6.2"
 
 [tool.black]
 line-length = 88
@@ -41,6 +42,7 @@ warn_untyped_fields = true
 [tool.pytest.ini_options]
 minversion = "6.0"
 testpaths = ["tests"]
+env = ["SKYLINE_INVENTORY_MANAGER_URL=http://localhost:8080/v1/graphql"]
 
 [tool.coverage.run]
 source = ["flights"]

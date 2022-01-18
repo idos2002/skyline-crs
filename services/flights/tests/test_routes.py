@@ -18,11 +18,6 @@ app.dependency_overrides.update(
 )
 
 
-@pytest.fixture(autouse=True)
-def get_settings_override(monkeypatch):
-    monkeypatch.setenv("SKYLINE_INVENTORY_MANAGER_URL", "http://localhost:8080/graphql")
-
-
 @pytest.mark.parametrize(
     "origin, destination, departure_time, expected_status, expected_response",
     [
