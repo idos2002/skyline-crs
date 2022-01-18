@@ -1,6 +1,8 @@
 import logging
+import time
+from datetime import datetime
 
-from fastapi import Depends, FastAPI, Request, status
+from fastapi import Depends, FastAPI, Request, Response, status
 from fastapi.responses import JSONResponse
 
 from . import dependencies, models, schemas
@@ -10,11 +12,27 @@ from .exceptions import (
     ServiceNotFoundException,
     SkylineException,
 )
+from .util import log_access
 
 config_logging()
 log = logging.getLogger(__name__)
 
 app = FastAPI()
+
+
+@app.middleware("http")
+async def access_log_middleware(request: Request, call_next):
+    start_time = datetime.utcnow()
+    start_measure_ns = time.perf_counter_ns()
+
+    response: Response = await call_next(request)
+
+    duration_ns = time.perf_counter_ns() - start_measure_ns
+    end_time = datetime.utcnow()
+
+    log_access(log, request, response, start_time, end_time, duration_ns)
+
+    return response
 
 
 @app.exception_handler(SkylineException)

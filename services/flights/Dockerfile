@@ -20,4 +20,5 @@ COPY flights flights
 CMD exec uvicorn flights.main:app \
     --host 0.0.0.0 \
     --port ${SKYLINE_PORT:=80} \
-    --log-config flights/logging.yaml
+    --log-config flights/logging.yaml \
+    --no-access-log
