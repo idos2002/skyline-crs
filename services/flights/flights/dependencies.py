@@ -30,74 +30,96 @@ async def query_inventory_manager(
         return response.json()
 
 
-async def get_flights(
-    origin: str = Path(..., regex=r"^[a-zA-Z]{3}$"),
-    destination: str = Path(..., regex=r"^[a-zA-Z]{3}$"),
-    departure_time: datetime = Path(...),
-    passengers: int = Query(1, ge=1),
-    cabin_classes: set[CabinClass] | None = Query(None, alias="cabin"),
-) -> ServiceFlights | None:
-    query = """
-        query findFlights(
-          $origin: String!
-          $destination: String!
-          $from_time: timestamptz!
-          $to_time: timestamptz!
-          $passengers: bigint! = 1
-          $cabin_classes: [String!]! = ["E", "B", "F"]
-        ) {
-          service(
-            where: {
-              origin_airport: { iata_code: { _eq: $origin } }
-              destination_airport: { iata_code: { _eq: $destination } }
-            }
-          ) {
-            id
-            origin_airport {
-              ...airportFragment
-            }
-            destination_airport {
-              ...airportFragment
-            }
-            flights(
-              where: {
-                departure_time: { _gte: $from_time, _lte: $to_time }
-                available_seats_counts: { available_seats_count: { _gte: $passengers } }
-              }
-            ) {
-              id
-              departure_terminal
-              departure_time
-              arrival_terminal
-              arrival_time
-              aircraft_model {
-                icao_code
-                iata_code
-                name
-              }
-              available_seats_counts(
-                where: {
-                  cabin_class: { _in: $cabin_classes }
-                  available_seats_count: { _gte: $passengers }
-                }
-              ) {
-                cabin_class
-                total_seats_count
-                available_seats_count
-              }
-            }
-          }
+_get_flights_query = """query findFlights(
+  $origin: String!
+  $destination: String!
+  $from_time: timestamptz!
+  $to_time: timestamptz!
+  $passengers: bigint! = 1
+  $cabin_classes: [String!]! = ["E", "B", "F"]
+) {
+  service(
+    where: {
+      origin_airport: { iata_code: { _eq: $origin } }
+      destination_airport: { iata_code: { _eq: $destination } }
+    }
+  ) {
+    id
+    origin_airport {
+      ...airportFragment
+    }
+    destination_airport {
+      ...airportFragment
+    }
+    flights(
+      where: {
+        departure_time: { _gte: $from_time, _lte: $to_time }
+        available_seats_counts: { available_seats_count: { _gte: $passengers } }
+      }
+    ) {
+      id
+      departure_terminal
+      departure_time
+      arrival_terminal
+      arrival_time
+      aircraft_model {
+        icao_code
+        iata_code
+        name
+      }
+      available_seats_counts(
+        where: {
+          cabin_class: { _in: $cabin_classes }
+          available_seats_count: { _gte: $passengers }
         }
+      ) {
+        cabin_class
+        total_seats_count
+        available_seats_count
+      }
+    }
+  }
+}
 
-        fragment airportFragment on airport {
-          iata_code
-          icao_code
-          name
-          subdivision_code
-          city
-          geo_location
-        }
-    """
+fragment airportFragment on airport {
+  iata_code
+  icao_code
+  name
+  subdivision_code
+  city
+  geo_location
+}
+"""
+
+
+async def get_flights(
+    origin: str = Path(
+        ...,
+        regex=r"^[a-zA-Z]{3}$",
+        description="The IATA airport code of the airport to depart from.",
+    ),
+    destination: str = Path(
+        ...,
+        regex=r"^[a-zA-Z]{3}$",
+        description="The IATA airport code of the destination airport.",
+    ),
+    departure_time: datetime = Path(
+        ...,
+        alias="departureTime",
+        description="The local date of departure (local to origin).",
+    ),
+    passengers: int = Query(
+        1,
+        ge=1,
+        description="The number of passengers to find a flight for.",
+    ),
+    cabin_classes: set[CabinClass]
+    | None = Query(
+        None,
+        alias="cabin",
+        description="The cabin classes of the flight.",
+    ),
+) -> ServiceFlights | None:
     variables = {
         "origin": origin.upper(),
         "destination": destination.upper(),
@@ -107,7 +129,7 @@ async def get_flights(
     }
     if cabin_classes:
         variables["cabin_classes"] = cabin_classes
-    response = await query_inventory_manager(query, variables)
+    response = await query_inventory_manager(_get_flights_query, variables)
     services = response["data"]["service"]
     if not services:
         return None
@@ -117,79 +139,93 @@ async def get_flights(
     return ServiceFlights(**flights_data)
 
 
-async def get_flight_details(flight_id: UUID) -> FlightDetails | None:
-    query = """
-        query getFlight($flight_id: uuid!) {
-          flight_by_pk(id: $flight_id) {
-            id
-            service {
-              id
-              origin_airport {
-                ...airportFragment
-              }
-              destination_airport {
-                ...airportFragment
-              }
-            }
-            departure_terminal
-            departure_time
-            arrival_terminal
-            arrival_time
-            aircraft_model {
-              iata_code
-              icao_code
-              name
-            }
-            available_seats_counts {
-              cabin_class
-              total_seats_count
-              available_seats_count
-            }
-          }
-        }
+_get_flight_query = """query getFlight($flight_id: uuid!) {
+  flight_by_pk(id: $flight_id) {
+    id
+    service {
+      id
+      origin_airport {
+        ...airportFragment
+      }
+      destination_airport {
+        ...airportFragment
+      }
+    }
+    departure_terminal
+    departure_time
+    arrival_terminal
+    arrival_time
+    aircraft_model {
+      iata_code
+      icao_code
+      name
+    }
+    available_seats_counts {
+      cabin_class
+      total_seats_count
+      available_seats_count
+    }
+  }
+}
 
-        fragment airportFragment on airport {
-          iata_code
-          icao_code
-          name
-          subdivision_code
-          city
-          geo_location
-        }
-    """
+fragment airportFragment on airport {
+  iata_code
+  icao_code
+  name
+  subdivision_code
+  city
+  geo_location
+}
+"""
+
+
+async def get_flight_details(
+    flight_id: UUID = Path(
+        ...,
+        alias="flightId",
+        description="The flight ID of the requested flight.",
+    )
+) -> FlightDetails | None:
     variables = {"flight_id": str(flight_id)}
-    response = await query_inventory_manager(query, variables)
+    response = await query_inventory_manager(_get_flight_query, variables)
     flight_data = response["data"]["flight_by_pk"]
     if not flight_data:
         return None
     return FlightDetails(**flight_data)
 
 
-async def get_flight_seats(flight_id: UUID) -> FlightSeats | None:
-    query = """
-        query getFlightSeats($flight_id: uuid!) {
-          flight_by_pk(id: $flight_id) {
-            id
-            aircraft_model {
-              icao_code
-              iata_code
-              name
-              seat_maps {
-                cabin_class
-                start_row
-                end_row
-                column_layout
-              }
-            }
-            booked_seats {
-              seat_row
-              seat_column
-            }
-          }
-        }
-    """
+_get_flight_seats_query = """query getFlightSeats($flight_id: uuid!) {
+  flight_by_pk(id: $flight_id) {
+    id
+    aircraft_model {
+      icao_code
+      iata_code
+      name
+      seat_maps {
+        cabin_class
+        start_row
+        end_row
+        column_layout
+      }
+    }
+    booked_seats {
+      seat_row
+      seat_column
+    }
+  }
+}
+"""
+
+
+async def get_flight_seats(
+    flight_id: UUID = Path(
+        ...,
+        alias="flightId",
+        description="The flight ID of the requested flight.",
+    )
+) -> FlightSeats | None:
     variables = {"flight_id": str(flight_id)}
-    response = await query_inventory_manager(query, variables)
+    response = await query_inventory_manager(_get_flight_seats_query, variables)
     flight_seats_data = response["data"]["flight_by_pk"]
     if not flight_seats_data:
         return None

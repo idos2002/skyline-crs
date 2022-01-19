@@ -4,7 +4,7 @@ from datetime import datetime
 from uuid import UUID
 
 from humps import camelize
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from . import models
 from .config import get_settings
@@ -18,8 +18,14 @@ class CamelCaseModel(BaseModel):
 
 
 class Coordinates(CamelCaseModel):
-    crs: str
-    data: list[float]
+    crs: str = Field(
+        title="Coordinates reference system",
+        description=(
+            "The coordinates reference system (CRS) URN used for the coordinates data, "
+            "e.g. urn:ogc:def:crs:EPSG::4326"
+        ),
+    )
+    data: list[float] = Field(description="The coordinates data")
 
     @classmethod
     def from_model(cls, geo_location: models.GeoLocation) -> Coordinates:
@@ -27,16 +33,23 @@ class Coordinates(CamelCaseModel):
 
 
 class Location(CamelCaseModel):
-    subdivision_code: str
-    city: str
-    coordinates: Coordinates
+    subdivision_code: str = Field(
+        title="Subdivision code",
+        description="The ISO 3166-2 subdivision code the airport is located in",
+    )
+    city: str = Field(description="The city the airport is located in")
+    coordinates: Coordinates = Field(description="Coordinates of the airport")
 
 
 class Airport(CamelCaseModel):
-    iata_code: str
-    icao_code: str
-    name: str
-    location: Location
+    iata_code: str = Field(
+        title="IATA code", description="IATA airport code of the airport"
+    )
+    icao_code: str = Field(
+        title="ICAO code", description="ICAO airport code of the airport"
+    )
+    name: str = Field(description="Name of the airport")
+    location: Location = Field(description="The airport's location")
 
     @classmethod
     def from_model(cls, airport: models.Airport) -> Airport:
@@ -53,9 +66,13 @@ class Airport(CamelCaseModel):
 
 
 class AircraftModel(CamelCaseModel):
-    icao_code: str
-    iata_code: str
-    name: str
+    icao_code: str = Field(
+        title="ICAO code", description="ICAO aircraft type designator code"
+    )
+    iata_code: str = Field(
+        title="IATA code", description="IATA aircraft type designator code"
+    )
+    name: str = Field(description="Model name of the aircraft")
 
     @classmethod
     def from_model(cls, aircraft_model: models.AircraftModel) -> AircraftModel:
@@ -63,9 +80,13 @@ class AircraftModel(CamelCaseModel):
 
 
 class Cabin(CamelCaseModel):
-    cabin_class: CabinClass
-    seats_count: int
-    available_seats_count: int
+    cabin_class: CabinClass = Field(
+        title="Cabin class", description="Cabin class of this cabin"
+    )
+    seats_count: int = Field(title="Seats count", description="Total number of seats")
+    available_seats_count: int = Field(
+        title="Available seats count", description="Number of available seats"
+    )
 
     @classmethod
     def from_model(cls, cabin: models.Cabin) -> Cabin:
@@ -77,19 +98,29 @@ class Cabin(CamelCaseModel):
 
 
 class Flight(CamelCaseModel):
-    id: UUID
-    departure_terminal: str
-    departure_time: datetime
-    arrival_terminal: str
-    arrival_time: datetime
-    aircraft_model: AircraftModel
-    cabins: list[Cabin]
+    id: UUID = Field(description="ID of the flight")
+    departure_terminal: str = Field(
+        title="Departure terminal", description="Departure terminal name"
+    )
+    departure_time: datetime = Field(
+        title="Departure time", description="Departure time in ISO 1806 format"
+    )
+    arrival_terminal: str = Field(
+        title="Arrival terminal", description="Arrival terminal name"
+    )
+    arrival_time: datetime = Field(
+        title="Arrival time", description="Return time in ISO 1806 format"
+    )
+    aircraft_model: AircraftModel = Field(
+        title="Aircraft model", description="The flight's aircraft model"
+    )
+    cabins: list[Cabin] = Field(description="Cabins statistics for the flight")
 
 
 class FlightsList(CamelCaseModel):
-    name: str
-    origin: Airport
-    destination: Airport
+    name: str = Field(description="Service name for this itinerary")
+    origin: Airport = Field(description="Airport from which the flight originates")
+    destination: Airport = Field(description="The destination airport for the flight")
     flights: list[Flight]
 
     @classmethod
@@ -115,9 +146,9 @@ class FlightsList(CamelCaseModel):
 
 
 class FlightDetails(Flight):
-    name: str
-    origin: Airport
-    destination: Airport
+    name: str = Field(description="Service name for this itinerary")
+    origin: Airport = Field(description="Airport from which the flight originates")
+    destination: Airport = Field(description="The destination airport for the flight")
 
     @classmethod
     def from_model(cls, flight: models.FlightDetails) -> FlightDetails:
@@ -137,10 +168,15 @@ class FlightDetails(Flight):
 
 
 class SeatMapSection(CamelCaseModel):
-    cabin_class: CabinClass
-    start_row: int
-    end_row: int
-    column_layout: str
+    cabin_class: CabinClass = Field(
+        title="Cabin class", description="Cabin class of this section"
+    )
+    start_row: int = Field(title="Start row", description="Start row of the section")
+    end_row: int = Field(title="End row", description="End row of the section")
+    column_layout: str = Field(
+        title="Column layout",
+        description="Column layout for this section, e.g. ABC-DE-F#H",
+    )
 
     @classmethod
     def from_model(cls, seat_map_section: models.SeatMapSection) -> SeatMapSection:
@@ -148,8 +184,8 @@ class SeatMapSection(CamelCaseModel):
 
 
 class BookedSeat(CamelCaseModel):
-    row: int
-    column: str
+    row: int = Field(description="Row number of the booked seat")
+    column: str = Field(description="Column name of the booked seat")
 
     @classmethod
     def from_model(cls, booked_seat: models.BookedSeat) -> BookedSeat:
@@ -157,10 +193,16 @@ class BookedSeat(CamelCaseModel):
 
 
 class FlightSeats(CamelCaseModel):
-    flight_id: UUID
-    aircraft_model: AircraftModel
-    seat_map: list[SeatMapSection]
-    booked_seats: list[BookedSeat]
+    flight_id: UUID = Field(title="Flight ID", description="ID of the flight")
+    aircraft_model: AircraftModel = Field(
+        title="Aircraft model", description="The flight's aircraft model"
+    )
+    seat_map: list[SeatMapSection] = Field(
+        title="Seat map", description="Seat map of the flight's aircraft"
+    )
+    booked_seats: list[BookedSeat] = Field(
+        title="Booked seats", description="The flight's booked seats"
+    )
 
     @classmethod
     def from_model(cls, flight_seats: models.FlightSeats) -> FlightSeats:

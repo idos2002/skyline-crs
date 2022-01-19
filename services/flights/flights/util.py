@@ -6,6 +6,16 @@ from fastapi import Request, Response
 
 
 class CabinClass(str, Enum):
+    """
+    Cabin class of the aircraft cabin.
+
+    There are three available cabin classes:
+
+    * E - Economy class
+    * B - Business class
+    * F - First class
+    """
+
     ECONOMY = "E"
     BUSINESS = "B"
     FIRST = "F"
