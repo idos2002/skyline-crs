@@ -4,7 +4,7 @@ The **flights service** presents an external API for the inventory, which contai
 
 ## Features
 
-- Get a list of all available flights under the requested conditions and boundaries, with support for pagination.
+- Get a list of all available flights for from the origin to the destination.
 - Get details about specific flights.
 - Get flight seats and seat maps.
 

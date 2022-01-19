@@ -16,6 +16,12 @@ Examples:
 GET /flight/17564e2f-7d32-4d4a-9d99-27ccd768fb7d
 ```
 
+> **Cabin Class Codes**  
+> There are three available cabin classes, each associated with a single letter code:
+> - **E** - Economy class
+> - **B** - Business class
+> - **F** - First class
+
 ## Success Response - `200 OK`
 
 ```json
@@ -51,7 +57,7 @@ GET /flight/17564e2f-7d32-4d4a-9d99-27ccd768fb7d
     "departureTerminal": "<Departure terminal name>",
     "departureTime": "<Departure time in ISO 1806 format>",
     "arrivalTerminal": "<Arrival terminal name>",
-    "arrivalTime": "<Return time in ISO 1806 format>",
+    "arrivalTime": "<Arrival time in ISO 1806 format>",
     "aircraftModel": {
         "icaoCode": "<ICAO aircraft type designator code>",
         "iataCode": "<IATA aircraft type designator code>",

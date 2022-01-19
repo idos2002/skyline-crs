@@ -16,6 +16,20 @@ Examples:
 GET /flight/17564e2f-7d32-4d4a-9d99-27ccd768fb7d/seats
 ```
 
+> **Cabin Class Codes**  
+> There are three available cabin classes, each associated with a single letter code:
+> - **E** - Economy class
+> - **B** - Business class
+> - **F** - First class
+
+> **Seat Map Column Layouts**  
+> The column layout of a seat map represents the way columns are spread in a seat map section using a string of characters.
+> - Characters in the range `A-Z` represent a column.
+> - The character `-` represents an aisle between the seats.
+> - The character `#` represents an empty column, to denote there is are no seats in that column.
+>
+> For example, the column layout `ABC-DE-F#H` represents a layout where there are three columns to the left (`A`, `B`, `C`), an aisle, then two columns in the center (`D`, `E`), an aisle, and three columns to the right (`F`, `#`, `H`), with an empty column between columns `F` and `H`.
+
 ## Success Response - `200 OK`
 
 ```json
@@ -29,15 +43,15 @@ GET /flight/17564e2f-7d32-4d4a-9d99-27ccd768fb7d/seats
     "seatMap": [
         {
             "cabinClass": "<Cabin class: E / B / F>",
-            "startRow": "<Start row of the cabin>",
-            "endRow": "<End row of the cabin>",
-            "columnLayout": "<Column layout for this cabin, e.g. ABC-DE-FGH>"
+            "startRow": "<Start row of the section>",
+            "endRow": "<End row of the section>",
+            "columnLayout": "<Column layout for this section, e.g. ABC-DE-F#H>"
         },
     ],
     "bookedSeats": [
         {
             "row": "<Row number of the booked seat>",
-            "column": "<Column number of the booked seat>"
+            "column": "<Column name of the booked seat>"
         },
     ]
 }

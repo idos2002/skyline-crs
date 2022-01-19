@@ -66,7 +66,7 @@ GET /flights/LAX/TLV/2021-03-22?passengers=2&class=F
             "departureTerminal": "<Departure terminal name>",
             "departureTime": "<Departure time in ISO 1806 format>",
             "arrivalTerminal": "<Arrival terminal name>",
-            "arrivalTime": "<Return time in ISO 1806 format>",
+            "arrivalTime": "<Arrival time in ISO 1806 format>",
             "aircraftModel": {
                 "icaoCode": "<ICAO aircraft type designator code>",
                 "iataCode": "<IATA aircraft type designator code>",
