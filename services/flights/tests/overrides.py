@@ -11,7 +11,7 @@ from flights.util import CabinClass
 async def get_flights(
     origin: str = Path(..., regex=r"^[a-zA-Z]{3}$"),
     destination: str = Path(..., regex=r"^[a-zA-Z]{3}$"),
-    departure_time: datetime = Path(...),
+    departure_time: datetime = Path(..., alias="departureTime"),
     passengers: int = Query(1, ge=1),
     cabin_classes: set[CabinClass] | None = Query(None, alias="cabin"),
 ) -> ServiceFlights | None:
@@ -106,7 +106,9 @@ async def get_flights(
     return ServiceFlights(**flights_data)
 
 
-async def get_flight_details(flight_id: UUID) -> FlightDetails | None:
+async def get_flight_details(
+    flight_id: UUID = Path(..., alias="flightId")
+) -> FlightDetails | None:
     response_flight_id = "eb2e5080-000e-440d-8242-46428e577ce5"
     flight_data: dict[str, Any] = {
         "id": response_flight_id,
@@ -175,7 +177,9 @@ async def get_flight_details(flight_id: UUID) -> FlightDetails | None:
     return FlightDetails(**flight_data)
 
 
-async def get_flight_seats(flight_id: UUID) -> FlightSeats | None:
+async def get_flight_seats(
+    flight_id: UUID = Path(..., alias="flightId")
+) -> FlightSeats | None:
     response_flight_id = "eb2e5080-000e-440d-8242-46428e577ce5"
     flight_seats_data = {
         "id": response_flight_id,
