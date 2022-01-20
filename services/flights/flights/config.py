@@ -154,11 +154,12 @@ class JsonLogFormatter(logging.Formatter):
 
     @staticmethod
     def _json_dumps_fallback(o: Any) -> Any:
-        match o:
-            case BaseModel():
-                return o.dict()
-            case _:
-                return str(o)
+        if isinstance(o, BaseModel):
+            return o.dict()
+        elif isinstance(o, set):
+            return list(o)
+        else:
+            return str(o)
 
     def format(self, record: logging.LogRecord) -> str:
         """

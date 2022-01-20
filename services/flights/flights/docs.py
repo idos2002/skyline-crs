@@ -1,3 +1,5 @@
+from typing import Any
+
 from starlette import status
 
 from .exceptions import ErrorDetails
@@ -12,7 +14,7 @@ which contains all of the flights information.
 - Get flight seats and seat maps.
 """
 
-flights_examples = {
+flights_examples: dict[int | str, Any] = {
     status.HTTP_200_OK: {
         "name": "SK1",
         "origin": {
@@ -77,7 +79,7 @@ flights_examples = {
     },
 }
 
-flights_responses = {
+flights_responses: dict[int | str, Any] = {
     status.HTTP_200_OK: {
         "content": {
             "application/json": {"example": flights_examples[status.HTTP_200_OK]}
@@ -104,7 +106,7 @@ flights_responses = {
 }
 
 
-flight_examples = {
+flight_examples: dict[int | str, Any] = {
     status.HTTP_200_OK: {
         "id": "eb2e5080-000e-440d-8242-46428e577ce5",
         "name": "SK1",
@@ -163,7 +165,7 @@ flight_examples = {
 }
 
 
-flight_responses = {
+flight_responses: dict[int | str, Any] = {
     status.HTTP_200_OK: {
         "content": {
             "application/json": {"example": flight_examples[status.HTTP_200_OK]}
@@ -188,7 +190,7 @@ flight_responses = {
 }
 
 
-flight_seats_examples = {
+flight_seats_examples: dict[int | str, Any] = {
     **flight_examples,
     status.HTTP_200_OK: {
         "flightId": "eb2e5080-000e-440d-8242-46428e577ce5",
@@ -250,7 +252,7 @@ flight_seats_examples = {
 }
 
 
-flight_seats_responses = {
+flight_seats_responses: dict[int | str, Any] = {
     **flight_responses,
     status.HTTP_200_OK: {
         "content": {
