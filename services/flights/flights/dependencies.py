@@ -1,13 +1,17 @@
+import logging
 from datetime import datetime, timedelta
 from typing import Any
 from uuid import UUID
 
+import httpx
 from fastapi import Path, Query
-from httpx import AsyncClient, Response
 
 from .config import get_settings
+from .exceptions import ExternalDependencyException
 from .models import FlightDetails, FlightSeats, ServiceFlights
-from .util import CabinClass
+from .util import CabinClass, log_response
+
+log = logging.getLogger(__name__)
 
 
 async def query_inventory_manager(
@@ -22,12 +26,40 @@ async def query_inventory_manager(
     :return: The JSON response.
     """
     settings = get_settings()
-    async with AsyncClient() as client:
-        response: Response = await client.post(
-            settings.inventory_manager_url,
-            json={"query": query, "variables": variables},
+    async with httpx.AsyncClient() as client:
+        request_body = {"query": query, "variables": variables}
+        try:
+            response: httpx.Response = await client.post(
+                settings.inventory_manager_url,
+                json=request_body,
+            )
+        except httpx.RequestError as exc:
+            log.exception(
+                "Error connecting to inventory manager at %s", exc.request.url
+            )
+            raise ExternalDependencyException
+
+        body: dict[str, Any] = response.json()
+
+        if "errors" in body:
+            log_response(
+                log,
+                "Error with inventory manager GraphQL query: %s",
+                ", ".join([e.get("message") for e in body["errors"]]),
+                request_body=request_body,
+                response=response,
+                level=logging.ERROR,
+            )
+            raise ExternalDependencyException
+
+        log_response(
+            log,
+            "Queried inventory manager successfully",
+            request_body=request_body,
+            response=response,
         )
-        return response.json()
+
+        return body
 
 
 _get_flights_query = """query findFlights(
@@ -113,7 +145,7 @@ async def get_flights(
         ge=1,
         description="The number of passengers to find a flight for.",
     ),
-    cabin_classes: set[CabinClass]
+    cabin_classes: list[CabinClass]
     | None = Query(
         None,
         alias="cabin",
@@ -127,6 +159,7 @@ async def get_flights(
         "to_time": (departure_time + timedelta(days=1)).isoformat(),
         "passengers": passengers,
     }
+    cabin_classes = list(set(cabin_classes))
     if cabin_classes:
         variables["cabin_classes"] = cabin_classes
     response = await query_inventory_manager(_get_flights_query, variables)

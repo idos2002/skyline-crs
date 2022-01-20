@@ -1,8 +1,10 @@
 import logging
 from datetime import datetime
 from enum import Enum
+from typing import Any
 
-from fastapi import Request, Response
+import fastapi
+import httpx
 
 
 class CabinClass(str, Enum):
@@ -23,8 +25,8 @@ class CabinClass(str, Enum):
 
 def log_access(
     logger: logging.Logger,
-    request: Request,
-    response: Response,
+    request: fastapi.Request,
+    response: fastapi.Response,
     start_time: datetime,
     end_time: datetime,
     duration_ns: int,
@@ -42,7 +44,7 @@ def log_access(
     :param end_time: The time the response was received.
     :param duration_ns: The time duration it took to process the request and get a
         response, in nanoseconds.
-    :param level: The logging level to log this message. Defaults to INFO.
+    :param level: The logging level for this log. Defaults to INFO.
     :param time_format: Format for start_time and end_time in parameters using
         datetime.datetime.strftime formatting.
     """
@@ -73,3 +75,32 @@ def log_access(
         params,
         extra={"extra": params | extra},
     )
+
+
+def log_response(
+    logger: logging.Logger,
+    message: str,
+    *args,
+    request_body: str | dict[str, Any],
+    response: httpx.Response,
+    level: int = logging.INFO,
+):
+    """
+    Logs an HTTP response made with the library HTTPX (request and response details).
+
+    :param logger: The logger instance to be used for logging.
+    :param message: The message to add to the log.
+    :param args: Arguments for the message parameter format string.
+    :param request_body: The request body used to get the response.
+    :param response: The response object to log.
+    :param level: The logging level for this log. Defaults to INFO.
+    """
+    extras = {
+        "type": "request",
+        "method": response.request.method,
+        "url": response.url,
+        "requestBody": request_body,
+        "statusCode": response.status_code,
+        "responseBody": response.json(),
+    }
+    logger.log(level, message, *args, extra={"extra": extras})

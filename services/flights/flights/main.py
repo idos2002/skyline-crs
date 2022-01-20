@@ -10,10 +10,11 @@ from fastapi.responses import JSONResponse
 from . import dependencies, docs, models, schemas
 from .config import config_logging
 from .exceptions import (
+    EndpointException,
     ErrorDetails,
+    ExternalDependencyException,
     FlightNotFoundException,
     ServiceNotFoundException,
-    SkylineException,
 )
 from .util import log_access
 
@@ -49,11 +50,23 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 
-@app.exception_handler(SkylineException)
-async def service_not_found_exception_handler(request: Request, exc: SkylineException):
+@app.exception_handler(EndpointException)
+async def service_not_found_exception_handler(request: Request, exc: EndpointException):
     return JSONResponse(
         status_code=status.HTTP_404_NOT_FOUND,
         content=jsonable_encoder(exc.details, exclude_none=True),
+    )
+
+
+@app.exception_handler(ExternalDependencyException)
+async def request_exception_handler(request: Request, exc: ExternalDependencyException):
+    response = ErrorDetails(
+        error="Internal server error",
+        message="The server has experienced an unrecoverable error.",
+    )
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content=jsonable_encoder(response, exclude_none=True),
     )
 
 

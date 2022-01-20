@@ -19,7 +19,7 @@ class ErrorDetails(BaseModel):
         cls, error: RequestValidationError
     ) -> ErrorDetails:
         details = [
-            ErrorCause.construct(cause="/".join(e["loc"]), message=e["msg"])
+            ErrorCause.construct(cause="/".join(str(e["loc"])), message=e["msg"])
             for e in error.errors()
         ]
         return cls.construct(
@@ -29,13 +29,13 @@ class ErrorDetails(BaseModel):
         )
 
 
-class SkylineException(Exception):
+class EndpointException(Exception):
     def __init__(self, details: ErrorDetails):
         self.details = details
         super().__init__(details.message)
 
 
-class ServiceNotFoundException(SkylineException):
+class ServiceNotFoundException(EndpointException):
     def __init__(self, details: ErrorDetails | None = None):
         details = details or ErrorDetails(
             error="Flights not found",
@@ -44,10 +44,14 @@ class ServiceNotFoundException(SkylineException):
         super().__init__(details)
 
 
-class FlightNotFoundException(SkylineException):
+class FlightNotFoundException(EndpointException):
     def __init__(self, details: ErrorDetails | None = None):
         details = details or ErrorDetails(
             error="Flight not found",
             message="Could not find flight with the requested flight ID.",
         )
         super().__init__(details)
+
+
+class ExternalDependencyException(Exception):
+    pass
