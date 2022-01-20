@@ -159,8 +159,8 @@ async def get_flights(
         "to_time": (departure_time + timedelta(days=1)).isoformat(),
         "passengers": passengers,
     }
-    cabin_classes = list(set(cabin_classes))
     if cabin_classes:
+        cabin_classes = list(set(cabin_classes))
         variables["cabin_classes"] = cabin_classes
     response = await query_inventory_manager(_get_flights_query, variables)
     services = response["data"]["service"]
