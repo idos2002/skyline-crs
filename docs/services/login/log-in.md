@@ -8,7 +8,7 @@ Log in to Skyline CRS using the booking credentials to access protected endpoint
 
 2. The login service will verify the credentials with the existing data.
 
-3. If the credentials are correct, a JWT access token will be generated and sent as the HTTP cookie `access_token`, and will have a **30 minutes** expiration time. The JWT token will be signed using the HS256 (HMAC-SHA256) algorithm, and will have the following payload format:
+3. If the credentials are correct, a JWT access token will be generated and sent in the response body, and will have a **30 minutes** expiration time. The JWT token will be signed using the HS256 (HMAC-SHA256) algorithm, and will have the following payload format:
     ```json
     {
         "sub": "<The PNR ID of this access token>",
@@ -29,7 +29,7 @@ Log in to Skyline CRS using the booking credentials to access protected endpoint
     eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmMzYyODQ2Zi02NzlkLTRlZjctODU3ZC1lMzIxYzYyMmNiNDEiLCJpYXQiOiIxNjM5MTc2MzAwIiwiZXhwIjoiMTYzOTE3ODEwMCJ9.l1smQvKIIWZG6dLLopUrXsWs7cff8_SJQ0JYwB_sd9g
     ```
 
-4. Then, for each request involving the authenticated booking, the `access_token` cookie will be supplied for authorization. Using an invalid or expired token would result in an error response of course, and would require the client to re-authenticate (starting from step 1 as seen above).
+4. Then, for each request involving the authenticated booking, the access token will be supplied using the `Authorization` header  for authorization. Using an invalid or expired token would result in an error response of course, and would require the client to re-authenticate (starting from step 1 as seen above).
 
 ## Request
 
@@ -60,21 +60,34 @@ Example:
 
 ### Set Cookies
 
-```http
-Set-Cookie: access_token=<Access token>; Max-Age=1800; SameSite=Strict; HttpOnly
+```json
+{
+    "token": "<The JWT access token>"
+}
 ```
 
 Example:
-```http
-Set-Cookie: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmMzYyODQ2Zi02NzlkLTRlZjctODU3ZC1lMzIxYzYyMmNiNDEiLCJpYXQiOiIxNjM5MTc2MzAwIiwiZXhwIjoiMTYzOTE3ODEwMCJ9.l1smQvKIIWZG6dLLopUrXsWs7cff8_SJQ0JYwB_sd9g; Max-Age=1800; SameSite=Strict; HttpOnly
+```json
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmMzYyODQ2Zi02NzlkLTRlZjctODU3ZC1lMzIxYzYyMmNiNDEiLCJpYXQiOiIxNjM5MTc2MzAwIiwiZXhwIjoiMTYzOTE3ODEwMCJ9.l1smQvKIIWZG6dLLopUrXsWs7cff8_SJQ0JYwB_sd9g"
+}
 ```
 
-## Missing Credentials Response - `400 Bad Request`
+## Log In Failed Response - `400 Bad Request`
 
 ```json
 {
-    "error": "Missing credentials",
-    "message": "Some credentials are missing in the request.",
+    "error": "Log in failed",
+    "message": "Could not authenticate booking for the given PNR ID with the given first name and last name."
+}
+```
+
+## Validation Error Response - `422 Unprocessable Entity`
+
+```json
+{
+    "error": "Validation error",
+    "message": "Request has an invalid format.",
     "details": [
         {
             "cause": "<Path to the missing credential>",
@@ -87,22 +100,13 @@ Set-Cookie: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmMzYyOD
 Example:
 ```json
 {
-    "error": "Missing credentials",
-    "message": "Some credentials are missing in the request.",
+    "error": "Validation error",
+    "message": "Request has an invalid format.",
     "details": [
         {
-            "cause": "/lastName",
-            "message": "Last name credential is missing."
+            "cause": "lastName",
+            "message": "lastName is missing."
         },
     ]
-}
-```
-
-## Log In Failed Response - `401 Unauthorized`
-
-```json
-{
-    "error": "Log in failed",
-    "message": "Could not authenticate booking with the given PNR ID for the given first name and last name."
 }
 ```
