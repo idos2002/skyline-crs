@@ -43,6 +43,8 @@ services:
       POSTGRES_DB: ${INVENTORY_DB_NAME}
     expose:
       - ${INVENTORY_PORT}
+    ports:
+      - 5432:${INVENTORY_PORT}
     volumes:
       - inventory-data:/var/lib/postgresql/data
     restart: unless-stopped
@@ -55,6 +57,8 @@ services:
       MONGO_INITDB_DATABASE: ${PNR_DB_NAME}
     expose:
       - ${PNR_PORT}
+    ports:
+      - 27017:${PNR_PORT}
     volumes:
       - pnr-data:/data/db
     restart: unless-stopped
