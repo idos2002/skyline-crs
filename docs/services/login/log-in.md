@@ -43,7 +43,7 @@ POST /login
 {
     "pnrId": "<The PNR ID (booking number) of the requested booking>",
     "firstName": "<First name of the person who made the booking>",
-    "lastName": "<Last name of the person who made the booking>"
+    "surname": "<surname of the person who made the booking>"
 }
 ```
 
@@ -52,13 +52,11 @@ Example:
 {
     "pnrId": "f362846f-679d-4ef7-857d-e321c622cb41",
     "firstName": "John",
-    "lastName": "Doe"
+    "surname": "Doe"
 }
 ```
 
 ## Success Response - `200 OK`
-
-### Set Cookies
 
 ```json
 {
@@ -78,7 +76,7 @@ Example:
 ```json
 {
     "error": "Log in failed",
-    "message": "Could not authenticate booking for the given PNR ID with the given first name and last name."
+    "message": "Could not authenticate booking for the given PNR ID with the given first name and surname."
 }
 ```
 
@@ -104,8 +102,8 @@ Example:
     "message": "Request has an invalid format.",
     "details": [
         {
-            "cause": "lastName",
-            "message": "lastName is missing."
+            "cause": "surname",
+            "message": "surname is missing."
         },
     ]
 }
