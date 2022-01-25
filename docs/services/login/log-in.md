@@ -102,8 +102,8 @@ Example:
     "message": "Request has an invalid format.",
     "details": [
         {
-            "cause": "surname",
-            "message": "surname is missing."
+            "cause": "body/surname",
+            "message": "field is required"
         },
     ]
 }
