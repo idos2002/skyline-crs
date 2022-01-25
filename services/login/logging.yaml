@@ -2,7 +2,7 @@ version: 1
 disable_existing_loggers: false
 formatters:
   json:
-    (): flights.config.JsonLogFormatter
+    (): login.config.JsonLogFormatter
 handlers:
   default:
     class: logging.StreamHandler
@@ -10,7 +10,7 @@ handlers:
     formatter: json
     stream: ext://sys.stdout
 loggers:
-  flights:
+  login:
     # By default, the log level is INFO, unless the SKYLINE_LOG_LEVEL environment variable is set
     level: INFO
     handlers:

@@ -13,6 +13,8 @@ python = "^3.10"
 fastapi = "^0.72.0"
 uvicorn = { version = "^0.17.0", extras = ["standard"] }
 pyhumps = "^3.5.0"
+PyJWT = "^2.3.0"
+motor = "^2.5.1"
 
 [tool.poetry.dev-dependencies]
 black = "^21.12b0"
