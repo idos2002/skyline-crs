@@ -1,6 +1,23 @@
 version: "3.9"
 
 services:
+  login:
+    build: ./services/login
+    environment:
+      SKYLINE_PORT: ${LOGIN_PORT}
+      SKYLINE_LOG_LEVEL: ${LOGIN_LOG_LEVEL}
+      SKYLINE_PNR_DB_URL: mongodb://${PNR_USER}:${PNR_PASSWORD}@pnr:${PNR_PORT}
+      SKYLINE_PNR_DB_NAME: ${PNR_DB_NAME}
+      SKYLINE_PNR_DB_COLLECTION_NAME: ${PNR_COLLECTION_NAME}
+      SKYLINE_ACCESS_TOKEN_SECRET: ${SKYLINE_SECRET}
+    expose:
+      - ${LOGIN_PORT}
+    ports:
+      - 8081:${LOGIN_PORT}
+    depends_on:
+      - pnr
+    restart: unless-stopped
+
   flights:
     build: ./services/flights
     environment:
@@ -10,7 +27,7 @@ services:
     expose:
       - ${FLIGHTS_PORT}
     ports:
-      - 80:${FLIGHTS_PORT}
+      - 8082:${FLIGHTS_PORT}
     depends_on:
       - inventory-manager
     restart: unless-stopped
@@ -50,7 +67,9 @@ services:
     restart: unless-stopped
 
   pnr:
-    build: ./db/pnr
+    build:
+      context: ./db/pnr
+      target: development
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${PNR_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${PNR_PASSWORD}
