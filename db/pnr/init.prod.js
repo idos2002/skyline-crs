@@ -4,7 +4,7 @@ const res = db.createCollection("pnrs", {
             bsonType: "object",
             required: [
                 "passengers",
-                "fightId",
+                "flightId",
                 "contact",
                 "ticket",
                 "createdTimestamp"
