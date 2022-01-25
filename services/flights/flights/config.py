@@ -165,7 +165,7 @@ class JsonLogFormatter(logging.Formatter):
         """
         Formats the :class:`logging.LogRecord` to a structured JSON log.
         """
-        record.message = record.getMessage()
+        record.message = record.getMessage().strip()
 
         if self.usesTime():
             record.asctime = self.formatTime(record)

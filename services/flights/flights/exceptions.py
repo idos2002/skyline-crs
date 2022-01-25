@@ -18,10 +18,11 @@ class ErrorDetails(BaseModel):
     def from_request_validation_error(
         cls, error: RequestValidationError
     ) -> ErrorDetails:
-        details = [
-            ErrorCause.construct(cause="/".join(str(e["loc"])), message=e["msg"])
-            for e in error.errors()
-        ]
+        details: list[ErrorCause] = []
+        for e in error.errors():
+            cause = "/".join([str(loc) for loc in e["loc"]])
+            details.append(ErrorCause(cause=cause, message=e["msg"]))
+
         return cls.construct(
             error="Validation error",
             message="Request has an invalid format.",
