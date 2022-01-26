@@ -11,9 +11,12 @@ GET /flights/{origin}/{destination}/{departureDate}
 | ----------------- | ------------------------------------------------------------------ | ----------------------------------------------- |
 | `{origin}`        | The IATA airport code of the airport to depart from.               | 3-letter IATA airport code, e.g. TLV            |
 | `{destination}`   | The IATA airport code of the destination airport.                  | 3-letter IATA airport code                      |
-| `{departureDate}` | The local date of departure (local to origin).                     | ISO 1806 date, e.g. 2021-01-01                  |
+| `{departureTime}` | The departure time to find flights for. <sup>1</sup>               | ISO 1806 datetime                               |
 | `passengers`      | The number of passengers to find a flight for. <br> **Default:** 1 | Positive integer, e.g. 2                        |
 | `class`           | The cabin class of the flight. <br> **Default:** all cabin classes | One of the following cabin class codes: E, B, F |
+
+Notes:
+1. All flights from the given departure time to 24 hours after will be included. For example: Searching for a flight with a departure time of 2021-01-01T06:00:00Z will result in a list of all flights from 2021-01-01T06:00:00Z to 2021-01-02T06:00:00Z.
 
 Examples:
 ```http

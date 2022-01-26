@@ -138,7 +138,13 @@ async def get_flights(
     departure_time: datetime = Path(
         ...,
         alias="departureTime",
-        description="The local date of departure (local to origin).",
+        description=(
+            "The departure time to find flights for. All flights from the given "
+            "departure time to 24 hours after will be included.  \n"
+            "For example: Searching for a flight with a departure time of "
+            "2021-01-01T06:00:00Z will result in a list of all flights from "
+            "2021-01-01T06:00:00Z to 2021-01-02T06:00:00Z."
+        ),
     ),
     passengers: int = Query(
         1,
