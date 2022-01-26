@@ -43,10 +43,16 @@ warn_untyped_fields = true
 [tool.pytest.ini_options]
 minversion = "6.0"
 testpaths = ["tests"]
-# env = []
+env = [
+    "SKYLINE_PNR_DB_URL=mongodb://admin:pnrpassword@localhost:27017",
+    "SKYLINE_ACCESS_TOKEN_SECRET=loginsecret"
+]
+filterwarnings = [
+    "ignore:There is no current event loop:DeprecationWarning"
+]
 
 [tool.coverage.run]
-source = ["flights"]
+source = ["login"]
 branch = true
 
 [tool.coverage.report]
