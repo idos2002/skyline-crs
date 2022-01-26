@@ -8,6 +8,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
+from . import docs
 from .config import Settings, config_logging, get_settings
 from .dependencies import validate_login_details
 from .exceptions import (
@@ -22,7 +23,10 @@ from .util import UuidJsonEncoder, log_access
 config_logging()
 log = logging.getLogger(__name__)
 
-app = FastAPI(title="Login Service")
+app = FastAPI(
+    title="Login Service",
+    description=docs.app_description,
+)
 
 
 @app.middleware("http")
@@ -70,7 +74,13 @@ async def request_exception_handler(request: Request, exc: ExternalDependencyExc
     )
 
 
-@app.post("/login", response_model=AccessToken, summary="Log in", tags=["login"])
+@app.post(
+    "/login",
+    response_model=AccessToken,
+    responses=docs.responses,
+    summary="Log in",
+    tags=["login"],
+)
 async def login(
     pnr: PnrValidationDetails | None = Depends(validate_login_details),
     settings: Settings = Depends(get_settings),
