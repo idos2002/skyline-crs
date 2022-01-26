@@ -208,7 +208,7 @@ const res = [
     }),
     db.pnrs.insertOne(
         {
-            _id: UUID("eb2e5080-000e-440d-8242-46428e577ce5"),
+            _id: UUID("17564e2f-7d32-4d4a-9d99-27ccd768fb7d"),
             passengers: [
                 {
                     nameTitle: "Mr",
@@ -225,7 +225,7 @@ const res = [
                     gender: "female"
                 }
             ],
-            flightId: UUID("17564e2f-7d32-4d4a-9d99-27ccd768fb7d"),
+            flightId: UUID("eb2e5080-000e-440d-8242-46428e577ce5"),
             contact: {
                 firstName: "John",
                 surname: "Doe",
