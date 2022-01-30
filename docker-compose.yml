@@ -32,6 +32,23 @@ services:
       - inventory-manager
     restart: unless-stopped
 
+  rabbitmq:
+    image: rabbitmq:3.9.13-management
+    hostname: skyline-rabbitmq # See: https://stackoverflow.com/questions/41330514/docker-rabbitmq-persistency
+    environment:
+      RABBITMQ_NODE_PORT: ${RABBITMQ_AMQP_PORT}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    expose:
+      - ${RABBITMQ_AMQP_PORT}
+      - 15672
+    ports:
+      - 5672:${RABBITMQ_AMQP_PORT}
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq/
+    restart: unless-stopped
+
   inventory-manager:
     build: ./services/inventory-manager
     environment:
@@ -83,5 +100,6 @@ services:
     restart: unless-stopped
 
 volumes:
+  rabbitmq-data:
   inventory-data:
   pnr-data:
