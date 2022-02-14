@@ -1,0 +1,29 @@
+# Editors
+.idea
+*.iml
+.awcache
+.vscode
+
+node_modules
+
+# tests
+test
+*.spec.ts
+*.test.ts
+*.spec.js
+*.test.js
+
+# Environment
+.env
+.env.*
+
+# Git
+.gitignore
+
+# Docker
+.dockerignore
+Dockerfile
+
+# Other
+LICENSE
+README.md
