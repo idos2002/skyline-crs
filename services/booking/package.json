@@ -7,12 +7,17 @@
   "private": true,
   "scripts": {
     "build": "rimraf dist && tsc -p tsconfig.build.json",
+    "clean": "rimraf dist docs",
+    "clean:build": "rimraf dist",
+    "clean:docs": "rimraf docs",
+    "clean:all": "rimraf dist node_modules",
+    "docs": "typedoc --out docs src",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "start": "ts-node -r tsconfig-paths/register src/main.ts",
     "start:dev": "tsc-watch -p tsconfig.build.json --onSuccess \"node dist/main\"",
     "start:debug": "tsc-watch -p tsconfig.build.json --onSuccess \"node --inspect-brk dist/main\"",
-    "start:prod": "node dist/main",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "start:prod": "node -r module-alias/register dist/main",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -20,18 +25,30 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "express": "^4.17.2"
+    "@typegoose/typegoose": "^9.6.2",
+    "bunyan": "^1.8.15",
+    "express": "^4.17.2",
+    "express-async-errors": "^3.1.1",
+    "module-alias": "^2.2.2",
+    "mongoose": "^6.2.1",
+    "swagger-jsdoc": "^6.1.0",
+    "swagger-ui-express": "^4.3.0",
+    "uuid-mongodb": "^2.5.0"
   },
   "devDependencies": {
+    "@types/bunyan": "^1.8.8",
     "@types/express": "^4.17.13",
     "@types/jest": "^27.4.0",
     "@types/node": "^17.0.17",
     "@types/supertest": "^2.0.11",
+    "@types/swagger-jsdoc": "^6.0.1",
+    "@types/swagger-ui-express": "^4.1.3",
     "@typescript-eslint/eslint-plugin": "^5.11.0",
     "@typescript-eslint/parser": "^5.11.0",
     "eslint": "^8.9.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-tsdoc": "^0.2.14",
     "jest": "^27.5.1",
     "prettier": "2.5.1",
     "rimraf": "^3.0.2",
@@ -40,7 +57,15 @@
     "ts-node": "^10.5.0",
     "tsc-watch": "^4.6.0",
     "tsconfig-paths": "^3.12.0",
+    "typedoc": "^0.22.11",
     "typescript": "^4.5.5"
+  },
+  "_moduleAliases": {
+    "@booking": "dist/booking",
+    "@common": "dist/common",
+    "@config": "dist/config",
+    "@email": "dist/email",
+    "@flights": "dist/flights"
   },
   "jest": {
     "moduleFileExtensions": [
