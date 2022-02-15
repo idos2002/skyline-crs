@@ -13,11 +13,14 @@
 
     /* Modules */
     "module": "commonjs",
-    "baseUrl": "./src",
+    "baseUrl": ".",
+    "paths": {
+      "@*": ["src/*"],
+    },
 
     /* Emit */
     "outDir": "./dist",
-    "removeComments": true,
+    "removeComments": false, // Important for swagger-jsdoc support!
     "sourceMap": true,
 
     /* Interop Constraints */
