@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import { mongoose, prop } from '@typegoose/typegoose';
 import uuidMongodb from 'uuid-mongodb';
 
 /**
@@ -8,13 +8,13 @@ export type MongoUUIDBuffer = uuidMongodb.MUUID;
 
 /**
  * A custom {@link mongoose.SchemaType} for a MongoDB UUID binary type.
- * It should be used in conjunction with the mongoose schema type {@link mongoose.Schema.Types.Buffer}.
+ * It should not be used directly, an only through the decorator {@link uuidProp}.
  *
  * Example usage:
  * ```typescript
  * class SchemaWithUUID {
- *   @prop({ type: MongoUUID, default: MongoUUID.v1 })
- *   public _id!: mongoose.Schema.Types.Buffer;
+ *   @uuidProp()
+ *   public uuid!: string;
  * }
  * ```
  */
@@ -46,4 +46,40 @@ export class MongoUUID extends mongoose.SchemaType {
 
 (mongoose.Schema.Types as any).MongoUUID = MongoUUID;
 
-export default MongoUUID;
+/**
+ * A wrapper around Typegoose's decorator {@link prop} for MongoDB UUID support.
+ * Since UUIDs in JavaScript/TypeScript are represented as strings, it exposes a
+ * getter and setter for this property to be used as a string and hides the usage
+ * of the {@link MongoUUID} type.
+ *
+ * It configures by default the decorator options:
+ * - `type` - The {@link MongoUUID} custom schema type.
+ * - `get` and `set`.
+ *
+ * Example usage:
+ * ```typescript
+ * class SchemaWithUUID {
+ *   @uuidProp()
+ *   public uuid!: string;
+ * }
+ * ```
+ *
+ * @param options Passed to the decorator {@link prop} and merged with the configuration of this wrapper.
+ * @param kind Passed to the decorator {@link prop} as is.
+ */
+export function uuidProp(
+  options?: Parameters<typeof prop>[0],
+  kind?: Parameters<typeof prop>[1],
+): ReturnType<typeof prop> {
+  return prop(
+    {
+      type: MongoUUID,
+      set: (v: string) => uuidMongodb.from(v),
+      get: (v: uuidMongodb.MUUID) => v.toString(),
+      ...options,
+    },
+    kind,
+  );
+}
+
+export default { MongoUUID, uuidProp };
