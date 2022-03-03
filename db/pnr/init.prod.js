@@ -25,7 +25,8 @@ const res = db.createCollection("pnrs", {
                             "givenNames",
                             "surname",
                             "dateOfBirth",
-                            "gender"
+                            "gender",
+                            "bookedSeatId"
                         ],
                         properties: {
                             nameTitle: {

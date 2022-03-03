@@ -26,7 +26,8 @@ const res = [
                                 "givenNames",
                                 "surname",
                                 "dateOfBirth",
-                                "gender"
+                                "gender",
+                                "bookedSeatId"
                             ],
                             properties: {
                                 nameTitle: {
@@ -215,14 +216,16 @@ const res = [
                     givenNames: "John Albert",
                     surname: "Doe",
                     dateOfBirth: new Date("2000-01-01T00:00:00.000Z"),
-                    gender: "male"
+                    gender: "male",
+                    bookedSeatId: UUID("b7b6551a-9b16-11ec-9ff4-0242ac120002")
                 },
                 {
                     nameTitle: "Mrs",
                     givenNames: "Jane",
                     surname: "Doe",
                     dateOfBirth: new Date("2002-01-01T00:00:00.000Z"),
-                    gender: "female"
+                    gender: "female",
+                    bookedSeatId: UUID("b7b65bb4-9b16-11ec-9ff4-0242ac120002")
                 }
             ],
             flightId: UUID("eb2e5080-000e-440d-8242-46428e577ce5"),
