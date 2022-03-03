@@ -23,6 +23,9 @@
     "removeComments": false, // Important for swagger-jsdoc support!
     "sourceMap": true,
 
+    /* JavaScript Support */
+    "allowJs": true,
+
     /* Interop Constraints */
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
