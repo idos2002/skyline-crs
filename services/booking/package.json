@@ -31,8 +31,11 @@
     "class-transformer": "^0.5.1",
     "class-transformer-validator": "^0.9.1",
     "class-validator": "^0.13.2",
-    "express": "^4.17.2",
+    "express": "^4.17.3",
     "express-async-errors": "^3.1.1",
+    "graphql": "^16.3.0",
+    "graphql-request": "^4.0.0",
+    "http-status-codes": "^2.2.0",
     "module-alias": "^2.2.2",
     "mongoose": "^6.2.1",
     "reflect-metadata": "^0.1.13",
@@ -44,6 +47,7 @@
   "devDependencies": {
     "@types/bunyan": "^1.8.8",
     "@types/express": "^4.17.13",
+    "@types/http-status-codes": "^1.2.0",
     "@types/jest": "^27.4.0",
     "@types/node": "^17.0.17",
     "@types/supertest": "^2.0.11",
@@ -68,6 +72,7 @@
     "typescript": "^4.5.5"
   },
   "_moduleAliases": {
+    "@auth": "dist/auth",
     "@booking": "dist/booking",
     "@common": "dist/common",
     "@config": "dist/config",
@@ -90,6 +95,17 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "@(auth|booking|common|config|email|flights|ticket)/(.*)": "<rootDir>/$1/$2",
+      "@(auth|booking|common|config|email|flights|ticket)": "<rootDir>/$1"
+    },
+    "setupFiles": [
+      "<rootDir>/jest-setup.ts"
+    ],
+    "transformIgnorePatterns": [
+      "/node_modules/(?!(auto-bind)/)",
+      "\\.pnp\\.[^\\/]+$"
+    ]
   }
 }
