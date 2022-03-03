@@ -4,9 +4,9 @@ import 'express-async-errors';
 import createLogger from '@common/log';
 import BookingController from '@booking/booking.controller';
 import BookingService from '@booking/booking.service';
-import authenticateJWT from '@common/middleware/jwt-auth.middleware';
 import swaggerUi from 'swagger-ui-express';
 import openapiSpecification from '@config/openapi-spec';
+import FlightsService from '@flights/flights.service';
 
 const log = createLogger(__filename);
 
@@ -15,10 +15,10 @@ export default function createApp(): Express {
 
   app.use(express.json());
 
-  const bookingController = new BookingController(
-    new BookingService(),
-    authenticateJWT,
-  );
+  const flightsService = new FlightsService();
+  const bookingService = new BookingService(flightsService);
+  const bookingController = new BookingController(bookingService);
+  // TODO: Apply JWT authentication middleware to the booking controller
   app.use('/booking', bookingController.createRouter());
 
   app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
