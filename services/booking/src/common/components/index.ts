@@ -1,2 +1,2 @@
-export { Controller } from './controller';
+export * from './controller';
 export type { Middleware } from './middleware';
