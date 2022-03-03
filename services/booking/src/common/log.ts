@@ -1,11 +1,15 @@
 import bunyan from 'bunyan';
 import config from '@config';
 
-const defaultLogger = bunyan.createLogger({
-  name: 'booking',
-  level: config.logLevel,
-});
+let _defaultLogger: bunyan | null = null;
 
 export default function createLogger(module: string) {
-  return defaultLogger.child({ module });
+  if (_defaultLogger === null) {
+    _defaultLogger = bunyan.createLogger({
+      name: 'booking',
+      level: config().logLevel,
+    });
+  }
+
+  return _defaultLogger.child({ module });
 }
