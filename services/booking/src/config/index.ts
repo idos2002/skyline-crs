@@ -13,6 +13,16 @@ export interface Config {
    * Log level for the application.
    */
   logLevel: bunyan.LogLevelString;
+
+  /**
+   * URL for the MongoDB PNR database.
+   */
+  pnrDbUrl: string;
+
+  /**
+   * URL for the inventory manager (Hasura GraphQL).
+   */
+  inventoryManagerUrl: string;
 }
 
 const logLevels: string[] = [
@@ -34,9 +44,31 @@ function convertLogLevel(
   return defaultLevel;
 }
 
-const config: Config = {
-  port: parseInt(process.env.SKYLINE_PORT ?? '80', 10),
-  logLevel: convertLogLevel(process.env.SKYLINE_LOG_LEVEL, 'info'),
-};
+let _config: Config | null = null;
+
+function getEnvironmentVariable(name: string, defaultValue?: string): string {
+  const env = process.env[name] ?? defaultValue;
+  if (env === undefined) {
+    throw new Error(
+      `Configuration error: ${name} environment variable is required`,
+    );
+  }
+  return env;
+}
+
+export function config(): Config {
+  if (_config === null) {
+    _config = {
+      port: parseInt(getEnvironmentVariable('SKYLINE_PORT', '80'), 10),
+      logLevel: convertLogLevel(process.env.SKYLINE_LOG_LEVEL, 'info'),
+      pnrDbUrl: getEnvironmentVariable('SKYLINE_PNR_DB_URL'),
+      inventoryManagerUrl: getEnvironmentVariable(
+        'SKYLINE_INVENTORY_MANAGER_URl',
+      ),
+    };
+  }
+
+  return _config;
+}
 
 export default config;
