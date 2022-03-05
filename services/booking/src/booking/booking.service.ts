@@ -11,6 +11,8 @@ import CreateBookingDto from './dto/create-booking.dto';
 import UpdateBookingDto from './dto/update-booking.dto';
 import TicketStatus from './enums/ticket-status.enum';
 import FlightsService from '@flights/flights.service';
+import BookingAlreadyCancelledException from './booking-already-cancelled.exception';
+import BookingAlreadyCheckedInException from './booking-already-checked-in.exception';
 
 export default class BookingService {
   private readonly _mongooseConnection: mongoose.Connection;
@@ -34,7 +36,7 @@ export default class BookingService {
       exposeUnsetFields: false,
     });
 
-    // change seat property to bookedSeatId for saving in the PNR database
+    // Change seat property to bookedSeatId for saving in the PNR database
     for (const passenger of bookingDtoPlain.passengers) {
       const seat = bookedSeats.find(
         (s) =>
@@ -74,39 +76,63 @@ export default class BookingService {
       exposeUnsetFields: false,
     });
 
-    const booking = await this.BookingModel.findOneAndUpdate(
-      { _id: id },
-      bookingDtoPlain,
-      { new: true },
-    );
+    const booking = await this.BookingModel.findById(id);
 
     if (booking === null) {
       throw new BookingNotFoundException(
         `Could not find booking with ID ${id}`,
       );
     }
+
+    this.validateBookingForUpdate(booking);
+
+    const updatedBooking = await this.BookingModel.findByIdAndUpdate(
+      id,
+      { $set: { bookingDtoPlain }, $push: { updatesTimestamps: new Date() } },
+      { new: true, runValidators: true },
+    );
+
+    return updatedBooking as Booking;
+  }
+
+  public async cancel(id: string): Promise<Booking> {
+    const booking = await this.BookingModel.findById(id);
+
+    if (booking === null) {
+      throw new BookingNotFoundException(
+        `Could not find booking with ID ${id}`,
+      );
+    }
+
+    this.validateBookingForUpdate(booking);
+
+    booking.ticket.status = TicketStatus.CANCELED;
+    booking.cancelTimestamp = new Date();
+    booking.save();
+
+    const seatIds = booking.passengers.map((p) => p.bookedSeatId);
+    await this.flightsService.cancelBookedSeats(seatIds);
 
     return booking;
   }
 
-  public async cancel(id: string): Promise<Booking> {
-    const booking = await this.BookingModel.findOneAndUpdate(
-      { _id: id },
-      {
-        ticket: { status: TicketStatus.CANCELED },
-        cancelTimestamp: new Date(),
-      } as Partial<Booking>,
-      { new: true },
-    );
-
-    if (booking === null) {
-      throw new BookingNotFoundException(
-        `Could not find booking with ID ${id}`,
+  private validateBookingForUpdate(booking: Booking) {
+    // Check if booking was already cancelled
+    if (
+      booking.ticket.status === TicketStatus.CANCELED &&
+      booking.cancelTimestamp !== undefined
+    ) {
+      const dateIso = booking.cancelTimestamp.toISOString();
+      throw new BookingAlreadyCancelledException(
+        `Booking with ID ${booking._id} was already cancelled on ${dateIso}`,
       );
     }
 
-    await this.flightsService.cancelBookedSeats(booking.flightId);
-
-    return booking;
+    // Check if any of the passengers have already checked in
+    if (booking.passengers.some((p) => p.checkInTimestamp !== undefined)) {
+      throw new BookingAlreadyCheckedInException(
+        `Could not cancel booking with ID ${booking._id} where some of the passengers have already checked in`,
+      );
+    }
   }
 }
