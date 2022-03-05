@@ -7,6 +7,7 @@ import { transformAndValidate } from 'class-transformer-validator';
 import FlightRequestException from './flight-request.exception';
 import FlightUnavailableException from './flight-unavailable.exception';
 import BookedSeat from './entities/booked-seat.entity';
+import FlightSeatNotFoundException from './flight-seat-not-found.exception';
 
 export default class FlightsService {
   private readonly graphqlClient: GraphQLClient;
@@ -79,6 +80,7 @@ export default class FlightsService {
 
       return flight as Flight;
     } catch (err) {
+      if (err instanceof FlightNotFoundException) throw err;
       if (err instanceof ClientError) {
         throw new FlightRequestException(
           'Error querying inventory manager with findFlight query',
@@ -115,12 +117,17 @@ export default class FlightsService {
     }));
 
     try {
-      const bookedSeatsPlain = await this.graphqlClient.request(
+      let bookedSeatsPlain = await this.graphqlClient.request(
         bookSeatsMutation,
         { seats: seatsMutationVariable },
       );
 
-      if (!bookedSeatsPlain.insert_booked_seat.returning) {
+      bookedSeatsPlain = bookedSeatsPlain.insert_booked_seat.returning;
+
+      if (
+        !bookedSeatsPlain ||
+        (Array.isArray(bookedSeatsPlain) && bookedSeatsPlain.length === 0)
+      ) {
         throw new FlightNotFoundException(
           `Could not find flight with ID ${flightId}`,
         );
@@ -128,12 +135,13 @@ export default class FlightsService {
 
       const bookedSeats = await transformAndValidate(
         BookedSeat,
-        bookedSeatsPlain.insert_booked_seat.returning,
+        bookedSeatsPlain,
         { transformer: { excludeExtraneousValues: true } },
       );
 
       return bookedSeats as BookedSeat[];
     } catch (err) {
+      if (err instanceof FlightNotFoundException) throw err;
       if (err instanceof ClientError) {
         throw new FlightUnavailableException(
           `The requested seats on flight with ID ${flightId} are already booked`,
@@ -145,7 +153,57 @@ export default class FlightsService {
     }
   }
 
-  async cancelBookedSeats(flightId: string) {
-    // TODO: Implement cancelBookedSeats
+  async cancelBookedSeats(seatIds: string[]): Promise<BookedSeat[]> {
+    const removeBookedSeatsMutation = gql`
+      mutation removeBookedSeats($seats: [uuid!]!) {
+        delete_booked_seat(where: { id: { _in: $seats } }) {
+          returning {
+            id
+            cabin_class
+            seat_row
+            seat_column
+          }
+        }
+      }
+    `;
+
+    try {
+      let removedSeatsPlain = await this.graphqlClient.request(
+        removeBookedSeatsMutation,
+        { seats: seatIds },
+      );
+
+      removedSeatsPlain = removedSeatsPlain.delete_booked_seat.returning;
+
+      if (
+        !removedSeatsPlain ||
+        (Array.isArray(removedSeatsPlain) && removedSeatsPlain.length === 0)
+      ) {
+        const seatIdsString = seatIds.join(', ');
+        throw new FlightSeatNotFoundException(
+          `Could not find booked seats with IDs: ${seatIdsString}`,
+        );
+      }
+
+      const removedSeats = await transformAndValidate(
+        BookedSeat,
+        removedSeatsPlain,
+        { transformer: { excludeExtraneousValues: true } },
+      );
+
+      return removedSeats as BookedSeat[];
+    } catch (err) {
+      if (err instanceof FlightSeatNotFoundException) throw err;
+      if (err instanceof ClientError) {
+        const seatIdsString = seatIds.join(', ');
+        throw new FlightRequestException(
+          `Error requesting to cancel booked seats: ${seatIdsString}`,
+          err,
+        );
+      }
+      throw new FlightRequestException(
+        `Flight object validation error:\n${JSON.stringify(err, null, 2)}`,
+      );
+    }
   }
 }
