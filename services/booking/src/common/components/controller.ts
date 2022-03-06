@@ -1,5 +1,5 @@
 import express, { Router, RequestHandler } from 'express';
-import autoBind from 'auto-bind';
+import { boundClass } from 'autobind-decorator';
 import { Params } from 'express-serve-static-core';
 
 export enum RequestMethod {
@@ -34,12 +34,9 @@ interface HandlerRouteInfo extends Required<RouteInfo> {
   handler: AnyHandler;
 }
 
+@boundClass // FIXME: Check if working with Jest!
 export class Controller {
   private readonly _routes: HandlerRouteInfo[] = [];
-
-  constructor() {
-    autoBind(this); // FIXME! does not work with Jest!
-  }
 
   public createRouter(): Router {
     const router = express.Router();
@@ -105,6 +102,8 @@ export class Controller {
       }
     }
   }
+
+  // TODO: Add addErrorHandler public method (like filters in NestJS)
 
   protected registerHandler<
     ReqParams extends Params = any,
