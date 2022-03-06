@@ -75,7 +75,7 @@ export function uuidProp(
     {
       type: MongoUUID,
       set: (v: string) => uuidMongodb.from(v),
-      get: (v: uuidMongodb.MUUID) => v.toString(),
+      get: (v?: uuidMongodb.MUUID) => v?.toString(),
       ...options,
     },
     kind,

@@ -32,7 +32,7 @@ export default async function transformAndValidateBody<T extends object>(
       throw new ValidationException(
         'body',
         err,
-        `Request body must be of type ${classType}`,
+        `Request body must be of type ${classType.name}`,
       );
     }
   }
