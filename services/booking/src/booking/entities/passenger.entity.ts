@@ -1,9 +1,10 @@
 import { prop } from '@typegoose/typegoose';
-import { Expose, Transform, Type } from 'class-transformer';
+import { Exclude, Expose, Transform, Type } from 'class-transformer';
 import { uuidProp } from '@common/util/mongo-uuid';
 import Gender from '@booking/enums/gender.enum';
 import Passport from './passport.entity';
 
+@Exclude()
 export default class Passenger {
   @prop()
   @Expose()

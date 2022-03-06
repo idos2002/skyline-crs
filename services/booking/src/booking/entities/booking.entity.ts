@@ -1,11 +1,12 @@
 import { prop } from '@typegoose/typegoose';
 import { v4 as uuidv4 } from 'uuid';
-import { Expose, Type, Transform } from 'class-transformer';
+import { Expose, Type, Transform, Exclude } from 'class-transformer';
 import { uuidProp } from '@common/util/mongo-uuid';
 import Passenger from './passenger.entity';
 import ContactDetails from './contact-details.entity';
 import Ticket from './ticket.entity';
 
+@Exclude()
 export default class Booking {
   @uuidProp({ default: uuidv4 })
   @Transform((value) => {

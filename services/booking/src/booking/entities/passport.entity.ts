@@ -1,6 +1,7 @@
-import { Expose } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 import { prop } from '@typegoose/typegoose';
 
+@Exclude()
 export default class Passport {
   @prop({ required: true })
   @Expose()

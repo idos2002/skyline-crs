@@ -1,6 +1,7 @@
 import { prop } from '@typegoose/typegoose';
-import { Expose } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 
+@Exclude()
 export default class Address {
   @prop({
     required: true,
