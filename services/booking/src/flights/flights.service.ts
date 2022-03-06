@@ -1,13 +1,13 @@
 import { ClientError, gql, GraphQLClient } from 'graphql-request';
+import { transformAndValidate } from 'class-transformer-validator';
 import config from '@config';
 import Seat from './interfaces/seat.interface';
-import FlightNotFoundException from './flight-not-found.exception';
 import Flight from './entities/flight.entity';
-import { transformAndValidate } from 'class-transformer-validator';
-import FlightRequestException from './flight-request.exception';
-import FlightUnavailableException from './flight-unavailable.exception';
 import BookedSeat from './entities/booked-seat.entity';
-import FlightSeatNotFoundException from './flight-seat-not-found.exception';
+import FlightNotFoundException from './exceptions/flight-not-found.exception';
+import FlightRequestException from './exceptions/flight-request.exception';
+import FlightUnavailableException from './exceptions/flight-unavailable.exception';
+import FlightSeatNotFoundException from './exceptions/flight-seat-not-found.exception';
 
 export default class FlightsService {
   private readonly graphqlClient: GraphQLClient;
@@ -62,21 +62,21 @@ export default class FlightsService {
     `;
 
     try {
-      const flightPlain = await this.graphqlClient.request(findFlightQuery, {
+      let flightPlain = await this.graphqlClient.request(findFlightQuery, {
         flight_id: id,
       });
 
-      if (!flightPlain.flight_by_pk) {
+      flightPlain = flightPlain.flight_by_pk;
+
+      if (!flightPlain) {
         throw new FlightNotFoundException(
           `Could not find flight with ID ${id}`,
         );
       }
 
-      const flight = await transformAndValidate(
-        Flight,
-        flightPlain.flight_by_pk,
-        { transformer: { excludeExtraneousValues: true } },
-      );
+      const flight = await transformAndValidate(Flight, flightPlain, {
+        transformer: { excludeExtraneousValues: true },
+      });
 
       return flight as Flight;
     } catch (err) {
