@@ -64,8 +64,8 @@ export default class Flight {
   @IsArray()
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
-  @Expose({ name: 'aircraft_model', toClassOnly: true })
-  @Transform(({ value }) => value.seat_maps, { toClassOnly: true })
+  @Expose({ name: 'seat_maps', toClassOnly: true })
+  @Transform(({ obj }) => obj.aircraft_model.seat_maps, { toClassOnly: true })
   public readonly seatMaps!: SeatMap[];
 
   @Type(() => FlightBookedSeat)
