@@ -26,9 +26,7 @@ export default class FlightsService {
           seat.row === bookedSeat.row && seat.column === bookedSeat.column,
       );
       if (seatAlreadyBooked) {
-        throw new FlightUnavailableException(
-          `The seat ${bookedSeat.row}${bookedSeat.column} on flight with ID ${flightId} is already booked`,
-        );
+        throw new FlightUnavailableException();
       }
     }
 
@@ -69,9 +67,7 @@ export default class FlightsService {
       flightPlain = flightPlain.flight_by_pk;
 
       if (!flightPlain) {
-        throw new FlightNotFoundException(
-          `Could not find flight with ID ${id}`,
-        );
+        throw new FlightNotFoundException();
       }
 
       const flight = await transformAndValidate(Flight, flightPlain, {
@@ -128,9 +124,7 @@ export default class FlightsService {
         !bookedSeatsPlain ||
         (Array.isArray(bookedSeatsPlain) && bookedSeatsPlain.length === 0)
       ) {
-        throw new FlightNotFoundException(
-          `Could not find flight with ID ${flightId}`,
-        );
+        throw new FlightNotFoundException();
       }
 
       const bookedSeats = await transformAndValidate(
@@ -143,9 +137,7 @@ export default class FlightsService {
     } catch (err) {
       if (err instanceof FlightNotFoundException) throw err;
       if (err instanceof ClientError) {
-        throw new FlightUnavailableException(
-          `The requested seats on flight with ID ${flightId} are already booked`,
-        );
+        throw new FlightUnavailableException();
       }
       throw new FlightRequestException(
         `Flight object validation error:\n${JSON.stringify(err, null, 2)}`,

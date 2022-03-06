@@ -1,5 +1,3 @@
-export default class FlightRequestException extends Error {
-  constructor(message: string, public cause?: Error) {
-    super(message);
-  }
-}
+import InternalException from '@common/exceptions/internal.exception';
+
+export default class FlightRequestException extends InternalException {}

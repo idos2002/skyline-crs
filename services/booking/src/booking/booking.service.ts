@@ -73,9 +73,7 @@ export default class BookingService {
     const booking = await this.BookingModel.findById(id);
 
     if (booking === null) {
-      throw new BookingNotFoundException(
-        `Could not find booking with ID ${id}`,
-      );
+      throw new BookingNotFoundException();
     }
 
     return plainToInstance(Booking, booking);
@@ -92,17 +90,13 @@ export default class BookingService {
     const booking = await this.BookingModel.findById(id);
 
     if (booking === null) {
-      throw new BookingNotFoundException(
-        `Could not find booking with ID ${id}`,
-      );
+      throw new BookingNotFoundException();
     }
 
     this.validateBookingForUpdate(booking);
 
     if (bookingDto.passengers.length !== booking.passengers.length) {
-      throw new BookingPassengersCountChangeException(
-        'Passenger additions or removals are not allowed.',
-      );
+      throw new BookingPassengersCountChangeException();
     }
 
     const flattenedBookingDto: Record<string, any> = flatten(bookingDtoPlain);
@@ -123,9 +117,7 @@ export default class BookingService {
     const booking = await this.BookingModel.findById(id);
 
     if (booking === null) {
-      throw new BookingNotFoundException(
-        `Could not find booking with ID ${id}`,
-      );
+      throw new BookingNotFoundException();
     }
 
     this.validateBookingForUpdate(booking);
@@ -146,17 +138,12 @@ export default class BookingService {
       booking.ticket.status === TicketStatus.CANCELED &&
       booking.cancelTimestamp !== undefined
     ) {
-      const dateIso = booking.cancelTimestamp.toISOString();
-      throw new BookingAlreadyCancelledException(
-        `Booking with ID ${booking._id} was already cancelled on ${dateIso}`,
-      );
+      throw new BookingAlreadyCancelledException();
     }
 
     // Check if any of the passengers have already checked in
     if (booking.passengers.some((p) => p.checkInTimestamp !== undefined)) {
-      throw new BookingAlreadyCheckedInException(
-        `Could not cancel booking with ID ${booking._id} where some of the passengers have already checked in`,
-      );
+      throw new BookingAlreadyCheckedInException();
     }
   }
 }
