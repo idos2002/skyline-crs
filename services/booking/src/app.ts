@@ -1,14 +1,12 @@
 import 'reflect-metadata';
-import express, { Express, NextFunction, Request, Response } from 'express';
+import express, { Express } from 'express';
 import 'express-async-errors';
-import createLogger from '@common/log';
 import BookingController from '@booking/booking.controller';
 import BookingService from '@booking/booking.service';
 import swaggerUi from 'swagger-ui-express';
 import openapiSpecification from '@config/openapi-spec';
 import FlightsService from '@flights/flights.service';
-
-const log = createLogger(__filename);
+import defaultErrorHandler from '@common/defaults/default.error-handler';
 
 export default function createApp(): Express {
   const app = express();
@@ -24,13 +22,7 @@ export default function createApp(): Express {
   app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 
   // Default error handler - should be registered last!
-  app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
-    log.error(err);
-    res.status(500).json({
-      error: 'Internal server error',
-      message: 'The server has experienced an unrecoverable error.',
-    });
-  });
+  app.use(defaultErrorHandler());
 
   return app;
 }
