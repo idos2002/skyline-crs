@@ -49,9 +49,11 @@ let _config: Config | null = null;
 function getEnvironmentVariable(name: string, defaultValue?: string): string {
   const env = process.env[name] ?? defaultValue;
   if (env === undefined) {
-    throw new Error(
+    console.error(
       `Configuration error: ${name} environment variable is required`,
     );
+    // Make sure server stops running (an exception may be caught)
+    process.exit(1);
   }
   return env;
 }
