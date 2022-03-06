@@ -2,8 +2,8 @@ import { StatusCodes } from 'http-status-codes';
 import { instanceToPlain } from 'class-transformer';
 import createLogger from '@common/log';
 import { RequestMethod, Controller } from '@common/components';
-import validateUUID from '@common/util/validate-uuid.middleware';
-import transformAndValidateBody from '@common/util/transform-and-validate-body.middleware';
+import validateUUID from '@common/util/validate-uuid';
+import transformAndValidateBody from '@common/util/transform-and-validate-body';
 import BookingService from './booking.service';
 import CreateBookingDto from './dto/create-booking.dto';
 import UpdateBookingDto from './dto/update-booking.dto';
@@ -25,9 +25,7 @@ export default class BookingController extends Controller {
           CreateBookingDto,
         );
         const booking = await this.create(bookingDto);
-        res
-          .status(StatusCodes.CREATED)
-          .send(instanceToPlain(booking, { exposeUnsetFields: false }));
+        res.status(StatusCodes.CREATED).send(instanceToPlain(booking));
       },
     );
 
@@ -38,9 +36,7 @@ export default class BookingController extends Controller {
       async (req, res) => {
         const id = validateUUID(req, 'id');
         const booking = await this.find(id);
-        res
-          .status(StatusCodes.OK)
-          .send(instanceToPlain(booking, { exposeUnsetFields: false }));
+        res.status(StatusCodes.OK).send(instanceToPlain(booking));
       },
     );
 
@@ -55,9 +51,7 @@ export default class BookingController extends Controller {
           UpdateBookingDto,
         );
         const booking = await this.update(id, bookingDto);
-        res
-          .status(StatusCodes.OK)
-          .send(instanceToPlain(booking, { exposeUnsetFields: false }));
+        res.status(StatusCodes.OK).send(instanceToPlain(booking));
       },
     );
 
@@ -68,9 +62,7 @@ export default class BookingController extends Controller {
       async (req, res) => {
         const id = validateUUID(req, 'id');
         const booking = await this.cancel(id);
-        res
-          .status(StatusCodes.OK)
-          .send(instanceToPlain(booking, { exposeUnsetFields: false }));
+        res.status(StatusCodes.OK).send(instanceToPlain(booking));
       },
     );
   }
@@ -81,6 +73,7 @@ export default class BookingController extends Controller {
   }
 
   public async find(id: string): Promise<Booking> {
+    this.log.debug('Finding booking with ID %s', id);
     const booking = await this.bookingService.find(id);
     return booking;
   }

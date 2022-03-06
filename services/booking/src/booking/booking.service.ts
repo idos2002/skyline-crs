@@ -3,25 +3,35 @@ import {
   getModelForClass,
   ReturnModelType,
 } from '@typegoose/typegoose';
-import { instanceToPlain } from 'class-transformer';
+import { instanceToPlain, plainToInstance } from 'class-transformer';
+import { flatten } from 'flat';
 import config from '@config';
-import Booking from './entities/booking.entity';
-import BookingNotFoundException from './booking-not-found.exception';
+import createLogger from '@common/log';
+import FlightsService from '@flights/flights.service';
 import CreateBookingDto from './dto/create-booking.dto';
 import UpdateBookingDto from './dto/update-booking.dto';
 import TicketStatus from './enums/ticket-status.enum';
-import FlightsService from '@flights/flights.service';
-import BookingAlreadyCancelledException from './booking-already-cancelled.exception';
-import BookingAlreadyCheckedInException from './booking-already-checked-in.exception';
+import Booking from './entities/booking.entity';
+import BookingNotFoundException from './exceptions/booking-not-found.exception';
+import BookingAlreadyCancelledException from './exceptions/booking-already-cancelled.exception';
+import BookingAlreadyCheckedInException from './exceptions/booking-already-checked-in.exception';
+import BookingPassengersCountChangeException from './exceptions/booking-passengers-count-change.exception';
 
 export default class BookingService {
-  private readonly _mongooseConnection: mongoose.Connection;
+  private readonly log = createLogger(__filename);
+  private readonly mongooseConnection: mongoose.Connection;
   private readonly BookingModel: ReturnModelType<typeof Booking>;
 
   constructor(private readonly flightsService: FlightsService) {
-    this._mongooseConnection = mongoose.createConnection(config().pnrDbUrl);
+    this.log.info(
+      'Creating connection to PNR database at %s',
+      config().pnrDbUrl,
+    );
+    this.mongooseConnection = mongoose.createConnection(config().pnrDbUrl, {
+      authSource: 'admin',
+    });
     this.BookingModel = getModelForClass(Booking, {
-      existingConnection: this._mongooseConnection,
+      existingConnection: this.mongooseConnection,
       schemaOptions: { collection: 'pnrs' },
     });
   }
@@ -53,7 +63,10 @@ export default class BookingService {
       delete passenger.seat;
     }
 
-    return await this.BookingModel.create(bookingDtoPlain);
+    bookingDtoPlain.ticket = { status: TicketStatus.PENDING };
+
+    const booking = await this.BookingModel.create(bookingDtoPlain);
+    return plainToInstance(Booking, booking);
   }
 
   public async find(id: string): Promise<Booking> {
@@ -65,7 +78,7 @@ export default class BookingService {
       );
     }
 
-    return booking;
+    return plainToInstance(Booking, booking);
   }
 
   public async update(
@@ -86,13 +99,24 @@ export default class BookingService {
 
     this.validateBookingForUpdate(booking);
 
+    if (bookingDto.passengers.length !== booking.passengers.length) {
+      throw new BookingPassengersCountChangeException(
+        'Passenger additions or removals are not allowed.',
+      );
+    }
+
+    const flattenedBookingDto: Record<string, any> = flatten(bookingDtoPlain);
+
     const updatedBooking = await this.BookingModel.findByIdAndUpdate(
       id,
-      { $set: { bookingDtoPlain }, $push: { updatesTimestamps: new Date() } },
+      {
+        $set: flattenedBookingDto,
+        $push: { updatesTimestamps: new Date() },
+      },
       { new: true, runValidators: true },
     );
 
-    return updatedBooking as Booking;
+    return plainToInstance(Booking, updatedBooking);
   }
 
   public async cancel(id: string): Promise<Booking> {
@@ -113,7 +137,7 @@ export default class BookingService {
     const seatIds = booking.passengers.map((p) => p.bookedSeatId);
     await this.flightsService.cancelBookedSeats(seatIds);
 
-    return booking;
+    return plainToInstance(Booking, booking);
   }
 
   private validateBookingForUpdate(booking: Booking) {
