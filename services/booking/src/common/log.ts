@@ -8,6 +8,10 @@ export default function createLogger(module: string) {
     _defaultLogger = bunyan.createLogger({
       name: 'booking',
       level: config().logLevel,
+      serializers: {
+        ...bunyan.stdSerializers,
+        cause: bunyan.stdSerializers.err,
+      },
     });
   }
 
