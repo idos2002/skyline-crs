@@ -6,6 +6,69 @@ import Passenger from './passenger.entity';
 import ContactDetails from './contact-details.entity';
 import Ticket from './ticket.entity';
 
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     Booking:
+ *       required:
+ *         - id
+ *         - passengers
+ *         - flightId
+ *         - contact
+ *         - ticket
+ *         - createdTimestamp
+ *       properties:
+ *         id:
+ *           type: string
+ *           format: uuid
+ *           title: Booking ID
+ *           description: ID of this booking
+ *           example: 17564e2f-7d32-4d4a-9d99-27ccd768fb7d
+ *         passengers:
+ *           type: array
+ *           minItems: 1
+ *           items:
+ *             $ref: '#/components/schemas/Passenger'
+ *           title: Passengers details
+ *           description: Passengers details for the booking
+ *         flightId:
+ *           type: string
+ *           format: uuid
+ *           title: Flight ID
+ *           description: ID of the flight for this booking
+ *           example: eb2e5080-000e-440d-8242-46428e577ce5
+ *         contact:
+ *           allOf:
+ *             - $ref: '#/components/schemas/ContactDetails'
+ *           title: Contact details
+ *           description: Contact details of the booking
+ *         ticket:
+ *           allOf:
+ *             - $ref: '#/components/schemas/Ticket'
+ *           title: Ticket details
+ *           description: Details about the ticket for this booking
+ *         createdTimestamp:
+ *           type: string
+ *           format: date-time
+ *           title: Creation timestamp
+ *           description: The creation time of this booking
+ *           example: 2022-01-01T05:35:12.345Z
+ *         updatesTimestamps:
+ *           type: array
+ *           title: Updates timestamps
+ *           description: The updates timestamps of this booking
+ *           items:
+ *             type: string
+ *             format: date-time
+ *             example: 2022-01-02T05:35:12.345Z
+ *         cancelTimestamp:
+ *           type: string
+ *           format: date-time
+ *           title: Cancellation timestamp
+ *           description: The cancellation time of this booking
+ *           example: 2022-01-05T05:35:12.345Z
+ */
 @Exclude()
 export default class Booking {
   @uuidProp({ default: uuidv4 })

@@ -5,7 +5,7 @@ export default class FlightUnavailableException extends HttpException {
   constructor() {
     super(
       StatusCodes.CONFLICT,
-      'Flight not available',
+      'Seats not available',
       'Could not book the requested seats, as they are already booked',
     );
   }

@@ -6,7 +6,7 @@ export default class BookingAlreadyCancelledException extends HttpException {
     super(
       StatusCodes.CONFLICT,
       'Booking already canceled',
-      'Could not cancel a booking which is already canceled.',
+      'Could not update or cancel a booking which is already canceled.',
     );
   }
 }

@@ -6,7 +6,7 @@ export default class BookingAlreadyCheckedInException extends HttpException {
     super(
       StatusCodes.CONFLICT,
       'Already checked in',
-      'Could not cancel a booking which all or some of its passengers have already checked in.',
+      'Could not update or cancel a booking which all or some of its passengers have already checked in.',
     );
   }
 }
