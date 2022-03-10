@@ -1,6 +1,5 @@
 import { ClientError, gql, GraphQLClient } from 'graphql-request';
 import { transformAndValidate } from 'class-transformer-validator';
-import config from '@config';
 import Seat from './interfaces/seat.interface';
 import Flight from './entities/flight.entity';
 import BookedSeat from './entities/booked-seat.entity';
@@ -10,11 +9,7 @@ import FlightUnavailableException from './exceptions/flight-unavailable.exceptio
 import FlightSeatNotFoundException from './exceptions/flight-seat-not-found.exception';
 
 export default class FlightsService {
-  private readonly graphqlClient: GraphQLClient;
-
-  constructor() {
-    this.graphqlClient = new GraphQLClient(config().inventoryManagerUrl);
-  }
+  constructor(private readonly graphqlClient: GraphQLClient) {}
 
   async bookSeats(flightId: string, seats: Seat[]): Promise<BookedSeat[]> {
     const flight = await this.findFlight(flightId);
