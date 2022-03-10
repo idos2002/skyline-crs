@@ -5,7 +5,6 @@ import {
 } from '@typegoose/typegoose';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { flatten } from 'flat';
-import config from '@config';
 import createLogger from '@common/log';
 import FlightsService from '@flights/flights.service';
 import CreateBookingDto from './dto/create-booking.dto';
@@ -19,17 +18,12 @@ import BookingPassengersCountChangeException from './exceptions/booking-passenge
 
 export default class BookingService {
   private readonly log = createLogger(__filename);
-  private readonly mongooseConnection: mongoose.Connection;
   private readonly BookingModel: ReturnModelType<typeof Booking>;
 
-  constructor(private readonly flightsService: FlightsService) {
-    this.log.info(
-      'Creating connection to PNR database at %s',
-      config().pnrDbUrl,
-    );
-    this.mongooseConnection = mongoose.createConnection(config().pnrDbUrl, {
-      authSource: 'admin',
-    });
+  constructor(
+    private readonly mongooseConnection: mongoose.Connection,
+    private readonly flightsService: FlightsService,
+  ) {
     this.BookingModel = getModelForClass(Booking, {
       existingConnection: this.mongooseConnection,
       schemaOptions: { collection: 'pnrs' },
