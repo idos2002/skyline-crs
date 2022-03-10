@@ -5,7 +5,7 @@ import { GraphQLClient } from 'graphql-request';
 import { mongoose } from '@typegoose/typegoose';
 import amqp from 'amqplib';
 import swaggerUi from 'swagger-ui-express';
-import config, { openapiSpecification } from '@config';
+import config, { openapiSpecification, swaggerUiOptions } from '@config';
 import BookingController from '@booking/booking.controller';
 import BookingService from '@booking/booking.service';
 import FlightsService from '@flights/flights.service';
@@ -44,7 +44,12 @@ export default async function createApp(): Promise<Express> {
   // TODO: Apply JWT authentication middleware to the booking controller
   app.use('/booking', bookingController.createRouter());
 
-  app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
+  app.use('/openapi.json', (_req, res) => res.json(openapiSpecification));
+  app.use(
+    '/docs',
+    swaggerUi.serve,
+    swaggerUi.setup(openapiSpecification, swaggerUiOptions),
+  );
 
   app.use(jsonBodySyntaxErrorHandler());
 
