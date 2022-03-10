@@ -13,6 +13,7 @@ import defaultErrorHandler from '@common/defaults/default.error-handler';
 import TicketService from '@ticket/ticket.service';
 import EmailService from '@email/email.service';
 import jsonBodySyntaxErrorHandler from '@common/defaults/json-body-syntax.error-handler';
+import authenticateJWT from '@auth/jwt-auth.middleware';
 
 export default async function createApp(): Promise<Express> {
   const app = express();
@@ -40,8 +41,12 @@ export default async function createApp(): Promise<Express> {
     ticketService,
     emailService,
   );
+  bookingController.applyMiddleware(authenticateJWT('id'), [
+    'find',
+    'update',
+    'cancel',
+  ]);
 
-  // TODO: Apply JWT authentication middleware to the booking controller
   app.use('/booking', bookingController.createRouter());
 
   app.use('/openapi.json', (_req, res) => res.json(openapiSpecification));

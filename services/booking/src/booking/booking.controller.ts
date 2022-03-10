@@ -162,6 +162,8 @@ export default class BookingController extends Controller {
    *         schema:
    *           type: string
    *           format: uuid
+   *     security:
+   *       - accessToken: []
    *     responses:
    *       200:
    *         description: Successful Response
@@ -177,7 +179,7 @@ export default class BookingController extends Controller {
    *               $ref: '#/components/schemas/ErrorDetails'
    *             example:
    *               error: Unauthorized access
-   *               message: The Authorization header is missing or invalid. Please make sure you are logged in.
+   *               message: The Authorization header is missing or invalid.
    *       404:
    *         description: Booking Not Found
    *         content:
@@ -233,6 +235,8 @@ export default class BookingController extends Controller {
    *           schema:
    *             $ref: '#/components/schemas/UpdateBooking'
    *       required: true
+   *     security:
+   *       - accessToken: []
    *     responses:
    *       200:
    *         description: Successful Response
@@ -248,7 +252,7 @@ export default class BookingController extends Controller {
    *               $ref: '#/components/schemas/ErrorDetails'
    *             example:
    *               error: Unauthorized access
-   *               message: The Authorization header is missing or invalid. Please make sure you are logged in.
+   *               message: The Authorization header is missing or invalid.
    *       404:
    *         description: Booking Not Found
    *         content:
@@ -322,6 +326,8 @@ export default class BookingController extends Controller {
    *         schema:
    *           type: string
    *           format: uuid
+   *     security:
+   *       - accessToken: []
    *     responses:
    *       200:
    *         description: Successful Response
@@ -337,7 +343,7 @@ export default class BookingController extends Controller {
    *               $ref: '#/components/schemas/ErrorDetails'
    *             example:
    *               error: Unauthorized access
-   *               message: The Authorization header is missing or invalid. Please make sure you are logged in.
+   *               message: The Authorization header is missing or invalid.
    *       404:
    *         description: Booking Not Found
    *         content:
