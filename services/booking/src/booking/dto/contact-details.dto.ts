@@ -4,6 +4,7 @@ import {
   IsEmail,
   IsPhoneNumber,
   ValidateNested,
+  IsDefined,
 } from 'class-validator';
 import { Expose, Type } from 'class-transformer';
 import AddressDto from './address.dto';
@@ -28,6 +29,7 @@ export default class ContactDetailsDto {
   public readonly phone!: string;
 
   @Type(() => AddressDto)
+  @IsDefined()
   @ValidateNested()
   @Expose()
   public readonly address!: AddressDto;
