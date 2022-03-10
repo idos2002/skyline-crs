@@ -1,17 +1,24 @@
 import { Expose, Type } from 'class-transformer';
-import { ArrayMinSize, IsArray, IsUUID, ValidateNested } from 'class-validator';
-import BookingBaseDto from './booking.base-dto';
+import {
+  ArrayMinSize,
+  IsArray,
+  IsDefined,
+  IsUUID,
+  ValidateNested,
+} from 'class-validator';
+import ContactDetailsDto from './contact-details.dto';
 import PassengerDto from './passenger.dto';
 import SeatDto from './seat.dto';
 
 export class PassengerWithSeatDto extends PassengerDto {
   @Type(() => SeatDto)
+  @IsDefined()
   @ValidateNested()
   @Expose()
   public readonly seat!: SeatDto;
 }
 
-export default class CreateBookingDto extends BookingBaseDto {
+export default class CreateBookingDto {
   @Type(() => PassengerWithSeatDto)
   @IsArray()
   @ArrayMinSize(1)
@@ -22,4 +29,10 @@ export default class CreateBookingDto extends BookingBaseDto {
   @IsUUID()
   @Expose()
   public readonly flightId!: string;
+
+  @Type(() => ContactDetailsDto)
+  @IsDefined()
+  @ValidateNested()
+  @Expose()
+  public readonly contact!: ContactDetailsDto;
 }
