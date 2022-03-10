@@ -15,6 +15,11 @@ export interface Config {
   logLevel: bunyan.LogLevelString;
 
   /**
+   * The secret used to sign access tokens for this API.
+   */
+  accessTokenSecret: string;
+
+  /**
    * URI for the MongoDB PNR database.
    */
   pnrDbUri: string;
@@ -93,6 +98,7 @@ export function config(): Config {
     _config = {
       port: parseInt(getEnvironmentVariable('SKYLINE_PORT', '80'), 10),
       logLevel: convertLogLevel(process.env.SKYLINE_LOG_LEVEL, 'info'),
+      accessTokenSecret: getEnvironmentVariable('SKYLINE_ACCESS_TOKEN'),
       pnrDbUri: getEnvironmentVariable('SKYLINE_PNR_DB_URI'),
       inventoryManagerUrl: getEnvironmentVariable(
         'SKYLINE_INVENTORY_MANAGER_URL',
