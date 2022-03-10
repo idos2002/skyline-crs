@@ -7,7 +7,7 @@ import createLogger from '@common/log';
 export default function defaultErrorHandler(): ErrorRequestHandler {
   const log = createLogger(__filename);
 
-  return (err, _req, res) => {
+  return (err, _req, res, _next) => {
     if (err instanceof HttpException) {
       res.status(err.status).json(err.response);
       return;
