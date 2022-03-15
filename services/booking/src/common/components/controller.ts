@@ -29,7 +29,7 @@ interface HandlerRouteInfo extends Required<RouteInfo> {
 
 type AnyErrorHandler = ErrorRequestHandler<any, any, any, any, any>;
 
-@boundClass // FIXME: Check if working with Jest!
+@boundClass
 export class Controller {
   private readonly _routes: HandlerRouteInfo[] = [];
   private readonly _errorHandlers: AnyErrorHandler[] = [];

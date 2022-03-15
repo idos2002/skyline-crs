@@ -293,7 +293,7 @@ describe('BookingService', () => {
       expect(booking).toMatchObject(updatedBookingData);
     });
 
-    it('should throw BookingNotFound', async () => {
+    it('should throw BookingNotFoundException', async () => {
       const badBookingId = 'ea548976-3224-46e4-afa0-527990321cec';
       const bookingDto = await transformAndValidate(
         UpdateBookingDto,
@@ -398,7 +398,6 @@ describe('BookingService', () => {
     });
   });
 
-  // TODO: Make tests for `cancel`
   describe('cancel', () => {
     const bookingData = {
       _id: mockBookingId,
@@ -466,7 +465,7 @@ describe('BookingService', () => {
       });
     });
 
-    it('should throw BookingNotFound', async () => {
+    it('should throw BookingNotFoundException', async () => {
       const badBookingId = 'ea548976-3224-46e4-afa0-527990321cec';
 
       findBookingByIdSpy = jest
@@ -482,7 +481,7 @@ describe('BookingService', () => {
       expect(cancelBookedSeatsSpy).not.toHaveBeenCalled();
     });
 
-    it('should throw BookingAlreadyCancelledException', async () => {
+    it('should throw BookingAlreadyCanceledException', async () => {
       const canceledBookingData = {
         ...bookingData,
         ticket: {
