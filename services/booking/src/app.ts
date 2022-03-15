@@ -2,11 +2,12 @@ import 'reflect-metadata';
 import express, { Express } from 'express';
 import 'express-async-errors';
 import { GraphQLClient } from 'graphql-request';
-import { mongoose } from '@typegoose/typegoose';
+import { getModelForClass, mongoose } from '@typegoose/typegoose';
 import amqp from 'amqplib';
 import swaggerUi from 'swagger-ui-express';
 import config, { openapiSpecification, swaggerUiOptions } from '@config';
 import BookingController from '@booking/booking.controller';
+import Booking from '@booking/entities/booking.entity';
 import BookingService from '@booking/booking.service';
 import FlightsService from '@flights/flights.service';
 import defaultErrorHandler from '@common/defaults/default.error-handler';
@@ -26,10 +27,11 @@ export default async function createApp(): Promise<Express> {
   const pnrMongooseConnection = mongoose.createConnection(config().pnrDbUri, {
     authSource: 'admin',
   });
-  const bookingService = new BookingService(
-    pnrMongooseConnection,
-    flightsService,
-  );
+  const BookingModel = getModelForClass(Booking, {
+    existingConnection: pnrMongooseConnection,
+    schemaOptions: { collection: 'pnrs' },
+  });
+  const bookingService = new BookingService(BookingModel, flightsService);
 
   const amqpConnection = await amqp.connect(config().rabbitmqUri);
   const amqpChannel = await amqpConnection.createConfirmChannel();

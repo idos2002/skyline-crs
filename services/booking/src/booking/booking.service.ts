@@ -1,8 +1,4 @@
-import {
-  mongoose,
-  getModelForClass,
-  ReturnModelType,
-} from '@typegoose/typegoose';
+import { ReturnModelType } from '@typegoose/typegoose';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { flatten } from 'flat';
 import createLogger from '@common/log';
@@ -12,23 +8,17 @@ import UpdateBookingDto from './dto/update-booking.dto';
 import TicketStatus from './enums/ticket-status.enum';
 import Booking from './entities/booking.entity';
 import BookingNotFoundException from './exceptions/booking-not-found.exception';
-import BookingAlreadyCancelledException from './exceptions/booking-already-cancelled.exception';
+import BookingAlreadyCanceledException from './exceptions/booking-already-cancelled.exception';
 import BookingAlreadyCheckedInException from './exceptions/booking-already-checked-in.exception';
 import BookingPassengersCountChangeException from './exceptions/booking-passengers-count-change.exception';
 
 export default class BookingService {
   private readonly log = createLogger(__filename);
-  private readonly BookingModel: ReturnModelType<typeof Booking>;
 
   constructor(
-    private readonly mongooseConnection: mongoose.Connection,
+    private readonly BookingModel: ReturnModelType<typeof Booking>,
     private readonly flightsService: FlightsService,
-  ) {
-    this.BookingModel = getModelForClass(Booking, {
-      existingConnection: this.mongooseConnection,
-      schemaOptions: { collection: 'pnrs' },
-    });
-  }
+  ) {}
 
   public async create(bookingDto: CreateBookingDto): Promise<Booking> {
     const bookedSeats = await this.flightsService.bookSeats(
@@ -118,7 +108,7 @@ export default class BookingService {
 
     booking.ticket.status = TicketStatus.CANCELED;
     booking.cancelTimestamp = new Date();
-    booking.save();
+    await booking.save();
 
     const seatIds = booking.passengers.map((p) => p.bookedSeatId);
     await this.flightsService.cancelBookedSeats(seatIds);
@@ -132,7 +122,7 @@ export default class BookingService {
       booking.ticket.status === TicketStatus.CANCELED &&
       booking.cancelTimestamp !== undefined
     ) {
-      throw new BookingAlreadyCancelledException();
+      throw new BookingAlreadyCanceledException();
     }
 
     // Check if any of the passengers have already checked in

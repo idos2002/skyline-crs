@@ -1,7 +1,7 @@
 import HttpException from '@common/exceptions/http.exception';
 import { StatusCodes } from 'http-status-codes';
 
-export default class BookingAlreadyCancelledException extends HttpException {
+export default class BookingAlreadyCanceledException extends HttpException {
   constructor() {
     super(
       StatusCodes.CONFLICT,
