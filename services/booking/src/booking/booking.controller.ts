@@ -110,31 +110,17 @@ export default class BookingController extends Controller {
    *             $ref: '#/components/schemas/CreateBooking'
    *       required: true
    *     responses:
-   *       201:
+   *       '201':
    *         description: Successful Response
    *         content:
    *           application/json:
    *             schema:
    *               $ref: '#/components/schemas/Booking'
-   *       404:
-   *         description: Flight Not Found
-   *         content:
-   *           application/json:
-   *             schema:
-   *               $ref: '#/components/schemas/ErrorDetails'
-   *             example:
-   *               error: Flight not found
-   *               message: Could not find flight with the requested flight ID.
-   *       409:
-   *         description: Seats Not Available
-   *         content:
-   *           application/json:
-   *             schema:
-   *               $ref: '#/components/schemas/ErrorDetails'
-   *             example:
-   *               error: Seats not available
-   *               message: Could not book the requested seats, as they are already booked.
-   *       422:
+   *       '404':
+   *         $ref: '#/components/responses/FlightNotFound'
+   *       '409':
+   *         $ref: '#/components/responses/SeatsNotAvailable'
+   *       '422':
    *         description: Validation Error
    *         content:
    *           application/json:
@@ -178,31 +164,17 @@ export default class BookingController extends Controller {
    *     security:
    *       - accessToken: []
    *     responses:
-   *       200:
+   *       '200':
    *         description: Successful Response
    *         content:
    *           application/json:
    *             schema:
    *               $ref: '#/components/schemas/Booking'
-   *       401:
-   *         description: Unauthorized Access
-   *         content:
-   *           application/json:
-   *             schema:
-   *               $ref: '#/components/schemas/ErrorDetails'
-   *             example:
-   *               error: Unauthorized access
-   *               message: The Authorization header is missing or invalid.
-   *       404:
-   *         description: Booking Not Found
-   *         content:
-   *           application/json:
-   *             schema:
-   *               $ref: '#/components/schemas/ErrorDetails'
-   *             example:
-   *               error: Booking not found
-   *               message: Could not find a booking with the given PNR ID.
-   *       422:
+   *       '401':
+   *         $ref: '#/components/responses/UnauthorizedAccess'
+   *       '404':
+   *         $ref: '#/components/responses/BookingNotFound'
+   *       '422':
    *         description: Validation Error
    *         content:
    *           application/json:
@@ -251,31 +223,17 @@ export default class BookingController extends Controller {
    *     security:
    *       - accessToken: []
    *     responses:
-   *       200:
+   *       '200':
    *         description: Successful Response
    *         content:
    *           application/json:
    *             schema:
    *               $ref: '#/components/schemas/Booking'
-   *       401:
-   *         description: Unauthorized Access
-   *         content:
-   *           application/json:
-   *             schema:
-   *               $ref: '#/components/schemas/ErrorDetails'
-   *             example:
-   *               error: Unauthorized access
-   *               message: The Authorization header is missing or invalid.
-   *       404:
-   *         description: Booking Not Found
-   *         content:
-   *           application/json:
-   *             schema:
-   *               $ref: '#/components/schemas/ErrorDetails'
-   *             example:
-   *               error: Booking not found
-   *               message: Could not find a booking with the given PNR ID.
-   *       409:
+   *       '401':
+   *         $ref: '#/components/responses/UnauthorizedAccess'
+   *       '404':
+   *         $ref: '#/components/responses/BookingNotFound'
+   *       '409':
    *         description: Update Conflict
    *         content:
    *           application/json:
@@ -283,21 +241,12 @@ export default class BookingController extends Controller {
    *               $ref: '#/components/schemas/ErrorDetails'
    *             examples:
    *               passengerCountChange:
-   *                 summary: Passenger Count Change
-   *                 value:
-   *                   error: Passenger count change
-   *                   message: Passenger additions or removals are not allowed.
+   *                 $ref: '#/components/examples/PassengerCountChangeResponse'
    *               alreadyCheckedIn:
-   *                 summary: Already Checked In
-   *                 value:
-   *                   error: Already checked in
-   *                   message: Could not update or cancel a booking which all or some of its passengers have already checked in.
+   *                 $ref: '#/components/examples/AlreadyCheckedInResponse'
    *               bookingAlreadyCanceled:
-   *                 summary: Booking Already Canceled
-   *                 value:
-   *                   error: Booking already canceled
-   *                   message: Could not update or cancel a booking which is already canceled.
-   *       422:
+   *                 $ref: '#/components/examples/BookingAlreadyCanceledResponse'
+   *       '422':
    *         description: Validation Error
    *         content:
    *           application/json:
@@ -342,30 +291,16 @@ export default class BookingController extends Controller {
    *     security:
    *       - accessToken: []
    *     responses:
-   *       200:
+   *       '200':
    *         description: Successful Response
    *         content:
    *           application/json:
    *             schema:
    *               $ref: '#/components/schemas/Booking'
-   *       401:
-   *         description: Unauthorized Access
-   *         content:
-   *           application/json:
-   *             schema:
-   *               $ref: '#/components/schemas/ErrorDetails'
-   *             example:
-   *               error: Unauthorized access
-   *               message: The Authorization header is missing or invalid.
-   *       404:
-   *         description: Booking Not Found
-   *         content:
-   *           application/json:
-   *             schema:
-   *               $ref: '#/components/schemas/ErrorDetails'
-   *             example:
-   *               error: Booking not found
-   *               message: Could not find a booking with the given PNR ID.
+   *       '401':
+   *         $ref: '#/components/responses/UnauthorizedAccess'
+   *       '404':
+   *         $ref: '#/components/responses/BookingNotFound'
    *       409:
    *         description: Cancel Conflict
    *         content:
@@ -374,15 +309,9 @@ export default class BookingController extends Controller {
    *               $ref: '#/components/schemas/ErrorDetails'
    *             examples:
    *               alreadyCheckedIn:
-   *                 summary: Already Checked In
-   *                 value:
-   *                   error: Already checked in
-   *                   message: Could not update or cancel a booking which all or some of its passengers have already checked in.
+   *                 $ref: '#/components/examples/AlreadyCheckedInResponse'
    *               bookingAlreadyCanceled:
-   *                 summary: Booking Already Canceled
-   *                 value:
-   *                   error: Booking already canceled
-   *                   message: Could not update or cancel a booking which is already canceled.
+   *                 $ref: '#/components/examples/BookingAlreadyCanceledResponse'
    *       422:
    *         description: Validation Error
    *         content:

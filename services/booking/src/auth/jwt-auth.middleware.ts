@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 import config from '@config';
-import AuthenticationException from './authentication.excpetion';
+import AuthenticationException from './authentication.exception';
 
 /**
  * Creates a middleware that authenticates requests by their `Authorization` header,

@@ -29,7 +29,7 @@ import Gender from '@booking/enums/gender.enum';
  *           type: string
  *           title: Given names
  *           description: Given names of the passenger (first and middle names)
- *           example: John
+ *           example: John Albert
  *         surname:
  *           type: string
  *           title: Surname
