@@ -47,6 +47,7 @@ export default async function createApp(): Promise<Express> {
     'find',
     'update',
     'cancel',
+    'checkIn',
   ]);
 
   app.use('/booking', bookingController.createRouter());
