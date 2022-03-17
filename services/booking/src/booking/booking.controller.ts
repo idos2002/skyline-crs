@@ -10,6 +10,7 @@ import UpdateBookingDto from './dto/update-booking.dto';
 import Booking from './entities/booking.entity';
 import TicketService from '@ticket/ticket.service';
 import EmailService from '@email/email.service';
+import CheckInDto from './dto/check-in.dto';
 
 export default class BookingController extends Controller {
   private readonly log = createLogger(__filename);
@@ -68,6 +69,18 @@ export default class BookingController extends Controller {
       async (req, res) => {
         const id = validateUUID(req, 'id');
         const booking = await this.cancel(id);
+        res.status(StatusCodes.OK).send(instanceToPlain(booking));
+      },
+    );
+
+    this.registerHandler(
+      'checkIn',
+      RequestMethod.POST,
+      '/:id/checkIn',
+      async (req, res) => {
+        const id = validateUUID(req, 'id');
+        const checkInDto = await transformAndValidateBody(req, CheckInDto);
+        const booking = await this.checkIn(id, checkInDto);
         res.status(StatusCodes.OK).send(instanceToPlain(booking));
       },
     );
@@ -386,6 +399,12 @@ export default class BookingController extends Controller {
   public async cancel(id: string): Promise<Booking> {
     const booking = await this.bookingService.cancel(id);
     this.emailService.queueCancellationConfirmationEmail(id);
+    return booking;
+  }
+
+  public async checkIn(id: string, checkInDto: CheckInDto): Promise<Booking> {
+    const booking = await this.bookingService.checkIn(id, checkInDto);
+    this.emailService.queueBoardingPassEmail(id);
     return booking;
   }
 }
