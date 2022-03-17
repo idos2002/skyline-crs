@@ -12,9 +12,13 @@ import TicketStatus from './enums/ticket-status.enum';
 import FlightUnavailableException from '@flights/exceptions/flight-unavailable.exception';
 import BookingNotFoundException from './exceptions/booking-not-found.exception';
 import UpdateBookingDto from './dto/update-booking.dto';
-import BookingAlreadyCanceledException from './exceptions/booking-already-cancelled.exception';
+import BookingAlreadyCanceledException from './exceptions/booking-already-canceled.exception';
 import BookingAlreadyCheckedInException from './exceptions/booking-already-checked-in.exception';
 import BookingPassengersCountChangeException from './exceptions/booking-passengers-count-change.exception';
+import CheckInDto from './dto/check-in.dto';
+import BookingNotTicketedException from './exceptions/booking-not-ticketed.exception';
+import PassengerAlreadyCheckedInException from './exceptions/passenger-already-checked-in.exception';
+import CheckInValidationException from './exceptions/check-in-validation.exception';
 
 jest.mock('./booking.service');
 jest.mock('@ticket/ticket.service');
@@ -58,6 +62,17 @@ const mockPassengersWithBookedSeatIds = mockPassengers.map(
   (passenger, index) => ({
     ...passenger,
     bookedSeatId: mockBookedSeats[index]?.id,
+  }),
+);
+
+const mockCheckInPassengers = mockPassengersWithBookedSeatIds.map(
+  (passenger, index) => ({
+    ...passenger,
+    passport: {
+      number: `${index + 1}`.repeat(8),
+      expirationDate: new Date(2030, 1, 1, index, index, index, index),
+      countryIssued: 'IL',
+    },
   }),
 );
 
@@ -418,5 +433,90 @@ describe('BookingController', () => {
         ).not.toHaveBeenCalled();
       },
     );
+  });
+
+  describe('checkIn', () => {
+    const checkInDtoData = { passengers: mockCheckInPassengers };
+    const updatedBookingData = {
+      _id: mockBookingId,
+      passengers: mockCheckInPassengers.map((p, i) => ({
+        ...p,
+        checkInTimestamp: new Date(2020, 1, 1, i, i, i, i),
+      })),
+      flightId: mockFlightId,
+      contact: mockContact,
+      ticket: {
+        status: TicketStatus.ISSUED,
+        issueTimestamp: new Date(2020, 1, 3, 3, 3, 3, 333),
+      },
+      createdTimestamp: new Date(2020, 1, 1, 1, 1, 1, 111),
+    };
+    let checkInBookingSpy: jest.SpyInstance | undefined;
+
+    afterEach(() => {
+      checkInBookingSpy?.mockRestore();
+    });
+
+    it('should check in the passengers and return the updated booking', async () => {
+      const checkInDto = await transformAndValidate(CheckInDto, checkInDtoData);
+
+      checkInBookingSpy = jest
+        .spyOn(bookingService, 'checkIn')
+        .mockReturnValue(transformAndValidate(Booking, updatedBookingData));
+
+      const booking = await bookingController.checkIn(
+        mockBookingId,
+        checkInDto,
+      );
+
+      expect(checkInBookingSpy).toHaveBeenCalledTimes(1);
+      expect(checkInBookingSpy).toHaveBeenCalledWith(mockBookingId, checkInDto);
+      expect(booking).toMatchObject(updatedBookingData);
+    });
+
+    it.each`
+      bookingId                                 | exceptionType
+      ${'ea548976-3224-46e4-afa0-527990321cec'} | ${BookingNotFoundException}
+      ${mockBookingId}                          | ${BookingAlreadyCanceledException}
+      ${mockBookingId}                          | ${BookingNotTicketedException}
+      ${mockBookingId}                          | ${PassengerAlreadyCheckedInException}
+    `(
+      'should throw $exceptionType.name',
+      async ({ bookingId, exceptionType }) => {
+        const checkInDto = await transformAndValidate(
+          CheckInDto,
+          checkInDtoData,
+        );
+
+        checkInBookingSpy = jest
+          .spyOn(bookingService, 'checkIn')
+          .mockRejectedValue(new exceptionType());
+
+        await expect(
+          bookingController.checkIn(bookingId, checkInDto),
+        ).rejects.toThrow(exceptionType);
+        expect(checkInBookingSpy).toHaveBeenCalledTimes(1);
+        expect(checkInBookingSpy).toHaveBeenCalledWith(bookingId, checkInDto);
+      },
+    );
+
+    it('should throw CheckInValidationException', async () => {
+      const checkInDto = await transformAndValidate(CheckInDto, {
+        passengers: mockCheckInPassengers.map((p) => ({
+          ...p,
+          gender: Gender.UNSPECIFIED,
+        })),
+      });
+
+      checkInBookingSpy = jest
+        .spyOn(bookingService, 'checkIn')
+        .mockRejectedValue(new CheckInValidationException(0));
+
+      await expect(
+        bookingService.checkIn(mockBookingId, checkInDto),
+      ).rejects.toThrow(CheckInValidationException);
+      expect(checkInBookingSpy).toHaveBeenCalledTimes(1);
+      expect(checkInBookingSpy).toHaveBeenCalledWith(mockBookingId, checkInDto);
+    });
   });
 });
