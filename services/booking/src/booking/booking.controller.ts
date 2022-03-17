@@ -331,6 +331,73 @@ export default class BookingController extends Controller {
     return booking;
   }
 
+  /**
+   * Check in passengers for the given booking ID with the given data.
+   *
+   * @param id The ID of the passengers' booking to check in.
+   * @param checkInDto The data to check in the passengers with.
+   * @returns A promise to the updated booking.
+   *
+   * @openapi
+   * /booking/{id}/checkIn:
+   *   post:
+   *     tags:
+   *       - booking
+   *     summary: Check in booking
+   *     description: Check in passengers of the booking with the given ID using the data passed in the body.
+   *     parameters:
+   *       - name: id
+   *         description: The ID of the passengers' booking to check in.
+   *         in: path
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: uuid
+   *     requestBody:
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/CheckIn'
+   *       required: true
+   *     security:
+   *       - accessToken: []
+   *     responses:
+   *       '200':
+   *         description: Successful Response
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Booking'
+   *       '401':
+   *         $ref: '#/components/responses/UnauthorizedAccess'
+   *       '404':
+   *         $ref: '#/components/responses/BookingNotFound'
+   *       '409':
+   *         description: Check-in Conflict
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/ErrorDetails'
+   *             examples:
+   *               bookingNotTicketed:
+   *                 $ref: '#/components/examples/BookingNotTicketedResponse'
+   *               checkInValidationError:
+   *                 $ref: '#/components/examples/CheckInValidationErrorResponse'
+   *               passengerAlreadyCheckedIn:
+   *                 $ref: '#/components/examples/PassengerAlreadyCheckedInResponse'
+   *       '422':
+   *         description: Validation Error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/ErrorDetails'
+   *             example:
+   *               error: Validation error
+   *               message: Request has an invalid format.
+   *               details:
+   *                 - cause: path/id
+   *                   message: id must be a UUID
+   */
   public async checkIn(id: string, checkInDto: CheckInDto): Promise<Booking> {
     const booking = await this.bookingService.checkIn(id, checkInDto);
     this.emailService.queueBoardingPassEmail(id);
