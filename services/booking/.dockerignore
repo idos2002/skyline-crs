@@ -7,7 +7,11 @@
 # Node.js
 node_modules
 
-# tests
+# Artifacts
+dist
+docs
+
+# Tests
 test
 *.spec.ts
 *.test.ts
