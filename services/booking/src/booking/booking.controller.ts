@@ -343,7 +343,7 @@ export default class BookingController extends Controller {
    *   post:
    *     tags:
    *       - booking
-   *     summary: Check in booking
+   *     summary: Check in
    *     description: Check in passengers of the booking with the given ID using the data passed in the body.
    *     parameters:
    *       - name: id
