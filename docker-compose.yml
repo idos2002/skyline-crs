@@ -32,6 +32,31 @@ services:
       - inventory-manager
     restart: unless-stopped
 
+  booking:
+    build: ./services/booking
+    environment:
+      SKYLINE_PORT: ${BOOKING_PORT}
+      SKYLINE_LOG_LEVEL: ${BOOKING_LOG_LEVEL}
+      SKYLINE_ACCESS_TOKEN_SECRET: ${SKYLINE_SECRET}
+      SKYLINE_PNR_DB_URI: mongodb://${PNR_USER}:${PNR_PASSWORD}@pnr:${PNR_PORT}/${PNR_DB_NAME}
+      SKYLINE_INVENTORY_MANAGER_URL: http://inventory-manager:${INVENTORY_MANAGER_PORT}/${INVENTORY_MANAGER_GRAPHQL_ENDPOINT}
+      SKYLINE_RABBITMQ_URI: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:${RABBITMQ_AMQP_PORT}/${RABBITMQ_VHOST}
+      SKYLINE_TICKET_EXCHANGE_NAME: ${RABBITMQ_TICKET_EXCHANGE_NAME}
+      SKYLINE_TICKET_BOOKING_ROUTING_KEY: ${RABBITMQ_TICKET_BOOKING_ROUTING_KEY}
+      SKYLINE_EMAIL_EXCHANGE_NAME: ${RABBITMQ_EMAIL_EXCHANGE_NAME}
+      SKYLINE_EMAIL_BOOKING_CONFIRMATION_ROUTING_KEY: ${RABBITMQ_EMAIL_BOOKING_CONFIRMATION_ROUTING_KEY}
+      SKYLINE_EMAIL_BOOKING_CANCELLATION_ROUTING_KEY: ${RABBITMQ_EMAIL_BOOKING_CANCELLATION_ROUTING_KEY}
+      SKYLINE_EMAIL_BOARDING_PASS_ROUTING_KEY: ${RABBITMQ_EMAIL_BOARDING_PASS_ROUTING_KEY}
+    expose:
+      - ${BOOKING_PORT}
+    ports:
+      - 8083:${BOOKING_PORT}
+    depends_on:
+      - inventory-manager
+      - pnr
+      - rabbitmq
+    restart: unless-stopped
+
   rabbitmq:
     image: rabbitmq:3.9.13-management
     hostname: skyline-rabbitmq # See: https://stackoverflow.com/questions/41330514/docker-rabbitmq-persistency
