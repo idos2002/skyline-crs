@@ -78,7 +78,7 @@ function convertLogLevel(
   logLevel: string | undefined,
   defaultLevel: bunyan.LogLevelString,
 ): bunyan.LogLevelString {
-  if (logLevel !== undefined && logLevels.includes(logLevel)) {
+  if (logLevel !== undefined && logLevels.includes(logLevel.toLowerCase())) {
     return logLevel as bunyan.LogLevelString;
   }
   return defaultLevel;
@@ -103,7 +103,7 @@ export function config(): Config {
     _config = {
       port: parseInt(getEnvironmentVariable('SKYLINE_PORT', '80'), 10),
       logLevel: convertLogLevel(process.env.SKYLINE_LOG_LEVEL, 'info'),
-      accessTokenSecret: getEnvironmentVariable('SKYLINE_ACCESS_TOKEN'),
+      accessTokenSecret: getEnvironmentVariable('SKYLINE_ACCESS_TOKEN_SECRET'),
       pnrDbUri: getEnvironmentVariable('SKYLINE_PNR_DB_URI'),
       inventoryManagerUrl: getEnvironmentVariable(
         'SKYLINE_INVENTORY_MANAGER_URL',
