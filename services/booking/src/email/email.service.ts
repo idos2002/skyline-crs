@@ -21,6 +21,11 @@ export default class EmailService {
     type: config().emailCancellationConfirmationRoutingKey,
   };
 
+  private readonly queueBoardingPassOptions: Options.Publish = {
+    ...this.optionsBase,
+    type: config().emailBoardingPassRoutingKey,
+  };
+
   constructor(private readonly amqpChannel: ConfirmChannel) {
     this.amqpChannel.assertExchange(config().emailExchangeName, 'topic');
   }
@@ -99,6 +104,42 @@ export default class EmailService {
       config().emailCancellationConfirmationRoutingKey,
       Buffer.from(message),
       this.queueCancellationOptions,
+      onConfirm,
+    );
+  }
+
+  public queueBoardingPassEmail(bookingId: string, retries = 10) {
+    const message = JSON.stringify({ bookingId });
+
+    const onConfirm = (err: any) => {
+      if (err && retries > 0) {
+        // Retry to queue if failed on previous attempt
+        this.queueBoardingPassEmail(bookingId, retries - 1);
+        return;
+      }
+
+      const logData = {
+        bookingId,
+        exchange: config().emailExchangeName,
+        routingKey: config().emailBoardingPassRoutingKey,
+      };
+
+      if (err) {
+        this.log.error(
+          { err, ...logData },
+          'Could not queue boarding pass to be emailed',
+        );
+        return;
+      }
+
+      this.log.info(logData, 'Successfully queued boarding pass to be emailed');
+    };
+
+    this.amqpChannel.publish(
+      config().emailExchangeName,
+      config().emailBoardingPassRoutingKey,
+      Buffer.from(message),
+      this.queueBoardingPassOptions,
       onConfirm,
     );
   }

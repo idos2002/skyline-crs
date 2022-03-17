@@ -58,6 +58,11 @@ export interface Config {
    * The routing key to use for queueing cancellation confirmation emails in the RabbitMQ email exchange.
    */
   emailCancellationConfirmationRoutingKey: string;
+
+  /**
+   * The routing key to use for queueing boarding pass emails in the RabbitMQ email exchange.
+   */
+  emailBoardingPassRoutingKey: string;
 }
 
 const logLevels: string[] = [
@@ -119,6 +124,10 @@ export function config(): Config {
       emailCancellationConfirmationRoutingKey: getEnvironmentVariable(
         'SKYLINE_EMAIL_BOOKING_CANCELLATION_ROUTING_KEY',
         'email.booking.cancel',
+      ),
+      emailBoardingPassRoutingKey: getEnvironmentVariable(
+        'SKYLINE_EMAIL_BOARDING_PASS_ROUTING_KEY',
+        'email.boarding.ticket',
       ),
     };
   }
