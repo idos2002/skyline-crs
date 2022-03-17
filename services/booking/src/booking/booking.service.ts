@@ -8,9 +8,15 @@ import UpdateBookingDto from './dto/update-booking.dto';
 import TicketStatus from './enums/ticket-status.enum';
 import Booking from './entities/booking.entity';
 import BookingNotFoundException from './exceptions/booking-not-found.exception';
-import BookingAlreadyCanceledException from './exceptions/booking-already-cancelled.exception';
+import BookingAlreadyCanceledException from './exceptions/booking-already-canceled.exception';
 import BookingAlreadyCheckedInException from './exceptions/booking-already-checked-in.exception';
 import BookingPassengersCountChangeException from './exceptions/booking-passengers-count-change.exception';
+import CheckInDto from './dto/check-in.dto';
+import CheckInPassengerDto from './dto/check-in-passenger.dto';
+import Passenger from './entities/passenger.entity';
+import CheckInValidationException from './exceptions/check-in-validation.exception';
+import PassengerAlreadyCheckedInException from './exceptions/passenger-already-checked-in.exception';
+import BookingNotTicketedException from './exceptions/booking-not-ticketed.exception';
 
 export default class BookingService {
   private readonly log = createLogger(__filename);
@@ -129,5 +135,81 @@ export default class BookingService {
     if (booking.passengers.some((p) => p.checkInTimestamp !== undefined)) {
       throw new BookingAlreadyCheckedInException();
     }
+  }
+
+  public async checkIn(id: string, checkInDto: CheckInDto): Promise<Booking> {
+    const booking = await this.BookingModel.findById(id);
+
+    if (booking === null) {
+      throw new BookingNotFoundException();
+    }
+
+    // Check if booking was already cancelled
+    if (
+      booking.ticket.status === TicketStatus.CANCELED &&
+      booking.cancelTimestamp !== undefined
+    ) {
+      throw new BookingAlreadyCanceledException();
+    }
+
+    // Check if the booking has been ticketed
+    if (
+      booking.ticket.status !== TicketStatus.ISSUED &&
+      booking.ticket.issueTimestamp === undefined
+    ) {
+      throw new BookingNotTicketedException();
+    }
+
+    const passengersToUpdate: CheckInPassengerDto[] = [];
+    const checkProperties: (keyof CheckInPassengerDto & keyof Passenger)[] = [
+      'nameTitle',
+      'givenNames',
+      'surname',
+      'gender',
+    ];
+    for (const [index, bookingPassenger] of booking.passengers.entries()) {
+      const passenger = checkInDto.passengers.find(
+        (p) => p.bookedSeatId === bookingPassenger.bookedSeatId,
+      );
+
+      if (!passenger) continue;
+
+      // Validate if all passenger details are identical before checking in
+      const areDatesOfBirthEqual =
+        passenger.dateOfBirth.getTime() ===
+        bookingPassenger.dateOfBirth.getTime();
+      const areEqual =
+        areDatesOfBirthEqual &&
+        checkProperties.every(
+          (prop) => passenger[prop] === bookingPassenger[prop],
+        );
+
+      if (!areEqual) {
+        throw new CheckInValidationException(index);
+      }
+
+      if (bookingPassenger.checkInTimestamp !== undefined) {
+        throw new PassengerAlreadyCheckedInException(index);
+      }
+
+      // The passengers in the array will be ordered like in the booking,
+      // because of the order we are iterating over the elements of the
+      // booking's passengers
+      passengersToUpdate.push(passenger);
+    }
+
+    const updatedFields = {
+      passengers: passengersToUpdate.map((p) => ({
+        ...p,
+        checkInTimestamp: new Date(),
+      })),
+    };
+    const updatedBooking = await this.BookingModel.findByIdAndUpdate(
+      id,
+      { $set: flatten(updatedFields) },
+      { new: true, runValidators: true },
+    );
+
+    return plainToInstance(Booking, updatedBooking);
   }
 }
