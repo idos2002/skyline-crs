@@ -25,11 +25,12 @@ export default async function createApp(): Promise<Express> {
   const flightsService = new FlightsService(flightsGraphQLClient);
 
   const pnrMongooseConnection = mongoose.createConnection(config().pnrDbUri, {
+    dbName: config().pnrDbName,
     authSource: 'admin',
   });
   const BookingModel = getModelForClass(Booking, {
     existingConnection: pnrMongooseConnection,
-    schemaOptions: { collection: 'pnrs' },
+    schemaOptions: { collection: config().pnrDbCollectionName },
   });
   const bookingService = new BookingService(BookingModel, flightsService);
 

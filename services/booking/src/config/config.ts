@@ -25,6 +25,16 @@ export interface Config {
   pnrDbUri: string;
 
   /**
+   * Name of the PNR database for the given PNR database URI.
+   */
+  pnrDbName: string;
+
+  /**
+   * Name of the PNRs collection in the PNR database.
+   */
+  pnrDbCollectionName: string;
+
+  /**
    * URL for the inventory manager (Hasura GraphQL).
    */
   inventoryManagerUrl: string;
@@ -105,6 +115,11 @@ export function config(): Config {
       logLevel: convertLogLevel(process.env.SKYLINE_LOG_LEVEL, 'info'),
       accessTokenSecret: getEnvironmentVariable('SKYLINE_ACCESS_TOKEN_SECRET'),
       pnrDbUri: getEnvironmentVariable('SKYLINE_PNR_DB_URI'),
+      pnrDbName: getEnvironmentVariable('SKYLINE_PNR_DB_NAME', 'pnr'),
+      pnrDbCollectionName: getEnvironmentVariable(
+        'SKYLINE_PNR_DB_COLLECTION_NAME',
+        'pnrs',
+      ),
       inventoryManagerUrl: getEnvironmentVariable(
         'SKYLINE_INVENTORY_MANAGER_URL',
       ),
