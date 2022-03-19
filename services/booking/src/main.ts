@@ -13,4 +13,8 @@ async function main() {
   });
 }
 
-main().catch((err) => log.error(err, 'An uncaught unknown error was thrown'));
+main().catch((err) => {
+  // Usually happens when an error is thrown during the server startup
+  log.fatal(err, 'A fatal error has occurred, shutting down server.');
+  process.exit(1);
+});
