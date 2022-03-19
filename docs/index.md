@@ -11,9 +11,8 @@ The public API documentation is available [here](./public-api.md).
 
 ## Services Documentation
 
-| Service                                          | Description                                                                                           |
-| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
-| [Booking Service](./services/booking/index.md)   | Creates and manages flight bookings and manipulates the corresponding passenger name records (PNRs).  |
-| [Check-in Service](./services/check-in/index.md) | Responsible for the check-in process and the creation of the boarding passes.                         |
-| [Flights Service](./services/flights/index.md)   | Provides all of the flights related information (available flights, flight details, seat maps, etc.). |
-| [Login Service](./services/login/index.md)       | Logs the client into the system using PNR credentials to access protected resources (e.g. bookings).  |
+| Service                                        | Description                                                                                           |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| [Booking Service](./services/booking/index.md) | Creates and manages flight bookings and manipulates the corresponding passenger name records (PNRs).  |
+| [Flights Service](./services/flights/index.md) | Provides all of the flights related information (available flights, flight details, seat maps, etc.). |
+| [Login Service](./services/login/index.md)     | Logs the client into the system using PNR credentials to access protected resources (e.g. bookings).  |

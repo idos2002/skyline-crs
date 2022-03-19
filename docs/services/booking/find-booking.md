@@ -1,27 +1,23 @@
-# Cancel Booking
+# Find Booking
 
-Cancels the booking with the requested PNR ID. A booking **cannot be canceled** if all or some of the passengers have already checked in for the flight!
-
-> **Warning!** This operation is irreversible and can only be done once!
+Gets the booking with the requested PNR ID.
 
 > **Important:** Login is required to access this endpoint.
-
-> **Note:** Canceled PNRs will be archived and will not be accessible through this API thereafter.
 
 ## Request
 
 ```http
-POST /booking/{pnrId}/cancel
+GET /booking/{pnrId}
 ```
 
 | Parameter | Description                                           | Format      |
 | --------- | ----------------------------------------------------- | ----------- |
-| `{pnrId}` | The PNR ID (booking number) of the booking to cancel. | UUID string |
+| `{pnrId}` | The PNR ID (booking number) of the requested booking. | UUID string |
 
 Example:
 
 ```http
-POST /bookings/f362846f-679d-4ef7-857d-e321c622cb41/cancel
+GET /bookings/f362846f-679d-4ef7-857d-e321c622cb41
 ```
 
 ## Success Response - `200 OK`
@@ -36,7 +32,14 @@ POST /bookings/f362846f-679d-4ef7-857d-e321c622cb41/cancel
       "surname": "<Passenger surname (last name)>",
       "dateOfBirth": "<Passenger date of birth (in UTC ISO 8601 format)>",
       "gender": "<Passenger gender: male / female / other / unspecified>",
-      "bookedSeatId": "<Booked seat ID of the passenger's seat in the flight in standard UUID format>"
+      "bookedSeatId": "<Booked seat ID of the passenger's seat in the flight in standard UUID format>",
+      "passport": {
+        "number": "<The passport number (optional)>",
+        "expirationDate": "<The expiration date of the passport (optional)>",
+        "countryIssued": "<The ISO 3166-1 alpha-2 country code of the country that issued this passport (optional)>"
+      },
+      "checkInTimestamp": "<Check-in timestamp for this passenger (optional)>",
+      "boardingTimestamp": "<Plane boarding timestamp for this passenger (optional)>"
     }
   ],
   "flightId": "<Flight ID>",
@@ -55,7 +58,7 @@ POST /bookings/f362846f-679d-4ef7-857d-e321c622cb41/cancel
     }
   },
   "ticket": {
-    "status": "canceled",
+    "status": "<Ticketing status: pending / issued / canceled>",
     "issueTimestamp": "<Ticket issue timestamp (optional)>"
   },
   "createdTimestamp": "<PNR creation timestamp>",
@@ -76,7 +79,13 @@ Example:
       "surname": "Doe",
       "dateOfBirth": "2000-01-01T00:00:00.000Z",
       "gender": "male",
-      "bookedSeatId": "e3bfa7ae-a03b-11ec-a75d-0242ac120002"
+      "bookedSeatId": "2dc2ad2b-23ea-429a-bcf9-a462d0e42806",
+      "passport": {
+        "number": "12345678",
+        "expirationDate": "2022-01-01T00:00:00.000Z",
+        "countryIssued": "IL"
+      },
+      "checkInTimestamp": "2020-10-20T02:15:54.659720Z"
     },
     {
       "nameTitle": "Mrs",
@@ -84,7 +93,13 @@ Example:
       "surname": "Doe",
       "dateOfBirth": "2002-01-01T00:00:00.000Z",
       "gender": "female",
-      "bookedSeatId": "0509d3a3-5ce1-437d-b4b4-b971aa2c0657"
+      "passport": {
+        "number": "87654321",
+        "expirationDate": "2024-06-01T00:00:00.000Z",
+        "countryIssued": "IL"
+      },
+      "bookedSeatId": "2edb1071-f3ab-4754-b40f-38616e2b8060",
+      "checkInTimestamp": "2020-10-20T02:15:54.659720Z"
     }
   ],
   "flightId": "17564e2f-7d32-4d4a-9d99-27ccd768fb7d",
@@ -102,12 +117,11 @@ Example:
     }
   },
   "ticket": {
-    "status": "canceled",
+    "status": "issued",
     "issueTimestamp": "2020-10-11T22:58:43.236672Z"
   },
   "createdTimestamp": "2020-10-10T14:23:05.659711Z",
-  "updatesTimestamps": ["2020-10-17T07:31:01.678945Z"],
-  "cancelTimestamp": "2020-10-20T02:15:54.659720Z"
+  "updatesTimestamps": ["2020-10-17T07:31:01.678945Z"]
 }
 ```
 
@@ -126,24 +140,6 @@ Example:
 {
   "error": "Booking not found",
   "message": "Could not find a booking with the given PNR ID."
-}
-```
-
-## Booking Already Canceled Response - `409 Conflict`
-
-```json
-{
-  "error": "Booking already canceled",
-  "message": "Could not update or cancel a booking which is already canceled."
-}
-```
-
-## Already Checked In Response - `409 Conflict`
-
-```json
-{
-  "error": "Already checked in",
-  "message": "Could not update or cancel a booking which all or some of its passengers have already checked in."
 }
 ```
 
