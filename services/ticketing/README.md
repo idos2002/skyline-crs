@@ -42,7 +42,7 @@ docker run -dp 80:80 \
   -e SKYLINE_TICKET_QUEUE_NAME=<Ticket queue name> \
   -e SKYLINE_TICKET_BOOKING_BINDING_KEY=<Ticket booking binding key> \
   -e SKYLINE_EMAIL_EXCHANGE_NAME=<Email exchange name> \
-  -e DEAD_LETTER_EXCHANGE_NAME=<Dead letter exchange name>
+  -e DEAD_LETTER_EXCHANGE_NAME=<Dead letter exchange name> \
   -e SKYLINE_PNR_DB_URI=<PNR database URI> \
   skyline-ticketing
 ```
