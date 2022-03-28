@@ -42,7 +42,7 @@ And to run the image in a new container run:
 docker run -dp 80:80 \
   -e SKYLINE_ACCESS_TOKEN_SECRET=<Access token secret> \
   -e SKYLINE_INVENTORY_MANAGER_URL=<Inventory manager URL> \
-  -e SKYLINE_PNR_DB_URL=<PNR database URL> \
+  -e SKYLINE_PNR_DB_URI=<PNR database URI> \
   -e SKYLINE_RABBITMQ_URI=<RabbitMQ URI> \
   -e SKYLINE_TICKET_EXCHANGE_NAME=<Ticket exchange name> \
   -e SKYLINE_EMAIL_EXCHANGE_NAME=<Email exchange name> \
@@ -97,7 +97,7 @@ Example value: `email`.
 
 ### `SKYLINE_PNR_DB_URI` (Required)
 
-The [PNR database](https://github.com/idos2002/skyline-crs/tree/master/db/pnr) URL for validating login data.  
+The [PNR database](https://github.com/idos2002/skyline-crs/tree/master/db/pnr) MongoDB URI for managing the bookings' PNRs.  
 Example values:
 
 - `mongodb://username:password@localhost:27017`
