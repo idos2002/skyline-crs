@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Skyline Booking Cancellation Notice</title>
+    <link rel="stylesheet" href="style.css" data-inline="data-inline" />
+  </head>
+  <body>
+    <span class="preheader"
+      >Your booking of the flight from {{flight.origin.city}} to
+      {{flight.destination.city}} has been successfully canceled.</span
+    >
+    <table
+      id="bodyTable"
+      role="presentation"
+      border="0"
+      cellpadding="0"
+      cellspacing="0">
+      <tr>
+        <td>&nbsp;</td>
+        <td class="container">
+          <div class="content">
+            <!-- Start header -->
+            <div class="header">
+              <table
+                role="presentation"
+                border="0"
+                cellpadding="0"
+                cellspacing="0">
+                <tr>
+                  <td class="logo">
+                    <img src="cid:skyline-logo" alt="Skyline logo" />
+                  </td>
+                  <td>&nbsp;</td>
+                  <td class="title">
+                    <table
+                      role="presentation"
+                      border="0"
+                      cellpadding="0"
+                      cellspacing="0">
+                      <tr>
+                        <td><b>Booking ID</b></td>
+                      </tr>
+                      <tr>
+                        <td>{{bookingId}}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <!-- End header -->
+
+            <!-- Start centered white container -->
+            <table role="presentation" class="main">
+              <!-- Start main content area -->
+              <tr>
+                <td>
+                  <table
+                    role="presentation"
+                    border="0"
+                    cellpadding="0"
+                    cellspacing="0">
+                    <tr>
+                      <td>
+                        <p><b>Hello {{contact.firstName}},</b></p>
+                        <p>
+                          Your booking of the flight from
+                          <b>{{flight.origin.city}}</b>
+                          to <b>{{flight.destination.city}}</b> has been
+                          successfully canceled.<br />
+                          Note that this action is irreversible.
+                        </p>
+                        <p>
+                          If you believe you have received this email by
+                          mistake, make sure to check on the status of you
+                          booking on out website.
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="booking-id">
+                        <b>Canceled Booking ID:</b> {{bookingId}}
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <!-- End main content area -->
+            </table>
+            <!-- End centered white container -->
+
+            <!-- Start footer -->
+            <div class="footer">
+              <table
+                role="presentation"
+                border="0"
+                cellpadding="0"
+                cellspacing="0">
+                <tr>
+                  <td>
+                    <p>
+                      This email was sent automatically by Skyline CRS, a
+                      computer reservation system for a fake airline named
+                      Skyline.
+                    </p>
+                    <p>
+                      The company "Skyline", as presented in this email, is not
+                      real, but made up for a personal project. If this email
+                      does not concern you and was sent to you by mistake, you
+                      may ignore it.<br />
+                    </p>
+                    <p>
+                      For more information about the project,
+                      <a href="https://github.com/idos2002/skyline-crs"
+                        >click here</a
+                      >.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <!-- End footer -->
+          </div>
+        </td>
+        <td>&nbsp;</td>
+      </tr>
+    </table>
+  </body>
+</html>

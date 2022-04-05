@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Skyline Boarding Passes</title>
+    <link rel="stylesheet" href="style.css" data-inline="data-inline" />
+  </head>
+  <body>
+    <span class="preheader"
+      >Thank you for booking with us! This is the ticket for your flight from
+      {{flight.origin.city}} to {{flight.destination.city}}.</span
+    >
+    <table
+      id="bodyTable"
+      role="presentation"
+      border="0"
+      cellpadding="0"
+      cellspacing="0">
+      <tr>
+        <td>&nbsp;</td>
+        <td class="container">
+          <div class="content">
+            <!-- Start header -->
+            <div class="header">
+              <table
+                role="presentation"
+                border="0"
+                cellpadding="0"
+                cellspacing="0">
+                <tr>
+                  <td class="logo">
+                    <img src="cid:skyline-logo" alt="Skyline logo" />
+                  </td>
+                  <td>&nbsp;</td>
+                  <td class="title">
+                    <table
+                      role="presentation"
+                      border="0"
+                      cellpadding="0"
+                      cellspacing="0">
+                      <tr>
+                        <td><b>Booking ID</b></td>
+                      </tr>
+                      <tr>
+                        <td>{{bookingId}}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <!-- End header -->
+
+            <!-- Start centered white container -->
+            <table role="presentation" class="main">
+              <!-- Start main content area -->
+              <tr>
+                <td>
+                  <table
+                    role="presentation"
+                    border="0"
+                    cellpadding="0"
+                    cellspacing="0">
+                    <tr>
+                      <td>
+                        <p><b>Hello {{contact.firstName}},</b></p>
+                        <p>
+                          This email includes the boarding passes of the
+                          passengers you have checked in for your flight from
+                          <b>{{flight.origin.city}}</b>
+                          to <b>{{flight.destination.city}}</b>. If there are
+                          some boarding passes missing for some of the
+                          passengers, make sure you have checked them in.
+                        </p>
+                        <p>
+                          For missing information concerning the flight and your
+                          booking, please log in to out website using your
+                          booking ID. Note that this email is not strictly
+                          needed to board your flight, as the boarding passes
+                          and all related information are also available on our
+                          website.
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><h2>Flight Details</h2></td>
+                    </tr>
+                    <tr>
+                      <td class="flight-details">
+                        <table
+                          role="presentation"
+                          border="0"
+                          cellpadding="0"
+                          cellspacing="0">
+                          <tr>
+                            <td>&nbsp;</td>
+                            <td class="flight-details-data">
+                              <table
+                                role="presentation"
+                                border="0"
+                                cellpadding="0"
+                                cellspacing="0">
+                                <tr>
+                                  <td>
+                                    <b>{{flight.origin.city}}</b>
+                                    ({{flight.origin.iataCode}})
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>{{flight.departureDate}}</td>
+                                </tr>
+                                <tr>
+                                  <td>{{flight.departureTime}}</td>
+                                </tr>
+                              </table>
+                            </td>
+                            <td>&nbsp;</td>
+                            <td class="flight-details-icon">
+                              <table
+                                role="presentation"
+                                border="0"
+                                cellpadding="0"
+                                cellspacing="0">
+                                <tr>
+                                  <td>
+                                    <img
+                                      src="cid:airplane-icon"
+                                      alt="Fly to icon" />
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <b
+                                      >{{airlineIataCode}}
+                                      {{flight.serviceId}}</b
+                                    >
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>Duration: {{flight.duration}}</td>
+                                </tr>
+                              </table>
+                            </td>
+                            <td>&nbsp;</td>
+                            <td class="flight-details-data">
+                              <table
+                                role="presentation"
+                                border="0"
+                                cellpadding="0"
+                                cellspacing="0">
+                                <tr>
+                                  <td>
+                                    <b>{{flight.destination.city}}</b>
+                                    ({{flight.destination.iataCode}})
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>{{flight.arrivalDate}}</td>
+                                </tr>
+                                <tr>
+                                  <td>{{flight.arrivalTime}}</td>
+                                </tr>
+                              </table>
+                            </td>
+                            <td>&nbsp;</td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><h2>Boarding Passes</h2></td>
+                    </tr>
+                    <tr>
+                      <td class="boarding-passes">
+                        <table
+                          role="presentation"
+                          border="0"
+                          cellpadding="0"
+                          cellspacing="0">
+                          <tr>
+                            <td>&nbsp;</td>
+                            <td>
+                              <table
+                                role="presentation"
+                                border="0"
+                                cellpadding="0"
+                                cellspacing="0">
+                                {{#each passengers}}
+                                <tr>
+                                  <td class="boarding-pass">
+                                    <table
+                                      role="presentation"
+                                      cellpadding="0"
+                                      cellspacing="0">
+                                      <tr>
+                                        <td class="boarding-pass-qr-code">
+                                          <img
+                                            src="{{boardingPassQrCodeCid}}"
+                                            alt="Boarding pass QR code" />
+                                        </td>
+                                        <td>&nbsp;</td>
+                                        <td class="boarding-pass-details">
+                                          <table
+                                            role="presentation"
+                                            border="0"
+                                            cellpadding="0"
+                                            cellspacing="0">
+                                            <tr>
+                                              <td>
+                                                <b>
+                                                  {{nameTitle}}. {{givenNames}}
+                                                  {{surname}}
+                                                </b>
+                                              </td>
+                                            </tr>
+                                            <tr>
+                                              <td>
+                                                <b>From:</b>
+                                                {{../flight.origin.iataCode}}
+                                                ({{../flight.origin.city}})
+                                              </td>
+                                              <td>
+                                                <b>To:</b>
+                                                {{../flight.destination.iataCode}}
+                                                ({{../flight.destination.city}})
+                                              </td>
+                                            </tr>
+                                            <tr>
+                                              <td>
+                                                <b>Flight:</b>
+                                                {{../airlineIataCode}}
+                                                {{../flight.serviceId}}
+                                              </td>
+                                              <td>
+                                                <b>Date:</b>
+                                                {{../flight.departureDate}}
+                                              </td>
+                                            </tr>
+                                            <tr>
+                                              <td>
+                                                <b>Boarding:</b>
+                                                {{../flight.boardingTime}}
+                                              </td>
+                                              <td>
+                                                <b>Departure:</b>
+                                                {{../flight.departureTime}}
+                                              </td>
+                                            </tr>
+                                            <tr>
+                                              <td>
+                                                <b>Class:</b> {{cabinClass}}
+                                              </td>
+                                              <td><b>Seat:</b> {{seat}}</td>
+                                            </tr>
+                                          </table>
+                                        </td>
+                                      </tr>
+                                    </table>
+                                  </td>
+                                </tr>
+                                {{/each}}
+                              </table>
+                            </td>
+                            <td>&nbsp;</td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <!-- End main content area -->
+            </table>
+            <!-- End centered white container -->
+
+            <!-- Start footer -->
+            <div class="footer">
+              <table
+                role="presentation"
+                border="0"
+                cellpadding="0"
+                cellspacing="0">
+                <tr>
+                  <td>
+                    <p>
+                      This email was sent automatically by Skyline CRS, a
+                      computer reservation system for a fake airline named
+                      Skyline.
+                    </p>
+                    <p>
+                      The company "Skyline", as presented in this email, is not
+                      real, but made up for a personal project. If this email
+                      does not concern you and was sent to you by mistake, you
+                      may ignore it.<br />
+                    </p>
+                    <p>
+                      For more information about the project,
+                      <a href="https://github.com/idos2002/skyline-crs"
+                        >click here</a
+                      >.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <!-- End footer -->
+          </div>
+        </td>
+        <td>&nbsp;</td>
+      </tr>
+    </table>
+  </body>
+</html>
