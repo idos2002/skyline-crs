@@ -1,0 +1,8 @@
+# Format only HTML handlebars files
+*.handlebars
+!html.handlebars
+!*.html.handlebars
+
+*.hbs
+!html.hbs
+!*.html.hbs

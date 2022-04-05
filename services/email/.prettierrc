@@ -1,0 +1,26 @@
+{
+  "singleQuote": true,
+  "trailingComma": "all",
+  "endOfLine": "auto",
+  "overrides": [
+    {
+      "files": [
+        "*.hbs",
+        "*.handlebars"
+      ],
+      "options": {
+        "singleQuote": false,
+        "parser": "html",
+        "bracketSameLine": true
+      }
+    },
+    {
+      "files": [
+        "*.html"
+      ],
+      "options": {
+        "bracketSameLine": true
+      }
+    }
+  ]
+}
