@@ -2,6 +2,7 @@ import path from 'path';
 import Email from 'email-templates';
 import uuidMongodb from 'uuid-mongodb';
 import dateDifferenceInMinutes from 'date-fns/differenceInMinutes';
+import subtractDates from 'date-fns/sub';
 import { formatInTimeZone } from 'date-fns-tz';
 import { find as findGeoLocationTimezone } from 'geo-tz';
 import { Attachment } from 'nodemailer/lib/mailer';
@@ -374,6 +375,8 @@ export default class EmailService {
       flight.destination.geoLocation,
     );
 
+    const boardingTime = subtractDates(flight.departureTime, { hours: 1 });
+
     await this.boardingEmail.send({
       template: 'boarding/ticket',
       message: {
@@ -410,6 +413,7 @@ export default class EmailService {
         airlineIataCode: config().iataAirlineCode,
         flight: {
           serviceId: flight.serviceId,
+          boardingTime: formatInTimeZone(boardingTime, originTimezone, 'HH:mm'),
           departureDate: formatInTimeZone(
             flight.departureTime,
             originTimezone,
