@@ -95,9 +95,12 @@ describe('BookingService', () => {
   let flightsService: FlightsService;
   let bookingService: BookingService;
 
-  beforeEach(() => {
-    flightsService = new FlightsService(undefined as any);
-    bookingService = new BookingService(BookingModel, flightsService);
+  beforeEach(async () => {
+    // Workaround for private constructors of mocked classes
+    // See: https://stackoverflow.com/questions/60530831/mock-typescript-class-with-private-constructor-using-jest
+    flightsService = new (FlightsService as any)(undefined as any);
+
+    bookingService = await BookingService.create(BookingModel, flightsService);
   });
 
   describe('create', () => {

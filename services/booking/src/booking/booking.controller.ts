@@ -15,14 +15,26 @@ import CheckInDto from './dto/check-in.dto';
 export default class BookingController extends Controller {
   private readonly log = createLogger(__filename);
 
-  constructor(
+  private constructor(
     private readonly bookingService: BookingService,
     private readonly ticketService: TicketService,
     private readonly emailService: EmailService,
   ) {
     super();
+  }
 
-    this.registerHandler(
+  public static async create(
+    bookingService: BookingService,
+    ticketService: TicketService,
+    emailService: EmailService,
+  ): Promise<BookingController> {
+    const bookingController = new BookingController(
+      bookingService,
+      ticketService,
+      emailService,
+    );
+
+    bookingController.registerHandler(
       'create',
       RequestMethod.POST,
       '/',
@@ -31,23 +43,23 @@ export default class BookingController extends Controller {
           req,
           CreateBookingDto,
         );
-        const booking = await this.create(bookingDto);
+        const booking = await bookingController.create(bookingDto);
         res.status(StatusCodes.CREATED).send(instanceToPlain(booking));
       },
     );
 
-    this.registerHandler(
+    bookingController.registerHandler(
       'find',
       RequestMethod.GET,
       '/:id',
       async (req, res) => {
         const id = validateUUID(req, 'id');
-        const booking = await this.find(id);
+        const booking = await bookingController.find(id);
         res.status(StatusCodes.OK).send(instanceToPlain(booking));
       },
     );
 
-    this.registerHandler(
+    bookingController.registerHandler(
       'update',
       RequestMethod.PUT,
       '/:id',
@@ -57,33 +69,35 @@ export default class BookingController extends Controller {
           req,
           UpdateBookingDto,
         );
-        const booking = await this.update(id, bookingDto);
+        const booking = await bookingController.update(id, bookingDto);
         res.status(StatusCodes.OK).send(instanceToPlain(booking));
       },
     );
 
-    this.registerHandler(
+    bookingController.registerHandler(
       'cancel',
       RequestMethod.POST,
       '/:id/cancel',
       async (req, res) => {
         const id = validateUUID(req, 'id');
-        const booking = await this.cancel(id);
+        const booking = await bookingController.cancel(id);
         res.status(StatusCodes.OK).send(instanceToPlain(booking));
       },
     );
 
-    this.registerHandler(
+    bookingController.registerHandler(
       'checkIn',
       RequestMethod.POST,
       '/:id/checkIn',
       async (req, res) => {
         const id = validateUUID(req, 'id');
         const checkInDto = await transformAndValidateBody(req, CheckInDto);
-        const booking = await this.checkIn(id, checkInDto);
+        const booking = await bookingController.checkIn(id, checkInDto);
         res.status(StatusCodes.OK).send(instanceToPlain(booking));
       },
     );
+
+    return bookingController;
   }
 
   /**
@@ -264,6 +278,7 @@ export default class BookingController extends Controller {
     bookingDto: UpdateBookingDto,
   ): Promise<Booking> {
     const booking = await this.bookingService.update(id, bookingDto);
+    // TODO: Queue updated ticket for the booking
     return booking;
   }
 

@@ -26,8 +26,13 @@ export default class EmailService {
     type: config().emailBoardingPassRoutingKey,
   };
 
-  constructor(private readonly amqpChannel: ConfirmChannel) {
-    this.amqpChannel.assertExchange(config().emailExchangeName, 'topic');
+  private constructor(private readonly amqpChannel: ConfirmChannel) {}
+
+  public static async create(
+    amqpChannel: ConfirmChannel,
+  ): Promise<EmailService> {
+    await amqpChannel.assertExchange(config().emailExchangeName, 'topic');
+    return new EmailService(amqpChannel);
   }
 
   public queueBookingConfirmationEmail(bookingId: string, retries = 10) {

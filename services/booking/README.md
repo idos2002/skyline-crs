@@ -105,12 +105,12 @@ Example values:
 
 ### `SKYLINE_PNR_DB_NAME`
 
-The name of the PNR database for the given database URL.  
+The name of the PNR database for the given database URI.  
 **Default:** `pnr`.
 
 ### `SKYLINE_PNR_DB_COLLECTION_NAME`
 
-The name of the PNR database's PNR collection for the given database URL.  
+The name of the PNR database's PNR collection for the given database URI.  
 **Default:** `pnrs`.
 
 ### `SKYLINE_TICKET_BOOKING_ROUTING_KEY`

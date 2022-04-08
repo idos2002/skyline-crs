@@ -1,14 +1,31 @@
-import createApp from './app';
+import { GraphQLClient } from 'graphql-request';
+import { mongoose } from '@typegoose/typegoose';
+import amqp from 'amqplib';
 import config from '@config';
 import createLogger from '@common/log';
+import Application from './app';
 
 const log = createLogger(__filename);
 
 async function main() {
-  const log = createLogger(__filename);
-  const app = await createApp();
+  const flightsGraphQLClient = new GraphQLClient(config().inventoryManagerUrl);
 
-  app.listen(config().port, '0.0.0.0', () => {
+  const pnrMongooseConnection = mongoose.createConnection(config().pnrDbUri, {
+    dbName: config().pnrDbName,
+    authSource: 'admin',
+  });
+
+  const amqpConnection = await amqp.connect(config().rabbitmqUri);
+
+  const app = await Application.create(
+    flightsGraphQLClient,
+    pnrMongooseConnection,
+    amqpConnection,
+  );
+
+  const expressApp = await app.createExpressApplication();
+
+  expressApp.listen(config().port, '0.0.0.0', () => {
     log.info(`Listening for connections on 0.0.0.0:${config().port}`);
   });
 }

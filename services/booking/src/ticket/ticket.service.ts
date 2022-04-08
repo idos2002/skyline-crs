@@ -12,8 +12,13 @@ export default class TicketService {
     type: config().ticketBookingRoutingKey,
   };
 
-  constructor(private readonly amqpChannel: ConfirmChannel) {
-    this.amqpChannel.assertExchange(config().ticketExchangeName, 'topic');
+  private constructor(private readonly amqpChannel: ConfirmChannel) {}
+
+  public static async create(
+    amqpChannel: ConfirmChannel,
+  ): Promise<TicketService> {
+    await amqpChannel.assertExchange(config().ticketExchangeName, 'topic');
+    return new TicketService(amqpChannel);
   }
 
   public queueBooking(bookingId: string, retries = 10) {

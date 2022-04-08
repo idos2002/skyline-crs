@@ -9,7 +9,13 @@ import FlightUnavailableException from './exceptions/flight-unavailable.exceptio
 import FlightSeatNotFoundException from './exceptions/flight-seat-not-found.exception';
 
 export default class FlightsService {
-  constructor(private readonly graphqlClient: GraphQLClient) {}
+  private constructor(private readonly graphqlClient: GraphQLClient) {}
+
+  public static async create(
+    graphqlClient: GraphQLClient,
+  ): Promise<FlightsService> {
+    return new FlightsService(graphqlClient);
+  }
 
   async bookSeats(flightId: string, seats: Seat[]): Promise<BookedSeat[]> {
     const flight = await this.findFlight(flightId);

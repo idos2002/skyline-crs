@@ -21,10 +21,17 @@ import BookingNotTicketedException from './exceptions/booking-not-ticketed.excep
 export default class BookingService {
   private readonly log = createLogger(__filename);
 
-  constructor(
+  private constructor(
     private readonly BookingModel: ReturnModelType<typeof Booking>,
     private readonly flightsService: FlightsService,
   ) {}
+
+  public static async create(
+    BookingModel: ReturnModelType<typeof Booking>,
+    flightsService: FlightsService,
+  ): Promise<BookingService> {
+    return new BookingService(BookingModel, flightsService);
+  }
 
   public async create(bookingDto: CreateBookingDto): Promise<Booking> {
     const bookedSeats = await this.flightsService.bookSeats(

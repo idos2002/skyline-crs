@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import express, { Express } from 'express';
+import express, { Application as ExpressApplication } from 'express';
 import 'express-async-errors';
 import { GraphQLClient } from 'graphql-request';
 import { getModelForClass, mongoose } from '@typegoose/typegoose';
@@ -16,54 +16,68 @@ import EmailService from '@email/email.service';
 import jsonBodySyntaxErrorHandler from '@common/defaults/json-body-syntax.error-handler';
 import authenticateJWT from '@auth/jwt-auth.middleware';
 
-export default async function createApp(): Promise<Express> {
-  const app = express();
+export default class Application {
+  private constructor(
+    private readonly bookingService: BookingService,
+    private readonly ticketService: TicketService,
+    private readonly emailService: EmailService,
+  ) {}
 
-  app.use(express.json());
+  public static async create(
+    flightsGraphqlClient: GraphQLClient,
+    pnrMongooseConnection: mongoose.Connection,
+    amqpConnection: amqp.Connection,
+  ): Promise<Application> {
+    const flightsService = await FlightsService.create(flightsGraphqlClient);
 
-  const flightsGraphQLClient = new GraphQLClient(config().inventoryManagerUrl);
-  const flightsService = new FlightsService(flightsGraphQLClient);
+    const BookingModel = getModelForClass(Booking, {
+      existingConnection: pnrMongooseConnection,
+      schemaOptions: { collection: config().pnrDbCollectionName },
+    });
 
-  const pnrMongooseConnection = mongoose.createConnection(config().pnrDbUri, {
-    dbName: config().pnrDbName,
-    authSource: 'admin',
-  });
-  const BookingModel = getModelForClass(Booking, {
-    existingConnection: pnrMongooseConnection,
-    schemaOptions: { collection: config().pnrDbCollectionName },
-  });
-  const bookingService = new BookingService(BookingModel, flightsService);
+    const bookingService = await BookingService.create(
+      BookingModel,
+      flightsService,
+    );
 
-  const amqpConnection = await amqp.connect(config().rabbitmqUri);
-  const amqpChannel = await amqpConnection.createConfirmChannel();
-  const ticketService = new TicketService(amqpChannel);
-  const emailService = new EmailService(amqpChannel);
+    const amqpChannel = await amqpConnection.createConfirmChannel();
+    const ticketService = await TicketService.create(amqpChannel);
+    const emailService = await EmailService.create(amqpChannel);
 
-  const bookingController = new BookingController(
-    bookingService,
-    ticketService,
-    emailService,
-  );
-  bookingController.applyMiddleware(authenticateJWT('id'), [
-    'find',
-    'update',
-    'cancel',
-    'checkIn',
-  ]);
+    return new Application(bookingService, ticketService, emailService);
+  }
 
-  app.use('/booking', bookingController.createRouter());
+  public async createExpressApplication(): Promise<ExpressApplication> {
+    const app = express();
 
-  app.use('/openapi.json', (_req, res) => res.json(openapiSpecification));
-  app.use(
-    '/docs',
-    swaggerUi.serve,
-    swaggerUi.setup(openapiSpecification, swaggerUiOptions),
-  );
+    app.use(express.json());
 
-  app.use(jsonBodySyntaxErrorHandler());
+    const bookingController = await BookingController.create(
+      this.bookingService,
+      this.ticketService,
+      this.emailService,
+    );
+    bookingController.applyMiddleware(authenticateJWT('id'), [
+      'find',
+      'update',
+      'cancel',
+      'checkIn',
+    ]);
 
-  // Default error handler - should be registered last!
-  app.use(defaultErrorHandler());
+    app.use('/booking', bookingController.createRouter());
 
-  return app;
+    app.use('/openapi.json', (_req, res) => res.json(openapiSpecification));
+    app.use(
+      '/docs',
+      swaggerUi.serve,
+      swaggerUi.setup(openapiSpecification, swaggerUiOptions),
+    );
+
+    app.use(jsonBodySyntaxErrorHandler());
+
+    // Default error handler - should be registered last!
+    app.use(defaultErrorHandler());
+
+    return app;
+  }
 }
