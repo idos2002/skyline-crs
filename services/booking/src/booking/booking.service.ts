@@ -179,7 +179,9 @@ export default class BookingService {
         (p) => p.bookedSeatId === bookingPassenger.bookedSeatId,
       );
 
-      if (!passenger) continue;
+      if (!passenger) {
+        throw new CheckInValidationException(index);
+      }
 
       // Validate if all passenger details are identical before checking in
       const areDatesOfBirthEqual =
