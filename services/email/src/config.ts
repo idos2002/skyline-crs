@@ -15,6 +15,10 @@ function getSkylineEnv(name: string, defaultValue?: string): string {
   return value;
 }
 
+function getOptionalSkylineEnv(name: string): string | undefined {
+  return process.env[skylineEnvPrefix + name];
+}
+
 const validLogLevels: string[] = [
   'trace',
   'debug',
@@ -39,8 +43,22 @@ function getSkylineLogLevelEnv(
   return logLevel as LogLevelString;
 }
 
-function getSkylineNumberEnv(name: string, defaultValue: number): number {
-  const stringValue = getSkylineEnv(name, defaultValue.toString());
+function getSkylineNumberEnv(name: string, defaultValue?: number): number {
+  const stringValue = getSkylineEnv(name, defaultValue?.toString());
+  const value = parseInt(stringValue);
+
+  if (value === NaN) {
+    throw new Error(`Configuration error: ${name} is not a number`);
+  }
+
+  return value;
+}
+
+function getOptionalSkylineNumberEnv(name: string): number | undefined {
+  const stringValue = getOptionalSkylineEnv(name);
+
+  if (stringValue === undefined) return undefined;
+
   const value = parseInt(stringValue);
 
   if (value === NaN) {
@@ -138,6 +156,31 @@ export interface Config {
    * The IATA airline code of Skyline.
    */
   iataAirlineCode: string;
+
+  /**
+   * The email address to use for sending emails.
+   */
+  emailAddress: string;
+
+  /**
+   * The SMTP server host name to use for sending emails.
+   */
+  smtpHost?: string | undefined;
+
+  /**
+   * The port to use for connecting with the SMTP server.
+   */
+  smtpPort?: number | undefined;
+
+  /**
+   * The username for authenticating with the SMTP server.
+   */
+  smtpUsername?: string | undefined;
+
+  /**
+   * The password for authenticating with the SMTP server.
+   */
+  smtpPassword?: string | undefined;
 }
 
 function createConfig(): Config {
@@ -172,6 +215,11 @@ function createConfig(): Config {
       pnrDbCollectionName: getSkylineEnv('PNR_DB_COLLECTION_NAME', 'pnrs'),
       inventoryManagerUrl: getSkylineEnv('INVENTORY_MANAGER_URL'),
       iataAirlineCode: getSkylineEnv('IATA_AIRLINE_CODE', 'SK'),
+      emailAddress: getSkylineEnv('EMAIL_ADDRESS'),
+      smtpHost: getOptionalSkylineEnv('SMTP_HOST'),
+      smtpPort: getOptionalSkylineNumberEnv('SMTP_PORT'),
+      smtpUsername: getOptionalSkylineEnv('SMTP_USERNAME'),
+      smtpPassword: getOptionalSkylineEnv('SMTP_PASSWORD'),
     };
   } catch (err) {
     if (err instanceof Error) {

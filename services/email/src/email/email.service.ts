@@ -1,5 +1,5 @@
 import path from 'path';
-import Email from 'email-templates';
+import Email, { NodeMailerTransportOptions } from 'email-templates';
 import uuidMongodb from 'uuid-mongodb';
 import dateDifferenceInMinutes from 'date-fns/differenceInMinutes';
 import subtractDates from 'date-fns/sub';
@@ -29,7 +29,7 @@ export interface EmailBoardingPassMessage {
 }
 
 export default class EmailService {
-  private readonly skylineEmail = 'no-reply@skyline.com'; // FIXME
+  private readonly skylineEmail = config().emailAddress;
   private readonly boardingPassQrCodeCidPrefix = 'boarding-pass-qr-code_';
 
   private readonly bookingAssetsFolderPath = path.resolve(
@@ -50,12 +50,7 @@ export default class EmailService {
         extension: 'hbs',
       },
     },
-    transport: {
-      jsonTransport: true,
-    },
-    preview: {
-      dir: path.resolve('tmp'),
-    },
+    transport: this.getTransport(),
   };
 
   private readonly commonBookingAttachments: Attachment[] = [
@@ -104,7 +99,29 @@ export default class EmailService {
     private readonly bookingService: BookingService,
     private readonly flightsService: FlightsService,
     private readonly qrCodeService: QrCodeService,
-  ) {}
+  ) {
+    if (process.env.NODE_ENV !== 'production') {
+      this.commonEmailOptions.preview = {
+        dir: path.resolve('tmp'),
+      };
+    }
+  }
+
+  private getTransport(): NodeMailerTransportOptions {
+    if (process.env.NODE_ENV !== 'production') {
+      return { jsonTransport: true };
+    }
+
+    return {
+      host: config().smtpHost,
+      port: config().smtpPort,
+      secure: true,
+      auth: {
+        user: config().smtpUsername,
+        pass: config().smtpPassword,
+      },
+    };
+  }
 
   public static async create(
     bookingService: BookingService,
