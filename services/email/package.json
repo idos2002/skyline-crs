@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "This is the email service for Skyline CRS. It is responsible for handling and sending emails to clients.",
   "author": "Ido Saban <sabanido.business@gmail.com>",
-  "license": "UNLICENSED",
+  "license": "AGPL-3.0-only",
   "private": true,
   "scripts": {
     "build": "rimraf dist && tsc -p tsconfig.build.json",
