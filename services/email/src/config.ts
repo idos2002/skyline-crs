@@ -209,7 +209,10 @@ function createConfig(): Config {
         'email.boarding.ticket',
       ),
       deadLetterExchangeName: getSkylineEnv('DEAD_LETTER_EXCHANGE_NAME'),
-      deadLetterRoutingKey: getSkylineEnv('DEAD_LETTER_ROUTING_KEY', 'email'),
+      deadLetterRoutingKey: getSkylineEnv(
+        'DEAD_LETTER_ROUTING_KEY',
+        'email.all',
+      ),
       pnrDbUri: getSkylineEnv('PNR_DB_URI'),
       pnrDbName: getSkylineEnv('PNR_DB_NAME', 'pnr'),
       pnrDbCollectionName: getSkylineEnv('PNR_DB_COLLECTION_NAME', 'pnrs'),
