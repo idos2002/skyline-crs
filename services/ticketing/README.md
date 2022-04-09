@@ -42,7 +42,7 @@ docker run -dp 80:80 \
   -e SKYLINE_TICKET_QUEUE_NAME=<Ticket queue name> \
   -e SKYLINE_TICKET_BOOKING_BINDING_KEY=<Ticket booking binding key> \
   -e SKYLINE_EMAIL_EXCHANGE_NAME=<Email exchange name> \
-  -e DEAD_LETTER_EXCHANGE_NAME=<Dead letter exchange name> \
+  -e SKYLINE_DEAD_LETTER_EXCHANGE_NAME=<Dead letter exchange name> \
   -e SKYLINE_PNR_DB_URI=<PNR database URI> \
   skyline-ticketing
 ```
@@ -58,7 +58,7 @@ The service is configured using environment variables. Note that some environmen
 
 ### `SKYLINE_RABBITMQ_URI` (Required)
 
-URI to the [RabbitMQ](https://www.rabbitmq.com/) service/cluster to use for queueing bookings for ticketing and emails. The URI _should_ contain the vhost to connect to.  
+URI to the [RabbitMQ](https://www.rabbitmq.com/) service/cluster to use for consuming the ticket queue and queuing flight ticket to be emailed. The URI _should_ contain the vhost to connect to.  
 Example values:
 
 - `amqp://username:password@localhost:5672/skyline`
