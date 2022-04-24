@@ -34,6 +34,7 @@ export default class _Document extends Document {
           <meta name="msapplication-TileColor" content="#008bef" />
           <meta name="theme-color" content="#ffffff" />
         </Head>
+
         <body>
           <Main />
           <NextScript />
