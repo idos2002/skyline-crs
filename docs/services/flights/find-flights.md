@@ -3,6 +3,7 @@
 Retrieve a list of flights from the requested origin to the requested destination at the provided date.
 
 ## Request
+
 ```http
 GET /flights/{origin}/{destination}/{departureDate}
 ```
@@ -13,21 +14,24 @@ GET /flights/{origin}/{destination}/{departureDate}
 | `{destination}`   | The IATA airport code of the destination airport.                  | 3-letter IATA airport code                      |
 | `{departureTime}` | The departure time to find flights for. <sup>1</sup>               | ISO 1806 datetime                               |
 | `passengers`      | The number of passengers to find a flight for. <br> **Default:** 1 | Positive integer, e.g. 2                        |
-| `class`           | The cabin class of the flight. <br> **Default:** all cabin classes | One of the following cabin class codes: E, B, F |
+| `cabin`           | The cabin class of the flight. <br> **Default:** all cabin classes | One of the following cabin class codes: E, B, F |
 
 Notes:
+
 1. All flights from the given departure time to 24 hours after will be included. For example: Searching for a flight with a departure time of 2021-01-01T06:00:00Z will result in a list of all flights from 2021-01-01T06:00:00Z to 2021-01-02T06:00:00Z.
 
 Examples:
+
 ```http
 GET /flights/TLV/BER/2021-01-01
 GET /flights/AMS/FRA/2021-12-07?passengers=4
 GET /flights/TLV/JFK/2021-11-12?class=E
-GET /flights/LAX/TLV/2021-03-22?passengers=2&class=F
+GET /flights/LAX/TLV/2021-03-22?passengers=2&cabin=F
 ```
 
 > **Cabin Class Codes**  
 > There are three available cabin classes, each associated with a single letter code:
+>
 > - **E** - Economy class
 > - **B** - Business class
 > - **F** - First class
@@ -36,118 +40,119 @@ GET /flights/LAX/TLV/2021-03-22?passengers=2&class=F
 
 ```json
 {
-    "name": "<Service name for this itinerary>",
-    "origin": {
-        "iataCode": "<IATA airport code of the origin>",
-        "icaoCode": "<ICAO airport code of the origin>",
-        "name": "<Origin airport name>",
-        "location": {
-            "subdivisionCode": "<The ISO 3166-2 subdivision code the airport is located in>",
-            "city": "<The city the airport is located in>",
-            "coordinates": {
-                "crs": "<The coordinates reference system (CRS) URN used for the coordinates data, e.g. urn:ogc:def:crs:EPSG::4326>",
-                "data": [ "<The coordinates data>" ]
-            }
-        }
-    },
-    "destination": {
-        "iataCode": "<IATA airport code of the destination>",
-        "icaoCode": "<ICAO airport code of the destination>",
-        "name": "<Destination airport name>",
-        "location": {
-            "subdivisionCode": "<The ISO 3166-2 subdivision code the airport is located in>",
-            "city": "<The city the airport is located in>",
-            "coordinates": {
-                "crs": "<The coordinates reference system (CRS) URN used for the coordinates data, e.g. urn:ogc:def:crs:EPSG::4326>",
-                "data": [ "<The coordinates data>" ]
-            }
-        }
-    },
-    "flights": [
+  "name": "<Service name for this itinerary>",
+  "origin": {
+    "iataCode": "<IATA airport code of the origin>",
+    "icaoCode": "<ICAO airport code of the origin>",
+    "name": "<Origin airport name>",
+    "location": {
+      "subdivisionCode": "<The ISO 3166-2 subdivision code the airport is located in>",
+      "city": "<The city the airport is located in>",
+      "coordinates": {
+        "crs": "<The coordinates reference system (CRS) URN used for the coordinates data, e.g. urn:ogc:def:crs:EPSG::4326>",
+        "data": ["<The coordinates data>"]
+      }
+    }
+  },
+  "destination": {
+    "iataCode": "<IATA airport code of the destination>",
+    "icaoCode": "<ICAO airport code of the destination>",
+    "name": "<Destination airport name>",
+    "location": {
+      "subdivisionCode": "<The ISO 3166-2 subdivision code the airport is located in>",
+      "city": "<The city the airport is located in>",
+      "coordinates": {
+        "crs": "<The coordinates reference system (CRS) URN used for the coordinates data, e.g. urn:ogc:def:crs:EPSG::4326>",
+        "data": ["<The coordinates data>"]
+      }
+    }
+  },
+  "flights": [
+    {
+      "id": "<ID of the flight>",
+      "departureTerminal": "<Departure terminal name>",
+      "departureTime": "<Departure time in ISO 1806 format>",
+      "arrivalTerminal": "<Arrival terminal name>",
+      "arrivalTime": "<Arrival time in ISO 1806 format>",
+      "aircraftModel": {
+        "icaoCode": "<ICAO aircraft type designator code>",
+        "iataCode": "<IATA aircraft type designator code>",
+        "name": "<Model name of the aircraft>"
+      },
+      "cabins": [
         {
-            "id": "<ID of the flight>",
-            "departureTerminal": "<Departure terminal name>",
-            "departureTime": "<Departure time in ISO 1806 format>",
-            "arrivalTerminal": "<Arrival terminal name>",
-            "arrivalTime": "<Arrival time in ISO 1806 format>",
-            "aircraftModel": {
-                "icaoCode": "<ICAO aircraft type designator code>",
-                "iataCode": "<IATA aircraft type designator code>",
-                "name": "<Model name of the aircraft>"
-            },
-            "cabins": [
-                {
-                    "cabinClass": "<Cabin class: E / B / F>",
-                    "seatsCount": "<Total number of seats>",
-                    "availableSeatsCount": "<Number of available seats>"
-                },
-            ]
-        },
-    ]
+          "cabinClass": "<Cabin class: E / B / F>",
+          "seatsCount": "<Total number of seats>",
+          "availableSeatsCount": "<Number of available seats>"
+        }
+      ]
+    }
+  ]
 }
 ```
 
 Example:
+
 ```json
 {
-    "name": "SKL1",
-    "origin": {
-        "iataCode": "TLV",
-        "icaoCode": "LLBG",
-        "name": "Ben Gurion Airport",
-        "location": {
-            "subdivisionCode": "IL-M",
-            "city": "Tel Aviv-Yafo",
-            "coordinates": {
-                "crs": "urn:ogc:def:crs:EPSG::4326",
-                "data": [ 32.009444, 34.882778 ]
-            }
-        }
-    },
-    "destination": {
-        "iataCode": "JFK",
-        "icaoCode": "KJFK",
-        "name": "John F. Kennedy International Airport",
-        "location": {
-            "subdivisionCode": "US-NY",
-            "city": "New York City",
-            "coordinates": {
-                "crs": "urn:ogc:def:crs:EPSG::4326",
-                "data": [ 40.639722, -73.778889 ]
-            }
-        }
-    },
-    "flights": [
+  "name": "SKL1",
+  "origin": {
+    "iataCode": "TLV",
+    "icaoCode": "LLBG",
+    "name": "Ben Gurion Airport",
+    "location": {
+      "subdivisionCode": "IL-M",
+      "city": "Tel Aviv-Yafo",
+      "coordinates": {
+        "crs": "urn:ogc:def:crs:EPSG::4326",
+        "data": [32.009444, 34.882778]
+      }
+    }
+  },
+  "destination": {
+    "iataCode": "JFK",
+    "icaoCode": "KJFK",
+    "name": "John F. Kennedy International Airport",
+    "location": {
+      "subdivisionCode": "US-NY",
+      "city": "New York City",
+      "coordinates": {
+        "crs": "urn:ogc:def:crs:EPSG::4326",
+        "data": [40.639722, -73.778889]
+      }
+    }
+  },
+  "flights": [
+    {
+      "id": "17564e2f-7d32-4d4a-9d99-27ccd768fb7d",
+      "departureTerminal": "3",
+      "departureTime": "2021-10-11T22:45:00Z",
+      "arrivalTerminal": "4",
+      "arrivalTime": "2021-10-12T10:45:00Z",
+      "aircraftModel": {
+        "icaoCode": "B789",
+        "iataCode": "789",
+        "name": "Boeing 787-9 Dreamliner"
+      },
+      "cabins": [
         {
-            "id": "17564e2f-7d32-4d4a-9d99-27ccd768fb7d",
-            "departureTerminal": "3",
-            "departureTime": "2021-10-11T22:45:00Z",
-            "arrivalTerminal": "4",
-            "arrivalTime": "2021-10-12T10:45:00Z",
-            "aircraftModel": {
-                "icaoCode": "B789",
-                "iataCode": "789",
-                "name": "Boeing 787-9 Dreamliner"
-            },
-            "cabins": [
-                {
-                    "cabinClass": "E",
-                    "seatsCount": 204,
-                    "availableSeatsCount": 201
-                },
-                {
-                    "cabinClass": "B",
-                    "seatsCount": 35,
-                    "availableSeatsCount": 14
-                },
-                {
-                    "cabinClass": "F",
-                    "seatsCount": 32,
-                    "availableSeatsCount": 21
-                }
-            ]
+          "cabinClass": "E",
+          "seatsCount": 204,
+          "availableSeatsCount": 201
+        },
+        {
+          "cabinClass": "B",
+          "seatsCount": 35,
+          "availableSeatsCount": 14
+        },
+        {
+          "cabinClass": "F",
+          "seatsCount": 32,
+          "availableSeatsCount": 21
         }
-    ]
+      ]
+    }
+  ]
 }
 ```
 
@@ -155,7 +160,7 @@ Example:
 
 ```json
 {
-    "error": "Flights not found",
-    "message": "The flights for the requested origin and destination airports."
+  "error": "Flights not found",
+  "message": "The flights for the requested origin and destination airports."
 }
 ```
