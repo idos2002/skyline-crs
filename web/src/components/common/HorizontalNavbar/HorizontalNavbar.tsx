@@ -15,7 +15,7 @@ const HEADER_HEIGHT = 72;
 
 const useStyles = createStyles((theme) => ({
   root: {
-    position: 'relative',
+    position: 'absolute',
     zIndex: 1,
     borderBottom: 0,
   },
