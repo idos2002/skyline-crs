@@ -10,7 +10,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "update-openflights": "node src/lib/openflights/update.js"
   },
   "dependencies": {
     "@mantine/core": "^4.1.5",
@@ -19,11 +20,11 @@
     "@mantine/hooks": "^4.1.5",
     "@mantine/modals": "^4.1.5",
     "@mantine/next": "^4.1.5",
+    "axios": "^0.27.2",
     "dayjs": "^1.11.1",
     "next": "^12.1.5",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "react-query": "3.38.0",
     "tabler-icons-react": "^1.46.0",
     "zod": "^3.14.4"
   },
@@ -33,6 +34,7 @@
     "@types/react": "^18.0.6",
     "@types/react-dom": "^18.0.2",
     "@typescript-eslint/eslint-plugin": "^5.20.0",
+    "csv-parse": "^5.0.4",
     "eslint": "^8.14.0",
     "eslint-config-next": "^12.1.5",
     "eslint-config-prettier": "^8.5.0",
