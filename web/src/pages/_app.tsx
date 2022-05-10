@@ -7,6 +7,11 @@ import Layout from '@components/common/Layout';
 // Set up Day.js plugins
 import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 dayjs.extend(isSameOrAfter);
 
 export default function App({ Component, pageProps }: AppProps) {
