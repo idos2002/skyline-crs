@@ -1,6 +1,6 @@
-import FindFlightsForm from '@components/home/FindFlightsForm';
 import { Center, Paper, Title } from '@mantine/core';
 import Head from 'next/head';
+import FindFlightsForm from '@components/home/FindFlightsForm';
 
 export default function Home() {
   return (
