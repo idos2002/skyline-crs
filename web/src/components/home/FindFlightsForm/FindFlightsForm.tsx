@@ -14,7 +14,7 @@ import { ChevronRight } from 'tabler-icons-react';
 import { z } from 'zod';
 import dayjs from 'dayjs';
 import AirportSelect from '@components/common/AirportSelect';
-import CabinClass from '@lib/types/cabin-class.enum';
+import CabinClass from '@lib/common/types/cabin-class.enum';
 
 export interface FindFLightsFormProps {
   airports: { iataCode: string; city: string; country: string }[];
@@ -65,6 +65,12 @@ const formSchema = z.object({
 
 type FormSchema = z.infer<typeof formSchema>;
 
+function currentDateWithoutTime(): Date {
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  return now;
+}
+
 export default function FindFlightsForm({ airports }: FindFLightsFormProps) {
   const form = useForm<FormSchema>({
     schema: zodResolver(formSchema),
@@ -72,7 +78,7 @@ export default function FindFlightsForm({ airports }: FindFLightsFormProps) {
       tripType: 'return',
       origin: '',
       destination: '',
-      departureDate: new Date(),
+      departureDate: currentDateWithoutTime(),
       passengers: 1,
       cabinClass: CabinClass.ECONOMY,
     },
@@ -103,19 +109,17 @@ export default function FindFlightsForm({ airports }: FindFLightsFormProps) {
         }
       }
 
-      router.push({
-        pathname: '/flights/[origin]/[destination]',
-        query: {
-          origin,
-          destination,
-          passengers,
-          cabin: cabinClass,
-          depart: dayjs(departureDate).format('YYYY-MM-DD'),
-          ...(isReturnTrip && {
-            return: dayjs(returnDate).format('YYYY-MM-DD'),
-          }),
-        },
-      });
+      const departureDateStr = dayjs(departureDate)
+        .format('YYYY-MM-DD')
+        .toString();
+      const returnDateStr =
+        returnDate && dayjs(returnDate).format('YYYY-MM-DD').toString();
+
+      let url = `/flights/${origin}/${destination}?passengers=${passengers}&cabin=${cabinClass}&depart=${departureDateStr}`;
+      if (isReturnTrip) {
+        url += `&return=${returnDateStr}`;
+      }
+      router.push(url);
     },
   );
 
