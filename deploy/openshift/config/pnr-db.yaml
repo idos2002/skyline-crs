@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pnr-db-config
+  labels:
+    app.kubernetes.io/name: pnr-db-config
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: skyline
+data:
+  port: "27017"
+  user: admin
+  db_name: pnr
+  pnr_collection_name: pnrs

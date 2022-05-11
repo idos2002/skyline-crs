@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: email-config
+  labels:
+    app.kubernetes.io/name: email-config
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: skyline
+data:
+  SKYLINE_LOG_LEVEL: INFO
+  SKYLINE_PREFETCH_COUNT: "1"

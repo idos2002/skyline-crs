@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flights-config
+  labels:
+    app.kubernetes.io/name: flights-config
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: skyline
+data:
+  SKYLINE_PORT: "80"
+  SKYLINE_LOG_LEVEL: INFO

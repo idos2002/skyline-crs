@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rabbitmq-config
+  labels:
+    app.kubernetes.io/name: rabbitmq-config
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: skyline
+data:
+  amqp_port: "5672"
+  management_port: "15672"
+  user: admin
+  vhost: skyline
+  ticket_exchange_name: ticket
+  ticket_queue_name: ticket
+  ticket_binding_key: "ticket.#"
+  ticket_booking_routing_key: ticket.booking
+  email_exchange_name: email
+  email_queue_name: email
+  email_binding_key: "email.#"
+  email_ticket_routing_key: email.booking.ticket
+  email_booking_confirmation_routing_key: email.booking.confirmation
+  email_booking_cancellation_routing_key: email.booking.cancel
+  email_boarding_pass_routing_key: email.boarding.ticket
+  dead_letter_exchange_name: dlx
+  dead_letter_ticket_booking_routing_key: ticket.booking
+  dead_letter_email_routing_key: email.all

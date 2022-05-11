@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: inventory-manager-config
+  labels:
+    app.kubernetes.io/name: inventory-manager-config
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: skyline
+data:
+  port: "80"
+  unauthorized_role: user
+  enable_console: "true"
+  enabled_log_types: startup, http-log, webhook-log, websocket-log, query-log
+  graphql_api_url: http://inventory-manager/v1/graphql
