@@ -9,7 +9,7 @@ spec:
     app.kubernetes.io/component: database
     app.kubernetes.io/part-of: skyline
   ports:
-    - name: postgres
+    - name: mongodb
       port: 27017
       targetPort: 27017
 
@@ -61,3 +61,10 @@ spec:
           ports:
             - name: postgres
               containerPort: 27017
+          volumeMounts:
+            - name: pnr-db-data
+              mountPath: /data/db
+      volumes:
+        - name: pnr-db-data
+          persistentVolumeClaim:
+            claimName: pnr-db

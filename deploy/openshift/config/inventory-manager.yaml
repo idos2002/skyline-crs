@@ -8,7 +8,7 @@ metadata:
     app.kubernetes.io/component: backend
     app.kubernetes.io/part-of: skyline
 data:
-  port: "80"
+  port: "8080"
   unauthorized_role: user
   enable_console: "true"
   enabled_log_types: startup, http-log, webhook-log, websocket-log, query-log

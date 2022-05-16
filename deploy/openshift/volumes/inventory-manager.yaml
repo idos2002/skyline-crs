@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: inventory-manager
+  labels:
+    app.kubernetes.io/name: inventory-manager
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: skyline
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 1Gi

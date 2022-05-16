@@ -58,6 +58,21 @@ spec:
                   name: inventory-db-config
                   key: db_name
                   optional: false
+              # Fixes permission issued as it cannot chown on the default directory,
+              # as its owned by root.
+              # See:
+              #   - https://stackoverflow.com/questions/51200115/chown-changing-ownership-of-data-db-operation-not-permitted/51203031#51203031
+              #   - https://stackoverflow.com/questions/51168558/how-to-mount-a-postgresql-volume-using-aws-ebs-in-kubernete
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
           ports:
             - name: postgres
               containerPort: 5432
+          volumeMounts:
+            - name: inventory-db-data
+              mountPath: /var/lib/postgresql/data
+              subPath: pgdata
+      volumes:
+        - name: inventory-db-data
+          persistentVolumeClaim:
+            claimName: inventory-db

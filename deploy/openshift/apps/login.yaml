@@ -11,7 +11,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 8080
 
 ---
 apiVersion: apps/v1
@@ -69,4 +69,4 @@ spec:
                   optional: false
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 8080
