@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "flights"
-version = "0.1.0"
+version = "0.2.0"
 description = "This is the flights service for Skyline CRS. It presents an external API for the inventory, which contains all of the flights information."
 authors = ["Ido Saban <sabanido.business@gmail.com>"]
 license = "AGPL-3.0-only"
