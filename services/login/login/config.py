@@ -31,6 +31,8 @@ class Settings(BaseSettings):
     """
 
     log_level: LogLevel | None = None
+    openapi_server_url: str = "/"
+    openapi_schema_prefix: str = "/"
     pnr_db_url: AnyUrl
     pnr_db_name: str = "pnr"
     pnr_db_collection_name: str = "pnrs"

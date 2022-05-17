@@ -26,6 +26,14 @@ log = logging.getLogger(__name__)
 app = FastAPI(
     title="Login Service",
     description=docs.app_description,
+    servers=[
+        {
+            "url": get_settings().openapi_server_url,
+            "description": "Public API Server",
+        }
+    ],
+    root_path=get_settings().openapi_schema_prefix,
+    root_path_in_servers=False,
 )
 
 
