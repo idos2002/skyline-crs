@@ -31,6 +31,8 @@ class Settings(BaseSettings):
     """
 
     log_level: LogLevel | None = None
+    openapi_server_url: str = "/"
+    openapi_schema_prefix: str = "/"
     inventory_manager_url: AnyHttpUrl
     iata_airline_code: str = Field("SK", regex=r"^[A-Z0-9]{2,3}$")
     icao_airline_code: str = Field("SKL", regex=r"^[A-Z]{3}$")

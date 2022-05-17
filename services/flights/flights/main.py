@@ -8,7 +8,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from . import dependencies, docs, models, schemas
-from .config import config_logging
+from .config import config_logging, get_settings
 from .exceptions import (
     EndpointException,
     ErrorDetails,
@@ -24,6 +24,14 @@ log = logging.getLogger(__name__)
 app = FastAPI(
     title="Flights Service",
     description=docs.app_description,
+    servers=[
+        {
+            "url": get_settings().openapi_server_url,
+            "description": "Public API Server",
+        }
+    ],
+    root_path=get_settings().openapi_schema_prefix,
+    root_path_in_servers=False,
 )
 
 
