@@ -4,9 +4,10 @@ metadata:
   name: flights-config
   labels:
     app.kubernetes.io/name: flights-config
-    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/version: "0.2.0"
     app.kubernetes.io/component: backend
     app.kubernetes.io/part-of: skyline
 data:
   SKYLINE_PORT: "8080"
   SKYLINE_LOG_LEVEL: INFO
+  SKYLINE_OPENAPI_SCHEMA_PREFIX: /docs/flights

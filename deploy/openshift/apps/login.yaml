@@ -5,7 +5,7 @@ metadata:
 spec:
   selector:
     app.kubernetes.io/name: login
-    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/version: "0.2.0"
     app.kubernetes.io/component: backend
     app.kubernetes.io/part-of: skyline
   ports:
@@ -25,20 +25,20 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: login
-      app.kubernetes.io/version: "0.1.0"
+      app.kubernetes.io/version: "0.2.0"
       app.kubernetes.io/component: backend
       app.kubernetes.io/part-of: skyline
   template:
     metadata:
       labels:
         app.kubernetes.io/name: login
-        app.kubernetes.io/version: "0.1.0"
+        app.kubernetes.io/version: "0.2.0"
         app.kubernetes.io/component: backend
         app.kubernetes.io/part-of: skyline
     spec:
       containers:
         - name: login
-          image: idos2002/skyline-login:0.1.0
+          image: idos2002/skyline-login:0.2.0
           envFrom:
             - configMapRef:
                 name: login-config
