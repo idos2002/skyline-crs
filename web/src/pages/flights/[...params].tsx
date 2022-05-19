@@ -30,17 +30,13 @@ const iataAirportCodeSchema = z
 const flightsSearchQuerySchema = z.object({
   origin: iataAirportCodeSchema,
   destination: iataAirportCodeSchema,
-  depart: z
-    .preprocess(unwrapQueryParam, z.string())
-    .refine(isValidDate)
-    .transform((d) => new Date(d)),
+  depart: z.preprocess(unwrapQueryParam, z.string()).refine(isValidDate),
   return: z
     .preprocess(
       (arg) => unwrapQueryParam(arg) || undefined,
       z.string().optional(),
     )
-    .refine((d) => !d || isValidDate(d))
-    .transform((d) => (d === undefined ? d : new Date(d))),
+    .refine((d) => !d || isValidDate(d)),
   passengers: z.preprocess((arg) => {
     const unwrapped = unwrapQueryParam(arg);
     return unwrapped && parseInt(unwrapped);
@@ -87,20 +83,31 @@ export const getServerSideProps: GetServerSideProps<
   const parsedQuery = parseFlightsSearchQuery(context.query);
   if (parsedQuery === null) return { notFound: true };
 
-  const findReturnFlights = async () => {
-    if (!parsedQuery.return) return null;
-    return await findFlights({
+  const departureTime = dayjs.tz(
+    parsedQuery.depart,
+    openFlights.findByIataCode(parsedQuery.origin)?.timezone ?? '',
+  );
+
+  const returnTime = parsedQuery.return
+    ? dayjs.tz(
+        parsedQuery.return,
+        openFlights.findByIataCode(parsedQuery.destination)?.timezone ?? '',
+      )
+    : null;
+
+  const findReturnFlights = async () =>
+    returnTime &&
+    (await findFlights({
       ...parsedQuery,
-      departureTime: parsedQuery.return,
+      departureTime: returnTime.toDate(),
       origin: parsedQuery.destination,
       destination: parsedQuery.origin,
-    });
-  };
+    }));
 
   const [departureFlights, returnFlights] = await Promise.all([
     findFlights({
       ...parsedQuery,
-      departureTime: parsedQuery.depart,
+      departureTime: departureTime.toDate(),
     }),
     findReturnFlights(),
   ]);
@@ -113,8 +120,8 @@ export const getServerSideProps: GetServerSideProps<
     props: {
       originIataCode: parsedQuery.origin,
       destinationIataCode: parsedQuery.destination,
-      departureDate: parsedQuery.depart.toISOString(),
-      returnDate: parsedQuery.return?.toISOString() ?? null,
+      departureDate: departureTime.format(),
+      returnDate: returnTime?.format() ?? null,
       departureFlights,
       returnFlights,
       passengers: parsedQuery.passengers,

@@ -25,6 +25,7 @@ export default function AirportSelect({ data, ...props }: AirportSelectProps) {
       nothingFound="Nothing found"
       data={normalizeData(data)}
       filter={filterItems}
+      limit={20}
       {...props}
     />
   );
@@ -40,7 +41,7 @@ function normalizeData(data: DataItem[]): NormalizedDataItem[] {
 
 function filterItems(value: string, item: NormalizedDataItem) {
   return (
-    compareToInput(item.iataCode, value) ||
+    compareToInput(item.iataCode ?? '', value) ||
     compareToInput(item.city, value) ||
     compareToInput(item.country, value) ||
     compareToInput(item.label, value)

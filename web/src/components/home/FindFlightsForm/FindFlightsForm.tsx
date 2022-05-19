@@ -17,7 +17,11 @@ import AirportSelect from '@components/common/AirportSelect';
 import CabinClass from '@lib/common/types/cabin-class.enum';
 
 export interface FindFLightsFormProps {
-  airports: { iataCode: string; city: string; country: string }[];
+  airports: {
+    iataCode: string;
+    city: string;
+    country: string;
+  }[];
 }
 
 const formSchema = z.object({

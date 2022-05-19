@@ -36,15 +36,11 @@ export default function FlightsListItem({
 
   const departureTime = dayjs
     .utc(flight.departureTime)
-    .utcOffset(
-      openFlights.findByIataCode(origin.iataCode)?.timezoneOffset ?? 0,
-    );
+    .tz(openFlights.findByIataCode(origin.iataCode)?.timezone ?? '');
 
   const arrivalTime = dayjs
     .utc(flight.arrivalTime)
-    .utcOffset(
-      openFlights.findByIataCode(destination.iataCode)?.timezoneOffset ?? 0,
-    );
+    .tz(openFlights.findByIataCode(destination.iataCode)?.timezone ?? '');
 
   const isArrivalDayAfter = arrivalTime.date() !== departureTime.date();
 

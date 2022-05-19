@@ -1,8 +1,24 @@
 import { Center, Paper, Title } from '@mantine/core';
 import Head from 'next/head';
 import FindFlightsForm from '@components/home/FindFlightsForm';
+import { GetServerSideProps } from 'next';
+import { pickAirportDetailsCompact } from '@lib/openflights';
 
-export default function Home() {
+interface HomeProps {
+  airports: {
+    iataCode: string;
+    city: string;
+    country: string;
+  }[];
+}
+
+export const getServerSideProps: GetServerSideProps<HomeProps> = async () => ({
+  props: {
+    airports: pickAirportDetailsCompact('iataCode', 'city', 'country'),
+  },
+});
+
+export default function Home({ airports }: HomeProps) {
   return (
     <>
       <Head>
@@ -22,16 +38,7 @@ export default function Home() {
             Find Your Dream Flight
           </Title>
 
-          <FindFlightsForm
-            airports={[
-              { iataCode: 'TLV', city: 'Tel Aviv-Yafo', country: 'Israel' },
-              {
-                iataCode: 'LAX',
-                city: 'Los Angeles',
-                country: 'USA',
-              },
-            ]}
-          />
+          <FindFlightsForm airports={airports} />
         </Paper>
       </Center>
     </>

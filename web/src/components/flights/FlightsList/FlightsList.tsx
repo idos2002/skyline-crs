@@ -29,9 +29,7 @@ export default function FlightsList({
       <Title order={4}>
         {dayjs
           .utc(departureDate)
-          .utcOffset(
-            openFlights.findByIataCode(origin.iataCode)?.timezoneOffset ?? 0,
-          )
+          .tz(openFlights.findByIataCode(origin.iataCode)?.timezone ?? '')
           .format('dddd, MMMM D, YYYY')}
       </Title>
     </Paper>
