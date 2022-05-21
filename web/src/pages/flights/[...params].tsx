@@ -112,10 +112,6 @@ export const getServerSideProps: GetServerSideProps<
     findReturnFlights(),
   ]);
 
-  if (departureFlights === null && returnFlights === null) {
-    return { notFound: true };
-  }
-
   return {
     props: {
       originIataCode: parsedQuery.origin,
